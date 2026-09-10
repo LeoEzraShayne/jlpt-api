@@ -1,0 +1,5 @@
+ALTER TABLE "StudySession"
+ADD COLUMN "hintRevealCount" INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE "ReviewEvent"
+ADD COLUMN "hintRevealCount" INTEGER NOT NULL DEFAULT 0;

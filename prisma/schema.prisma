@@ -1,0 +1,521 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum Theme {
+  sunshine
+  coral
+  mint
+  ocean
+  violet
+}
+
+enum JlptLevel {
+  N1
+  N2
+  N3
+  N4
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  DISABLED
+}
+
+enum RelationType {
+  CONFUSABLE
+  SIMILAR
+}
+
+enum ImportStatus {
+  DRY_RUN
+  VALIDATED
+  COMMITTED
+  FAILED
+}
+
+enum StudyPlanStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+enum TaskType {
+  LEARN
+  REVIEW
+  PRACTICE
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  LEARNING
+  DUE
+  MASTERED
+  NEEDS_WORK
+}
+
+enum SessionMode {
+  LEARN
+  REVIEW
+  PRACTICE
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+enum TimerPhase {
+  FOCUS
+  BREAK
+}
+
+enum RecallRating {
+  FORGOT
+  FUZZY
+  REMEMBERED
+}
+
+enum AttemptSource {
+  NEW_LEARNING
+  REVIEW
+  FREE_PRACTICE
+  RETRY
+}
+
+enum AiJobStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AiProvider {
+  GEMINI
+  DEEPSEEK
+}
+
+enum ReviewResultLevel {
+  CORRECT
+  MOSTLY_CORRECT
+  NEEDS_REVISION
+  INCORRECT
+}
+
+enum ReviewMemoryState {
+  NEW
+  LEARNING
+  REVIEW
+  RELEARNING
+}
+
+enum MemoryStateSource {
+  LEGACY_BACKFILL
+  NATIVE
+}
+
+enum TaskSkipReason {
+  PLAN_REPLACED
+  MIGRATION_DEDUP
+}
+
+model User {
+  id               String                @id @default(cuid())
+  email            String                @unique
+  displayName      String
+  avatarUrl        String?
+  role             UserRole              @default(USER)
+  timezone         String                @default("Asia/Tokyo")
+  targetLevel      JlptLevel             @default(N1)
+  colorTheme       Theme                 @default(sunshine)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  accounts         AuthAccount[]
+  sessions         AuthSession[]
+  studyPlans       StudyPlan[]
+  tasks            StudyTask[]
+  progress         UserGrammarProgress[]
+  studySessions    StudySession[]
+  sentenceAttempts SentenceAttempt[]
+  dailyStats       DailyStudyStat[]
+  reviewEvents     ReviewEvent[]
+  importBatches    ImportBatch[]         @relation("ImportOperator")
+}
+
+model AuthAccount {
+  id                String   @id @default(cuid())
+  userId            String
+  provider          String
+  providerAccountId String
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model AuthSession {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model GrammarPoint {
+  id                 String                  @id @default(cuid())
+  level              JlptLevel
+  title              String
+  chineseExplanation String
+  connectionRule     String?
+  usageScene         String?
+  commonErrors       String?
+  sortOrder          Int
+  status             ContentStatus           @default(PUBLISHED)
+  sourceDataset      String
+  sourceOrdinal      Int
+  sourceHash         String
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  examples           GrammarExample[]
+  relationMembers    GrammarRelationMember[]
+  progress           UserGrammarProgress[]
+  tasks              StudyTask[]
+  studySessions      StudySession[]
+  sentenceAttempts   SentenceAttempt[]
+  reviewEvents       ReviewEvent[]
+
+  @@unique([sourceDataset, level, sourceOrdinal])
+  @@index([level, status, sortOrder])
+}
+
+model GrammarExample {
+  id          String       @id @default(cuid())
+  grammarId   String
+  sentence    String
+  translation String
+  sortOrder   Int          @default(1)
+  grammar     GrammarPoint @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+
+  @@unique([grammarId, sortOrder])
+}
+
+model GrammarRelationGroup {
+  id        String                  @id @default(cuid())
+  level     JlptLevel
+  type      RelationType
+  title     String
+  notes     String
+  sortOrder Int
+  members   GrammarRelationMember[]
+
+  @@unique([level, type, sortOrder])
+}
+
+model GrammarRelationMember {
+  groupId   String
+  grammarId String
+  group     GrammarRelationGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  grammar   GrammarPoint         @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+
+  @@id([groupId, grammarId])
+  @@index([grammarId])
+}
+
+model ImportBatch {
+  id          String        @id @default(cuid())
+  dataset     String
+  fileName    String
+  fileHash    String
+  status      ImportStatus
+  summary     Json
+  operatorId  String?
+  createdAt   DateTime      @default(now())
+  committedAt DateTime?
+  operator    User?         @relation("ImportOperator", fields: [operatorId], references: [id])
+  errors      ImportError[]
+}
+
+model ImportError {
+  id      String      @id @default(cuid())
+  batchId String
+  line    Int?
+  code    String
+  message String
+  batch   ImportBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+}
+
+model StudyPlan {
+  id            String          @id @default(cuid())
+  userId        String
+  level         JlptLevel
+  startDate     DateTime
+  targetDate    DateTime
+  dailyMinutes  Int
+  dailyNewLimit Int
+  status        StudyPlanStatus @default(ACTIVE)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks         StudyTask[]
+
+  @@index([userId, status])
+}
+
+model StudyTask {
+  id               String               @id @default(cuid())
+  userId           String
+  planId           String?
+  progressId       String?
+  grammarId        String?
+  taskDate         DateTime             @db.Date
+  type             TaskType
+  status           TaskStatus           @default(PENDING)
+  skipReason       TaskSkipReason?
+  estimatedMinutes Int?
+  idempotencyKey   String               @unique
+  completedAt      DateTime?
+  createdAt        DateTime             @default(now())
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan             StudyPlan?           @relation(fields: [planId], references: [id], onDelete: SetNull)
+  progress         UserGrammarProgress? @relation(fields: [progressId], references: [id], onDelete: SetNull)
+  grammar          GrammarPoint?        @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+  studySession     StudySession?
+  reviewEvents     ReviewEvent[]
+
+  @@index([userId, taskDate, status])
+  @@index([planId, status])
+  @@index([progressId, status])
+}
+
+model UserGrammarProgress {
+  id            String          @id @default(cuid())
+  userId        String
+  grammarId     String
+  status        ProgressStatus  @default(NOT_STARTED)
+  stage         Int             @default(0)
+  masteryScore  Int             @default(0)
+  reviewCount   Int             @default(0)
+  correctStreak Int             @default(0)
+  lastScore     Int?
+  lastStudiedAt DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammar       GrammarPoint    @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+  schedule      ReviewSchedule?
+  tasks         StudyTask[]
+  reviewEvents  ReviewEvent[]
+
+  @@unique([userId, grammarId])
+  @@index([userId, status])
+}
+
+model ReviewSchedule {
+  id               String              @id @default(cuid())
+  progressId       String              @unique
+  lastReviewAt     DateTime?
+  nextReviewAt     DateTime
+  nextReviewOn     DateTime?           @db.Date
+  algorithmVersion String              @default("legacy-v1")
+  stability        Float?
+  difficulty       Float?
+  fsrsState        ReviewMemoryState?
+  scheduledDays    Int?
+  elapsedDays      Int?
+  reps             Int                 @default(0)
+  lapses           Int                 @default(0)
+  stateSource      MemoryStateSource?
+  progress         UserGrammarProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+
+  @@index([nextReviewAt])
+  @@index([nextReviewOn])
+}
+
+model StudySession {
+  id                  String            @id @default(cuid())
+  userId              String
+  grammarId           String
+  taskId              String?           @unique
+  mode                SessionMode
+  status              SessionStatus     @default(ACTIVE)
+  timerPhase          TimerPhase        @default(FOCUS)
+  timerPhaseStartedAt DateTime          @default(now())
+  timerPhaseEndsAt    DateTime
+  revealedAt          DateTime?
+  hintRevealCount     Int               @default(0)
+  activeSeconds       Int               @default(0)
+  lastActivityAt      DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime          @default(now())
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammar             GrammarPoint      @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+  task                StudyTask?        @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  attempts            SentenceAttempt[]
+  reviewEvent         ReviewEvent?
+
+  @@index([userId, status])
+}
+
+model SentenceAttempt {
+  id             String        @id @default(cuid())
+  userId         String
+  grammarId      String
+  studySessionId String
+  source         AttemptSource
+  sentence       String        @db.VarChar(150)
+  scene          String?
+  createdAt      DateTime      @default(now())
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammar        GrammarPoint  @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+  studySession   StudySession  @relation(fields: [studySessionId], references: [id], onDelete: Cascade)
+  aiJob          AiReviewJob?
+
+  @@index([userId, createdAt])
+  @@index([grammarId])
+}
+
+model AiReviewJob {
+  id           String          @id @default(cuid())
+  attemptId    String          @unique
+  status       AiJobStatus     @default(QUEUED)
+  provider     AiProvider?
+  retryCount   Int             @default(0)
+  errorCode    String?
+  errorMessage String?
+  availableAt  DateTime        @default(now())
+  lockedAt     DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  attempt      SentenceAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  result       AiReviewResult?
+
+  @@index([status, availableAt])
+}
+
+model AiReviewResult {
+  id                               String            @id @default(cuid())
+  jobId                            String            @unique
+  provider                         AiProvider
+  model                            String
+  promptVersion                    String
+  rawTotalScore                    Int?
+  totalScore                       Int
+  grammarScore                     Int
+  connectionScore                  Int
+  completenessScore                Int
+  naturalnessScore                 Int
+  vocabularyScore                  Int
+  isCorrect                        Boolean
+  usedTargetGrammar                Boolean?
+  targetGrammarCorrect             Boolean?
+  scorePolicyVersion               String            @default("ai-score-v1")
+  resultLevel                      ReviewResultLevel
+  errorSpans                       Json
+  correctedSentenceFurigana        String?
+  correctedSentence                String
+  correctedSentenceTranslationZh   String?
+  alternativeSentence              String?
+  alternativeSentenceFurigana      String?
+  alternativeSentenceTranslationZh String?
+  explanationZh                    String
+  encouragement                    String
+  inputTokens                      Int?
+  outputTokens                     Int?
+  latencyMs                        Int
+  createdAt                        DateTime          @default(now())
+  job                              AiReviewJob       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model ReviewAlgorithmProfile {
+  id                      String        @id @default(cuid())
+  version                 String        @unique
+  schedulerPackage        String
+  schedulerPackageVersion String
+  parameters              Json
+  parameterHash           String
+  targetRetention         Float
+  minIntervalDays         Int
+  maxIntervalDays         Int
+  active                  Boolean       @default(false)
+  createdAt               DateTime      @default(now())
+  reviewEvents            ReviewEvent[]
+
+  @@index([active])
+}
+
+model ReviewEvent {
+  id                   String                  @id @default(cuid())
+  userId               String
+  grammarId            String
+  progressId           String
+  sessionId            String                  @unique
+  taskId               String?
+  profileId            String?
+  reviewedAt           DateTime
+  scheduledFor         DateTime?               @db.Date
+  nextReviewOn         DateTime                @db.Date
+  elapsedDays          Int
+  submittedRating      RecallRating
+  effectiveRating      RecallRating
+  aiScore              Int?
+  aiEvidence           String
+  hintRevealCount      Int                     @default(0)
+  affectsSchedule      Boolean                 @default(true)
+  retrievabilityBefore Float?
+  stabilityBefore      Float?
+  stabilityAfter       Float?
+  difficultyBefore     Float?
+  difficultyAfter      Float?
+  scheduledDaysAfter   Int
+  algorithmVersion     String
+  legacyOutcome        Json?
+  shadowOutcome        Json?
+  createdAt            DateTime                @default(now())
+  user                 User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammar              GrammarPoint            @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+  progress             UserGrammarProgress     @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  session              StudySession            @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  task                 StudyTask?              @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  profile              ReviewAlgorithmProfile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
+
+  @@index([userId, reviewedAt])
+  @@index([progressId, reviewedAt])
+  @@index([algorithmVersion, reviewedAt])
+}
+
+model DailyStudyStat {
+  id             String   @id @default(cuid())
+  userId         String
+  studyDate      DateTime @db.Date
+  studyMinutes   Int      @default(0)
+  tasksCompleted Int      @default(0)
+  sentenceCount  Int      @default(0)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, studyDate])
+}

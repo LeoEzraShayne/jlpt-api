@@ -1,0 +1,47 @@
+import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import type { Request } from 'express';
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ContentStatus, JlptLevel } from '@prisma/client';
+import { GrammarService } from './grammar.service';
+import { SessionGuard } from '../auth/session.guard';
+
+class GrammarQueryDto {
+  @IsOptional() @IsEnum(JlptLevel) level?: JlptLevel;
+  @IsOptional() @IsEnum(ContentStatus) status?: ContentStatus;
+  @IsOptional() @IsString() query?: string;
+  @IsOptional() @IsString() cursor?: string;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit?: number;
+}
+
+@Controller()
+@UseGuards(SessionGuard)
+export class GrammarController {
+  constructor(private readonly grammar: GrammarService) {}
+
+  @Get('grammar-points')
+  async findAll(@Req() request: Request, @Query() query: GrammarQueryDto) {
+    const result = await this.grammar.findAll(
+      query,
+      request.currentUser!.id,
+      request.currentUser!.timezone,
+    );
+    return { data: result.items, meta: { nextCursor: result.nextCursor } };
+  }
+
+  @Get('grammar-points/:id')
+  async findOne(@Req() request: Request, @Param('id') id: string) {
+    return {
+      data: await this.grammar.findOne(
+        id,
+        request.currentUser!.id,
+        request.currentUser!.timezone,
+      ),
+    };
+  }
+
+  @Get('grammar-levels')
+  async getLevels() {
+    return { data: await this.grammar.getLevels() };
+  }
+}
