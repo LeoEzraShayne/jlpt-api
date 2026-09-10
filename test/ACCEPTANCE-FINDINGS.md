@@ -53,4 +53,8 @@ After integration, main independently reran all 29 cases and added one real-data
 admin rollout/metrics case (30 total passing), including unauthenticated/learner
 rejection, account-specific enable/disable, input validation, and real metrics SQL.
 
-Frontend browser/mobile end-to-end testing must run against the integrated E frontend in its designated worktree; F has not claimed it passed. Live AI accuracy/cost/latency checks belong to main's separately configured bounded smoke test. Long-term retention improvement is not established by these deterministic tests. Production migration and release remain excluded.
+Subsequent browser F acceptance passed six real-stack cases on desktop and 320 px
+mobile; main also verified 135 mock browser cases and four bounded live AI cases.
+See `docs/learning-v2-release.md` for the paired revisions and repeatable commands.
+Long-term retention improvement is not established by these deterministic tests.
+Production migration and release remain excluded.

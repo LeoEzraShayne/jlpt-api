@@ -2,6 +2,24 @@
 
 This work does not apply migrations or publish builds to production.
 
+## Validated application pair
+
+Backend `dd5ad4e` and frontend `91e7809` are the matched implementation/test revisions.
+Subsequent acceptance-document commits do not change application behavior. The web
+baseline changes supplied by the user were preserved separately in `5fe5c0d`.
+
+Final coverage: 183 backend unit tests, 30 real PostgreSQL integration tests,
+25 frontend unit/component tests, 135 mocked desktop/mobile browser cases and six
+real-stack browser cases. Both builds, type checks, lint and source line limits pass.
+The real-stack runner applies all 14 migrations to its own temporary database and
+uses real HTTP, sessions, CORS, polling and persistence. Only external AI results
+are synthetic in that suite; four separate live-provider cases passed.
+
+Live observations: 2,183–4,076 ms per request; 1,059–1,287 input and 422–634 output
+tokens. These are four synthetic sentences, not a production latency SLA or a
+long-term memory efficacy study. No configured monetary acceptance threshold was
+provided; token usage is recorded for subsequent billing review.
+
 ## Local environment
 
 Use an explicitly selected local/test PostgreSQL database. The implementation's
@@ -35,6 +53,15 @@ build. Never use the production API URL for mutation-based browser tests.
 - `npm run test:ai:live -- --output /absolute/path/ai-smoke.json` makes four bounded
   real AI calls using local backend configuration. This is an explicit paid smoke
   check, excluded from routine tests. Synthetic AI fixtures and real calls are separate.
+- Frontend `npm run test:e2e:real` builds and tests a real API/Next/PostgreSQL pair.
+  Run from isolated checkouts without `.env` files, setting `REAL_API_DIR` and an
+  outside-repository `REAL_QA_DIR`; see the frontend `scripts/real-stack/README.md`.
+  The default mock browser suite excludes these database-dependent cases.
+
+Local screenshots and runner evidence are retained under
+`/Users/shen/Downloads/jlpt/.implementation/qa/`, including
+`real-today-mobile-320.png`, `real-feedback-desktop.png`,
+`real-reveal-mobile-320.png` and `real-private-import-mobile-320.png`.
 
 ## Data preparation
 
