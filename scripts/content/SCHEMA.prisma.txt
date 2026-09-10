@@ -1,0 +1,100 @@
+// Main-agent contract: add these models. Scalar owner/source IDs are intentional;
+// services validate ownership and retain provenance after source deletion.
+model VocabularyEntry {
+  id String @id @default(cuid())
+  ownerId String?
+  fingerprint String @unique
+  word String
+  reading String
+  senseKey String
+  partOfSpeech String[]
+  glosses Json
+  chineseGloss String?
+  chineseGlossSource String?
+  level JlptLevel?
+  levelSource String?
+  sourceName String
+  sourceUrl String?
+  sourceVersion String
+  sourceEntryId String?
+  license String?
+  validationStatus String @default("PENDING")
+  provenance Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([ownerId, validationStatus, level])
+  @@index([word, reading])
+}
+model VocabularyBookmark {
+  id String @id @default(cuid())
+  userId String
+  vocabularyId String
+  note String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, vocabularyId])
+  @@index([userId, createdAt])
+}
+model PersonalExpression {
+  id String @id @default(cuid())
+  userId String
+  grammarId String
+  reviewId String
+  variant String
+  sentence String
+  furigana String?
+  translationZh String?
+  scenarioId String?
+  scene String?
+  note String @default("")
+  provenance Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, reviewId, variant])
+  @@index([userId, grammarId, createdAt])
+}
+model ContentImport {
+  id String @id @default(cuid())
+  userId String
+  fingerprint String
+  fileName String
+  sourceName String
+  sourceVersion String
+  sourceUrl String?
+  license String?
+  status String @default("PREVIEW")
+  summary Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, fingerprint])
+  @@index([userId, createdAt])
+}
+model ContentCandidate {
+  id String @id @default(cuid())
+  userId String
+  importId String
+  fingerprint String
+  kind String
+  word String
+  reading String
+  senseKey String
+  payload Json
+  validationStatus String @default("PENDING")
+  validationNotes String @default("")
+  vocabularyId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, fingerprint])
+  @@index([userId, importId, validationStatus])
+}
+model ContentExposure {
+  id String @id @default(cuid())
+  userId String
+  sessionId String
+  contentType String
+  contentId String
+  interaction String
+  createdAt DateTime @default(now())
+  @@unique([userId, sessionId, contentType, contentId, interaction])
+  @@index([userId, contentType, contentId])
+}
