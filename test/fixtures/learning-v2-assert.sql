@@ -14,8 +14,13 @@ DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM "UserGrammarProgress" WHERE id='migration-progress'
     AND status='MASTERED' AND "masteryRuleVersion"='legacy-v1') THEN
     RAISE EXCEPTION 'legacy mastery must be preserved and versioned'; END IF;
-  IF (SELECT count(*) FROM "ReviewEvent") <> 0 THEN
-    RAISE EXCEPTION 'must not manufacture historical evidence'; END IF;
+  IF (SELECT count(*) FROM "ReviewEvent") <> 1 THEN
+    RAISE EXCEPTION 'must preserve historical events without creating new ones'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM "ReviewEvent" WHERE id='migration-old-event'
+    AND "evidenceVersion"='legacy-v1' AND "firstScore" IS NULL
+    AND "scenarioId" IS NULL AND NOT "crossScenarioValid" AND NOT "dueReview"
+    AND "aiScore"=95 AND "algorithmVersion"='adaptive-v1') THEN
+    RAISE EXCEPTION 'missing historical evidence must not be invented'; END IF;
   IF (SELECT count(*) FROM "User" WHERE "learningV2Enabled") <> 0 THEN
     RAISE EXCEPTION 'rollout must default off'; END IF;
 END $$;

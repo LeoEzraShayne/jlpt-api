@@ -17,3 +17,7 @@ INSERT INTO "ReviewSchedule" (id,"progressId","nextReviewAt","algorithmVersion",
 INSERT INTO "StudyTask" (id,"userId","planId","progressId","grammarId","taskDate",type,status,"idempotencyKey") VALUES
  ('duplicate-review-1','migration-old','old-n1-active-new','migration-progress','migration-grammar','2026-09-01','REVIEW','PENDING','migration-review-1'),
  ('duplicate-review-2','migration-old','old-n1-active-new',NULL,'migration-grammar','2026-09-02','REVIEW','PENDING','migration-review-2');
+INSERT INTO "StudySession" (id,"userId","grammarId",mode,status,"timerPhaseEndsAt","completedAt") VALUES
+ ('migration-old-session','migration-old','migration-grammar','REVIEW','COMPLETED','2026-08-01','2026-08-01');
+INSERT INTO "ReviewEvent" (id,"userId","grammarId","progressId","sessionId","reviewedAt","nextReviewOn","elapsedDays","submittedRating","effectiveRating","aiScore","aiEvidence","scheduledDaysAfter","algorithmVersion") VALUES
+ ('migration-old-event','migration-old','migration-grammar','migration-progress','migration-old-session','2026-08-01','2026-09-01',30,'REMEMBERED','REMEMBERED',95,'ACCEPTED',31,'adaptive-v1');
