@@ -65,6 +65,42 @@ describe('level-specific current plans', () => {
     expect(tx.studyPlan.update).not.toHaveBeenCalled();
   });
 
+  it('persists UI noon dates at midnight when creating a plan starting today', async () => {
+    const { tx, service } = fixture();
+    const today = new Date().toISOString().slice(0, 10);
+    await service.create('u', {
+      ...dto,
+      startDate: new Date(`${today}T12:00:00.000Z`),
+      targetDate: new Date('2099-12-01T12:00:00.000Z'),
+    });
+    expect(tx.studyPlan.create).toHaveBeenCalledWith({
+      data: {
+        ...dto,
+        userId: 'u',
+        mode: 'GAP_FILL',
+        startDate: new Date(`${today}T00:00:00.000Z`),
+        targetDate: new Date('2099-12-01T00:00:00.000Z'),
+      },
+    });
+  });
+
+  it('persists edited UI noon dates at midnight without changing their calendar day', async () => {
+    const { tx, service } = fixture();
+    const today = new Date().toISOString().slice(0, 10);
+    tx.studyPlan.findFirst.mockResolvedValue({ id: 'p', ...dto });
+    await service.updateById('u', 'p', {
+      startDate: new Date(`${today}T12:00:00.000Z`),
+      targetDate: new Date('2099-12-01T12:00:00.000Z'),
+    });
+    expect(tx.studyPlan.update).toHaveBeenCalledWith({
+      where: { id: 'p' },
+      data: {
+        startDate: new Date(`${today}T00:00:00.000Z`),
+        targetDate: new Date('2099-12-01T00:00:00.000Z'),
+      },
+    });
+  });
+
   it('rejects resume of an archived plan when that level already has a current plan', async () => {
     const { tx, service } = fixture();
     tx.studyPlan.findFirst
