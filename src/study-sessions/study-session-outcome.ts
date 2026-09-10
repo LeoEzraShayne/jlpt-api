@@ -21,6 +21,12 @@ export function withReviewOutcome<
     stabilityAfter: number | null;
     difficultyAfter: number | null;
     algorithmVersion: string;
+    evidenceVersion?: string;
+    dueReview?: boolean;
+    firstScore?: number | null;
+    aiScore?: number | null;
+    targetGrammarCorrect?: boolean | null;
+    hintRevealCount?: number;
   } | null,
 >(session: T, event: E) {
   return {
@@ -34,6 +40,21 @@ export function withReviewOutcome<
           stabilityEstimateDays: event.stabilityAfter,
           difficultyEstimate: event.difficultyAfter,
           algorithmVersion: event.algorithmVersion,
+          evidenceVersion: event.evidenceVersion ?? 'legacy-v1',
+          dueReview: event.dueReview ?? false,
+          assessmentAvailable:
+            (event.evidenceVersion === 'mastery-v2'
+              ? event.firstScore
+              : event.aiScore) != null,
+          eligibleMasteryReview:
+            event.evidenceVersion === 'mastery-v2' &&
+            event.dueReview === true &&
+            (event.firstScore ?? -1) >= 80 &&
+            event.targetGrammarCorrect === true &&
+            event.hintRevealCount === 0 &&
+            event.submittedRating === 'REMEMBERED' &&
+            event.effectiveRating === 'REMEMBERED',
+          nextReviewStillDue: event.scheduledDaysAfter <= 0,
           isEstimate: true,
         }
       : null,
