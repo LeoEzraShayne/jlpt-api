@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { JlptLevel } from '@prisma/client';
+import type { JlptLevel, VocabularyEntry } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { fingerprint } from './content-fingerprint';
 
@@ -62,39 +62,52 @@ export class ContentSelectionService {
     const preferredIds = [
       ...bookmarkIds.slice(rotation),
       ...bookmarkIds.slice(0, rotation),
-    ].slice(0, 2);
+    ];
     const preferred = await this.prisma.vocabularyEntry.findMany({
       where: {
         ...visible,
         id: { in: preferredIds },
         level: { in: allowedLevels },
       },
-      take: 2,
       orderBy: { id: 'asc' },
     });
-    const where = {
-      ...visible,
-      level: { in: allowedLevels },
-      id: { notIn: [...recentIds, ...preferred.map((row) => row.id)] },
-    };
-    let count = await this.prisma.vocabularyEntry.count({ where });
-    // Recycle after all available words have been encountered; there is no new queue.
-    if (!count) {
-      where.id.notIn = preferred.map((row) => row.id);
-      count = await this.prisma.vocabularyEntry.count({ where });
+    const words: VocabularyEntry[] = [];
+    for (const id of preferredIds) {
+      const entry = preferred.find((row) => row.id === id);
+      if (
+        entry &&
+        !words.some(
+          (row) => row.word === entry.word && row.reading === entry.reading,
+        )
+      ) {
+        words.push(entry);
+      }
+      if (words.length === 2) break;
     }
-    const remaining = 2 - preferred.length;
-    const words =
-      remaining > 0 && count > 0
-        ? preferred.concat(
-            await this.prisma.vocabularyEntry.findMany({
-              where,
-              orderBy: { id: 'asc' },
-              skip: seed % Math.max(1, count - remaining + 1),
-              take: remaining,
-            }),
-          )
-        : preferred;
+    while (words.length < 2) {
+      const where = {
+        ...visible,
+        level: { in: allowedLevels },
+        id: { notIn: [...recentIds] },
+        // Keep senses in the dictionary, but give each word + reading one slot.
+        NOT: words.map(({ word, reading }) => ({ word, reading })),
+      };
+      let count = await this.prisma.vocabularyEntry.count({ where });
+      // Recycle recent content without reselecting a word already in this session.
+      if (!count) {
+        where.id.notIn = [];
+        count = await this.prisma.vocabularyEntry.count({ where });
+      }
+      if (!count) break;
+      const [entry] = await this.prisma.vocabularyEntry.findMany({
+        where,
+        orderBy: { id: 'asc' },
+        skip: (seed + words.length) % count,
+        take: 1,
+      });
+      if (!entry) break;
+      words.push(entry);
+    }
     const phrases = await this.prisma.contentCandidate.findMany({
       where: {
         userId,
