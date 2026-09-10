@@ -4,7 +4,9 @@
 Backend baseline: 636d4619f6411ff5c5e56d6ed62a5bfc124d6da5.
 Frontend baseline: abb83b053b9a295e14553f2b2facd4eabf74d916.
 The pre-existing frontend dashboard diff is protected outside either repository in
-`.implementation/frontend-user-baseline.patch`. It must not be committed as an unrelated change.
+`.implementation/frontend-user-baseline.patch`. Its exact bytes were verified before
+recording that existing work separately as web commit `5fe5c0d`; the new frontend
+implementation follows in a separate commit and preserves it.
 Baseline: API 72 tests passed; web 24 tests and typecheck passed.
 
 Main owns schema, migrations, cross-client contracts, wiring and integration.

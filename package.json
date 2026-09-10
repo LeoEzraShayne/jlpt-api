@@ -25,7 +25,8 @@
     "check:lines": "tsx scripts/check-line-limits.ts",
     "postinstall": "prisma generate",
     "test:migration": "tsx scripts/test-learning-v2-migration.ts",
-    "test:ai:live": "tsx scripts/smoke-learning-v2-ai.ts --run"
+    "test:ai:live": "tsx scripts/smoke-learning-v2-ai.ts --run",
+    "test:integration": "jest --config test/learning-v2/jest.json --runInBand"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

@@ -24,11 +24,11 @@ From the API repository root:
 - `npm run check:lines --silent`
 - `npm test -- --runInBand`
 
-Suggested package script for main to add: `"test:learning-v2": "jest --config test/learning-v2/jest.json --runInBand"`.
+Integrated package script: `npm run test:integration`.
 
 ## Harness boundaries
 
-The harness creates and removes only its own random `jlpt_v2_test_<time>_<random>` database, defaults to local PostgreSQL `postgres://shen@localhost:5432/postgres`, and rejects non-local `TEST_DATABASE_ADMIN_URL`. It applies every SQL migration in order. Dedicated integration and production databases are never reset or used.
+The harness creates and removes only its own random `jlpt_v2_test_<time>_<random>` database, defaults to local PostgreSQL using the current OS username, and rejects non-local `TEST_DATABASE_ADMIN_URL`. It applies every SQL migration in order. Dedicated integration and production databases are never reset or used.
 
 Configuration is explicit and test-only. `.env` is not parsed, process secrets are ignored, provider keys are empty, and no AI worker is instantiated. HTTP tests use the actual `AuthService` to create hashed sessions and authenticate cookies through the unchanged `SessionGuard`; only external Google OAuth is replaced by a synthetic profile. Real feature modules, controllers, validation pipe, exception format, and the production-equivalent 2 MB JSON parser are used. Global throttling and production OriginGuard are outside this harness.
 
@@ -48,5 +48,9 @@ Synthetic AI results are stored as completed review jobs; this intentionally tes
 - Independent legacy fixture: active plan outranks newer paused plan, budget inherits old current configuration, paused-only retains newest pause, noon dates normalize, in-progress duplicate review is retained, old task/session history and mastery versions survive.
 
 ## Remaining acceptance outside F's current write boundary
+
+After integration, main independently reran all 29 cases and added one real-database
+admin rollout/metrics case (30 total passing), including unauthenticated/learner
+rejection, account-specific enable/disable, input validation, and real metrics SQL.
 
 Frontend browser/mobile end-to-end testing must run against the integrated E frontend in its designated worktree; F has not claimed it passed. Live AI accuracy/cost/latency checks belong to main's separately configured bounded smoke test. Long-term retention improvement is not established by these deterministic tests. Production migration and release remain excluded.

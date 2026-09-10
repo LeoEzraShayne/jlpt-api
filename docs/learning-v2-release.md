@@ -28,10 +28,13 @@ build. Never use the production API URL for mutation-based browser tests.
   uniqueness, and removes only that database. Optional `TEST_DATABASE_ADMIN_URL`
   accepts a local host only.
 - Backend `npm test -- --runInBand`, `npm run build`, `npm run check:lines`.
+- `npm run test:integration` runs the real PostgreSQL HTTP/concurrency/evidence and
+  administrator rollout suite. Its isolated random databases are removed afterward.
 - Frontend `npm run typecheck`, `npm test -- --run`, `npm run build`,
   `npm run check:lines`, then configured Playwright desktop/mobile projects.
-- Additional real database and end-to-end scripts are documented in the acceptance
-  handoff after integration. Synthetic AI fixtures and real calls are separate checks.
+- `npm run test:ai:live -- --output /absolute/path/ai-smoke.json` makes four bounded
+  real AI calls using local backend configuration. This is an explicit paid smoke
+  check, excluded from routine tests. Synthetic AI fixtures and real calls are separate.
 
 ## Data preparation
 

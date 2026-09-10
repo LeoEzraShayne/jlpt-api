@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { randomBytes } from 'node:crypto';
+import { userInfo } from 'node:os';
 import { readdir, readFile } from 'node:fs/promises';
 import { Client } from 'pg';
 import { Test } from '@nestjs/testing';
@@ -16,6 +17,7 @@ import request from 'supertest';
 import { DatabaseModule } from '../../src/database/database.module';
 import { PrismaService } from '../../src/database/prisma.service';
 import { AuthModule } from '../../src/auth/auth.module';
+import { AdminModule } from '../../src/admin/admin.module';
 import { AuthService } from '../../src/auth/auth.service';
 import { StudyPlansModule } from '../../src/study-plans/study-plans.module';
 import { DashboardModule } from '../../src/dashboard/dashboard.module';
@@ -37,7 +39,7 @@ export type Harness = Awaited<ReturnType<typeof startHarness>>;
 export async function startHarness(legacySeed?: (db: Client) => Promise<void>) {
   const adminUrl = new URL(
     process.env.TEST_DATABASE_ADMIN_URL ??
-      'postgres://shen@localhost:5432/postgres',
+      `postgres://${encodeURIComponent(userInfo().username)}@localhost:5432/postgres`,
   );
   if (!['localhost', '127.0.0.1', '[::1]'].includes(adminUrl.hostname))
     throw new Error('Local test PostgreSQL only');
@@ -99,6 +101,7 @@ export async function startHarness(legacySeed?: (db: Client) => Promise<void>) {
         }),
         DatabaseModule,
         AuthModule,
+        AdminModule,
         StudyPlansModule,
         DashboardModule,
         StudySessionsModule,
