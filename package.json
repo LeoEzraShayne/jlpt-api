@@ -23,7 +23,8 @@
     "reconcile:daily": "tsx scripts/reconcile-daily-tasks.ts",
     "export:review-events": "tsx scripts/export-review-events.ts",
     "check:lines": "tsx scripts/check-line-limits.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test:migration": "tsx scripts/test-learning-v2-migration.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

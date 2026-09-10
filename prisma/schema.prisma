@@ -144,30 +144,36 @@ enum TaskSkipReason {
 }
 
 model User {
-  id               String                @id @default(cuid())
-  email            String                @unique
-  displayName      String
-  avatarUrl        String?
-  role             UserRole              @default(USER)
-  timezone         String                @default("Asia/Tokyo")
-  targetLevel      JlptLevel             @default(N1)
-  dailyMinutes     Int                   @default(30)
-  primaryShare     Int                   @default(80)
-  learningV2Enabled Boolean               @default(false)
-  colorTheme       Theme                 @default(sunshine)
-  createdAt        DateTime              @default(now())
-  updatedAt        DateTime              @updatedAt
-  accounts         AuthAccount[]
-  sessions         AuthSession[]
-  studyPlans       StudyPlan[]
-  tasks            StudyTask[]
-  progress         UserGrammarProgress[]
-  studySessions    StudySession[]
-  sentenceAttempts SentenceAttempt[]
-  dailyStats       DailyStudyStat[]
-  activityDays     StudyActivityDay[]
-  reviewEvents     ReviewEvent[]
-  importBatches    ImportBatch[]         @relation("ImportOperator")
+  id                  String                @id @default(cuid())
+  email               String                @unique
+  displayName         String
+  avatarUrl           String?
+  role                UserRole              @default(USER)
+  timezone            String                @default("Asia/Tokyo")
+  targetLevel         JlptLevel             @default(N1)
+  dailyMinutes        Int                   @default(30)
+  primaryShare        Int                   @default(80)
+  learningV2Enabled   Boolean               @default(false)
+  colorTheme          Theme                 @default(sunshine)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  accounts            AuthAccount[]
+  sessions            AuthSession[]
+  studyPlans          StudyPlan[]
+  tasks               StudyTask[]
+  progress            UserGrammarProgress[]
+  studySessions       StudySession[]
+  sentenceAttempts    SentenceAttempt[]
+  dailyStats          DailyStudyStat[]
+  activityDays        StudyActivityDay[]
+  vocabularyEntries   VocabularyEntry[]
+  vocabularyBookmarks VocabularyBookmark[]
+  personalExpressions PersonalExpression[]
+  contentImports      ContentImport[]
+  contentCandidates   ContentCandidate[]
+  contentExposures    ContentExposure[]
+  reviewEvents        ReviewEvent[]
+  importBatches       ImportBatch[]         @relation("ImportOperator")
 }
 
 model AuthAccount {
@@ -324,25 +330,25 @@ model StudyTask {
 }
 
 model UserGrammarProgress {
-  id            String          @id @default(cuid())
-  userId        String
-  grammarId     String
-  status        ProgressStatus  @default(NOT_STARTED)
-  stage         Int             @default(0)
-  masteryScore  Int             @default(0)
-  reviewCount   Int             @default(0)
-  correctStreak Int             @default(0)
-  needsWork     Boolean         @default(false)
-  masteryRuleVersion String     @default("legacy-v1")
-  lastScore     Int?
-  lastStudiedAt DateTime?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  grammar       GrammarPoint    @relation(fields: [grammarId], references: [id], onDelete: Cascade)
-  schedule      ReviewSchedule?
-  tasks         StudyTask[]
-  reviewEvents  ReviewEvent[]
+  id                 String          @id @default(cuid())
+  userId             String
+  grammarId          String
+  status             ProgressStatus  @default(NOT_STARTED)
+  stage              Int             @default(0)
+  masteryScore       Int             @default(0)
+  reviewCount        Int             @default(0)
+  correctStreak      Int             @default(0)
+  needsWork          Boolean         @default(false)
+  masteryRuleVersion String          @default("legacy-v1")
+  lastScore          Int?
+  lastStudiedAt      DateTime?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammar            GrammarPoint    @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+  schedule           ReviewSchedule?
+  tasks              StudyTask[]
+  reviewEvents       ReviewEvent[]
 
   @@unique([userId, grammarId])
   @@index([userId, status])
@@ -370,27 +376,27 @@ model ReviewSchedule {
 }
 
 model StudySession {
-  id                  String            @id @default(cuid())
+  id                  String             @id @default(cuid())
   userId              String
   grammarId           String
-  taskId              String?           @unique
+  taskId              String?            @unique
   scenarioId          String?
   trainingMode        String?
   trainingContext     Json?
   mode                SessionMode
-  status              SessionStatus     @default(ACTIVE)
-  timerPhase          TimerPhase        @default(FOCUS)
-  timerPhaseStartedAt DateTime          @default(now())
+  status              SessionStatus      @default(ACTIVE)
+  timerPhase          TimerPhase         @default(FOCUS)
+  timerPhaseStartedAt DateTime           @default(now())
   timerPhaseEndsAt    DateTime
   revealedAt          DateTime?
-  hintRevealCount     Int               @default(0)
-  activeSeconds       Int               @default(0)
+  hintRevealCount     Int                @default(0)
+  activeSeconds       Int                @default(0)
   lastActivityAt      DateTime?
   completedAt         DateTime?
-  createdAt           DateTime          @default(now())
-  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  grammar             GrammarPoint      @relation(fields: [grammarId], references: [id], onDelete: Cascade)
-  task                StudyTask?        @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  createdAt           DateTime           @default(now())
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammar             GrammarPoint       @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+  task                StudyTask?         @relation(fields: [taskId], references: [id], onDelete: SetNull)
   attempts            SentenceAttempt[]
   activityDays        StudyActivityDay[]
   reviewEvent         ReviewEvent?
@@ -490,48 +496,48 @@ model ReviewAlgorithmProfile {
 }
 
 model ReviewEvent {
-  id                   String                  @id @default(cuid())
-  userId               String
-  grammarId            String
-  progressId           String
-  sessionId            String                  @unique
-  taskId               String?
-  profileId            String?
-  reviewedAt           DateTime
-  scheduledFor         DateTime?               @db.Date
-  nextReviewOn         DateTime                @db.Date
-  elapsedDays          Int
-  submittedRating      RecallRating
-  effectiveRating      RecallRating
-  aiScore              Int?
-  evidenceVersion      String                  @default("legacy-v1")
-  firstAttemptId       String?
-  firstScore           Int?
-  targetGrammarCorrect Boolean?
-  dueReview            Boolean                 @default(false)
-  reviewDate           DateTime?                @db.Date
-  scenarioId           String?
-  scenarioTaskCompleted Boolean                @default(false)
-  crossScenarioValid   Boolean                 @default(false)
-  aiEvidence           String
-  hintRevealCount      Int                     @default(0)
-  affectsSchedule      Boolean                 @default(true)
-  retrievabilityBefore Float?
-  stabilityBefore      Float?
-  stabilityAfter       Float?
-  difficultyBefore     Float?
-  difficultyAfter      Float?
-  scheduledDaysAfter   Int
-  algorithmVersion     String
-  legacyOutcome        Json?
-  shadowOutcome        Json?
-  createdAt            DateTime                @default(now())
-  user                 User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  grammar              GrammarPoint            @relation(fields: [grammarId], references: [id], onDelete: Cascade)
-  progress             UserGrammarProgress     @relation(fields: [progressId], references: [id], onDelete: Cascade)
-  session              StudySession            @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  task                 StudyTask?              @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  profile              ReviewAlgorithmProfile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  id                    String                  @id @default(cuid())
+  userId                String
+  grammarId             String
+  progressId            String
+  sessionId             String                  @unique
+  taskId                String?
+  profileId             String?
+  reviewedAt            DateTime
+  scheduledFor          DateTime?               @db.Date
+  nextReviewOn          DateTime                @db.Date
+  elapsedDays           Int
+  submittedRating       RecallRating
+  effectiveRating       RecallRating
+  aiScore               Int?
+  evidenceVersion       String                  @default("legacy-v1")
+  firstAttemptId        String?
+  firstScore            Int?
+  targetGrammarCorrect  Boolean?
+  dueReview             Boolean                 @default(false)
+  reviewDate            DateTime?               @db.Date
+  scenarioId            String?
+  scenarioTaskCompleted Boolean                 @default(false)
+  crossScenarioValid    Boolean                 @default(false)
+  aiEvidence            String
+  hintRevealCount       Int                     @default(0)
+  affectsSchedule       Boolean                 @default(true)
+  retrievabilityBefore  Float?
+  stabilityBefore       Float?
+  stabilityAfter        Float?
+  difficultyBefore      Float?
+  difficultyAfter       Float?
+  scheduledDaysAfter    Int
+  algorithmVersion      String
+  legacyOutcome         Json?
+  shadowOutcome         Json?
+  createdAt             DateTime                @default(now())
+  user                  User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammar               GrammarPoint            @relation(fields: [grammarId], references: [id], onDelete: Cascade)
+  progress              UserGrammarProgress     @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  session               StudySession            @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  task                  StudyTask?              @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  profile               ReviewAlgorithmProfile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
 
   @@index([userId, reviewedAt])
   @@index([progressId, reviewedAt])
@@ -551,14 +557,15 @@ model DailyStudyStat {
 }
 
 model TrainingScenario {
-  id              String   @id
-  domain          String
-  objective       String
-  register        String
-  promptZh        String
-  levels          JlptLevel[]
-  active          Boolean  @default(true)
-  version         String   @default("scenario-v1")
+  id        String      @id
+  domain    String
+  objective String
+  register  String
+  promptZh  String
+  levels    JlptLevel[]
+  active    Boolean     @default(true)
+  version   String      @default("scenario-v1")
+
   @@index([active, domain])
 }
 
@@ -570,6 +577,129 @@ model StudyActivityDay {
   activeSeconds Int          @default(0)
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   session       StudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
   @@unique([sessionId, studyDate])
   @@index([userId, studyDate])
+}
+
+// Main-agent contract: add these models. Scalar owner/source IDs are intentional;
+// services validate ownership and retain provenance after source deletion.
+model VocabularyEntry {
+  id                 String               @id @default(cuid())
+  ownerId            String?
+  owner              User?                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  bookmarks          VocabularyBookmark[]
+  fingerprint        String               @unique
+  word               String
+  reading            String
+  senseKey           String
+  partOfSpeech       String[]
+  glosses            Json
+  chineseGloss       String?
+  chineseGlossSource String?
+  level              JlptLevel?
+  levelSource        String?
+  sourceName         String
+  sourceUrl          String?
+  sourceVersion      String
+  sourceEntryId      String?
+  license            String?
+  validationStatus   String               @default("PENDING")
+  provenance         Json
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@index([ownerId, validationStatus, level])
+  @@index([word, reading])
+}
+
+model VocabularyBookmark {
+  id           String          @id @default(cuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabularyId String
+  vocabulary   VocabularyEntry @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+  note         String          @default("")
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@unique([userId, vocabularyId])
+  @@index([userId, createdAt])
+}
+
+model PersonalExpression {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grammarId     String
+  reviewId      String
+  variant       String
+  sentence      String
+  furigana      String?
+  translationZh String?
+  scenarioId    String?
+  scene         String?
+  note          String   @default("")
+  provenance    Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, reviewId, variant])
+  @@index([userId, grammarId, createdAt])
+}
+
+model ContentImport {
+  id            String             @id @default(cuid())
+  userId        String
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fingerprint   String
+  fileName      String
+  sourceName    String
+  sourceVersion String
+  sourceUrl     String?
+  license       String?
+  status        String             @default("PREVIEW")
+  summary       Json
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  candidates    ContentCandidate[]
+
+  @@unique([userId, fingerprint])
+  @@index([userId, createdAt])
+}
+
+model ContentCandidate {
+  id               String        @id @default(cuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  importId         String
+  batch            ContentImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+  fingerprint      String
+  kind             String
+  word             String
+  reading          String
+  senseKey         String
+  payload          Json
+  validationStatus String        @default("PENDING")
+  validationNotes  String        @default("")
+  vocabularyId     String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@unique([userId, fingerprint])
+  @@index([userId, importId, validationStatus])
+}
+
+model ContentExposure {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId   String
+  contentType String
+  contentId   String
+  interaction String
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, sessionId, contentType, contentId, interaction])
+  @@index([userId, contentType, contentId])
 }
