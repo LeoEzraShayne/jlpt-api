@@ -24,7 +24,8 @@
     "export:review-events": "tsx scripts/export-review-events.ts",
     "check:lines": "tsx scripts/check-line-limits.ts",
     "postinstall": "prisma generate",
-    "test:migration": "tsx scripts/test-learning-v2-migration.ts"
+    "test:migration": "tsx scripts/test-learning-v2-migration.ts",
+    "test:ai:live": "tsx scripts/smoke-learning-v2-ai.ts --run"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
