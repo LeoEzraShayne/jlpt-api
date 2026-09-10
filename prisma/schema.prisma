@@ -48,6 +48,12 @@ enum StudyPlanStatus {
   ACTIVE
   PAUSED
   COMPLETED
+  ARCHIVED
+}
+
+enum StudyPlanMode {
+  SYSTEM
+  GAP_FILL
 }
 
 enum TaskType {
@@ -145,6 +151,9 @@ model User {
   role             UserRole              @default(USER)
   timezone         String                @default("Asia/Tokyo")
   targetLevel      JlptLevel             @default(N1)
+  dailyMinutes     Int                   @default(30)
+  primaryShare     Int                   @default(80)
+  learningV2Enabled Boolean               @default(false)
   colorTheme       Theme                 @default(sunshine)
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
@@ -156,6 +165,7 @@ model User {
   studySessions    StudySession[]
   sentenceAttempts SentenceAttempt[]
   dailyStats       DailyStudyStat[]
+  activityDays     StudyActivityDay[]
   reviewEvents     ReviewEvent[]
   importBatches    ImportBatch[]         @relation("ImportOperator")
 }
@@ -277,6 +287,7 @@ model StudyPlan {
   targetDate    DateTime
   dailyMinutes  Int
   dailyNewLimit Int
+  mode          StudyPlanMode   @default(SYSTEM)
   status        StudyPlanStatus @default(ACTIVE)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -321,6 +332,8 @@ model UserGrammarProgress {
   masteryScore  Int             @default(0)
   reviewCount   Int             @default(0)
   correctStreak Int             @default(0)
+  needsWork     Boolean         @default(false)
+  masteryRuleVersion String     @default("legacy-v1")
   lastScore     Int?
   lastStudiedAt DateTime?
   createdAt     DateTime        @default(now())
@@ -361,6 +374,9 @@ model StudySession {
   userId              String
   grammarId           String
   taskId              String?           @unique
+  scenarioId          String?
+  trainingMode        String?
+  trainingContext     Json?
   mode                SessionMode
   status              SessionStatus     @default(ACTIVE)
   timerPhase          TimerPhase        @default(FOCUS)
@@ -376,6 +392,7 @@ model StudySession {
   grammar             GrammarPoint      @relation(fields: [grammarId], references: [id], onDelete: Cascade)
   task                StudyTask?        @relation(fields: [taskId], references: [id], onDelete: SetNull)
   attempts            SentenceAttempt[]
+  activityDays        StudyActivityDay[]
   reviewEvent         ReviewEvent?
 
   @@index([userId, status])
@@ -442,6 +459,10 @@ model AiReviewResult {
   alternativeSentence              String?
   alternativeSentenceFurigana      String?
   alternativeSentenceTranslationZh String?
+  scenarioTaskCompleted            Boolean?
+  contentResponse                  String?
+  diversityAdvice                  String?
+  nextPractice                     String?
   explanationZh                    String
   encouragement                    String
   inputTokens                      Int?
@@ -483,6 +504,15 @@ model ReviewEvent {
   submittedRating      RecallRating
   effectiveRating      RecallRating
   aiScore              Int?
+  evidenceVersion      String                  @default("legacy-v1")
+  firstAttemptId       String?
+  firstScore           Int?
+  targetGrammarCorrect Boolean?
+  dueReview            Boolean                 @default(false)
+  reviewDate           DateTime?                @db.Date
+  scenarioId           String?
+  scenarioTaskCompleted Boolean                @default(false)
+  crossScenarioValid   Boolean                 @default(false)
   aiEvidence           String
   hintRevealCount      Int                     @default(0)
   affectsSchedule      Boolean                 @default(true)
@@ -518,4 +548,28 @@ model DailyStudyStat {
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, studyDate])
+}
+
+model TrainingScenario {
+  id              String   @id
+  domain          String
+  objective       String
+  register        String
+  promptZh        String
+  levels          JlptLevel[]
+  active          Boolean  @default(true)
+  version         String   @default("scenario-v1")
+  @@index([active, domain])
+}
+
+model StudyActivityDay {
+  id            String       @id @default(cuid())
+  userId        String
+  sessionId     String
+  studyDate     DateTime     @db.Date
+  activeSeconds Int          @default(0)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session       StudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  @@unique([sessionId, studyDate])
+  @@index([userId, studyDate])
 }

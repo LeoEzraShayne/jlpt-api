@@ -9,6 +9,9 @@ interface CurrentUser {
   timezone: string;
   targetLevel: JlptLevel;
   colorTheme: Theme;
+  dailyMinutes: number;
+  primaryShare: number;
+  learningV2Enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
