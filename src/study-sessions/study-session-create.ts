@@ -3,6 +3,8 @@ import {
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
+import { SceneService } from '../scenes/scenes.service';
 import { SessionMode, TaskStatus, TaskType } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { localDate } from '../dashboard/dashboard.service';
@@ -14,6 +16,7 @@ export async function createStudySession(
   userId: string,
   timezone: string,
   dto: CreateStudySessionDto,
+  scenes?: SceneService,
 ) {
   return prisma.$transaction(async (tx) => {
     await lockStudyUser(tx, userId);
@@ -101,8 +104,14 @@ export async function createStudySession(
       }
     }
     const timer = initialTimer();
+    const sessionId = randomUUID();
+    const training = scenes
+      ? await scenes.assign(tx, userId, sessionId, grammar)
+      : {};
     const session = await tx.studySession.create({
       data: {
+        ...(scenes ? { id: sessionId } : {}),
+        ...training,
         userId,
         grammarId: dto.grammarId,
         taskId,

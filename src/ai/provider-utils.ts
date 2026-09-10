@@ -34,7 +34,28 @@ export function parseReviewJson(text: string): ProviderReview {
       if (typeof parsed[field] === 'string')
         parsed[field] = parsed[field].replace(/\[[^\]]+\]/g, '');
     }
-    return providerReviewSchema.parse(parsed);
+    const full = providerReviewSchema.safeParse(parsed);
+    if (full.success) return full.data;
+    // A malformed supplement must not discard a valid original correction.
+    const baseline = { ...parsed };
+    for (const key of [
+      'content_response',
+      'diversity_advice',
+      'next_practice',
+      'scenario_task_completed',
+    ])
+      delete baseline[key];
+    const withoutExtras = providerReviewSchema.safeParse(baseline);
+    if (withoutExtras.success) return withoutExtras.data;
+    return providerReviewSchema.parse({
+      ...baseline,
+      alternative_sentence: baseline.corrected_sentence,
+      alternative_sentence_furigana: baseline.corrected_sentence_furigana,
+      alternative_sentence_translation_zh:
+        baseline.corrected_sentence_translation_zh,
+      alternative_sentence_uses_target_grammar:
+        baseline.corrected_sentence_uses_target_grammar,
+    });
   } catch {
     throw new ProviderError(
       'AI returned invalid structured output',

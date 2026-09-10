@@ -1,3 +1,4 @@
+import { SceneModule } from '../scenes/scenes.module';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { AiReviewService } from '../ai/ai-review.service';
@@ -8,7 +9,7 @@ import { SentenceReviewsController } from './sentence-reviews.controller';
 import { SentenceReviewsService } from './sentence-reviews.service';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, SceneModule],
   controllers: [SentenceReviewsController],
   providers: [
     SentenceReviewsService,

@@ -36,6 +36,18 @@ export const providerReviewSchema = z
     alternative_sentence_translation_zh: z.string().min(1),
     explanation_zh: z.string(),
     encouragement: z.string(),
+    content_response: z
+      .string()
+      .max(300)
+      .refine(
+        (text) =>
+          text.split(/[。！？!?]+/u).filter((part) => part.trim()).length <= 2,
+        'Content response must contain at most two sentences',
+      )
+      .optional(),
+    diversity_advice: z.string().max(400).optional(),
+    next_practice: z.string().max(400).optional(),
+    scenario_task_completed: z.boolean().optional(),
   })
   .superRefine((value, context) => {
     const componentTotal =

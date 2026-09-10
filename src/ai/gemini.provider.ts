@@ -54,6 +54,10 @@ const geminiReviewJsonSchema = {
     alternative_sentence_translation_zh: { type: 'string' },
     explanation_zh: { type: 'string' },
     encouragement: { type: 'string' },
+    content_response: { type: 'string', maxLength: 300 },
+    diversity_advice: { type: 'string', maxLength: 400 },
+    next_practice: { type: 'string', maxLength: 400 },
+    scenario_task_completed: { type: 'boolean' },
   },
   required: [
     'total_score',
@@ -77,6 +81,10 @@ const geminiReviewJsonSchema = {
     'alternative_sentence_translation_zh',
     'explanation_zh',
     'encouragement',
+    'content_response',
+    'diversity_advice',
+    'next_practice',
+    'scenario_task_completed',
   ],
   additionalProperties: false,
 } as const;

@@ -3,6 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { readTrainingContext } from '../scenes/training-context';
+import {
+  lockStudyUser,
+  lockStudySession,
+} from '../study-sessions/study-session-ledger';
 import { PrismaService } from '../database/prisma.service';
 import { publicAiReviewErrorMessage } from '../ai/public-error';
 import { recallPolicyForEvidence } from '../review/adaptive-review';
@@ -13,37 +18,43 @@ export class SentenceReviewsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: string, dto: CreateSentenceReviewDto) {
-    const session = await this.prisma.studySession.findUnique({
-      where: { id: dto.sessionId },
-    });
-    if (!session || session.userId !== userId)
-      throw new NotFoundException({
-        code: 'SESSION_NOT_FOUND',
-        message: 'Study session not found',
+    return this.prisma.$transaction(async (tx) => {
+      await lockStudyUser(tx, userId);
+      await lockStudySession(tx, dto.sessionId);
+      const session = await tx.studySession.findUnique({
+        where: { id: dto.sessionId },
       });
-    if (session.status !== 'ACTIVE')
-      throw new BadRequestException({
-        code: 'SESSION_ALREADY_COMPLETED',
-        message: 'Study session is not active',
+      if (!session || session.userId !== userId)
+        throw new NotFoundException({
+          code: 'SESSION_NOT_FOUND',
+          message: 'Study session not found',
+        });
+      if (session.status !== 'ACTIVE')
+        throw new BadRequestException({
+          code: 'SESSION_ALREADY_COMPLETED',
+          message: 'Study session is not active',
+        });
+      const attempt = await tx.sentenceAttempt.create({
+        data: {
+          userId,
+          grammarId: session.grammarId,
+          studySessionId: session.id,
+          source:
+            session.mode === 'LEARN'
+              ? 'NEW_LEARNING'
+              : session.mode === 'REVIEW'
+                ? 'REVIEW'
+                : 'FREE_PRACTICE',
+          sentence: dto.sentence,
+          scene:
+            readTrainingContext(session.trainingContext)?.scenario?.promptZh ??
+            dto.scene,
+          aiJob: { create: {} },
+        },
+        include: { aiJob: true },
       });
-    const attempt = await this.prisma.sentenceAttempt.create({
-      data: {
-        userId,
-        grammarId: session.grammarId,
-        studySessionId: session.id,
-        source:
-          session.mode === 'LEARN'
-            ? 'NEW_LEARNING'
-            : session.mode === 'REVIEW'
-              ? 'REVIEW'
-              : 'FREE_PRACTICE',
-        sentence: dto.sentence,
-        scene: dto.scene,
-        aiJob: { create: {} },
-      },
-      include: { aiJob: true },
+      return { reviewId: attempt.aiJob!.id, status: attempt.aiJob!.status };
     });
-    return { reviewId: attempt.aiJob!.id, status: attempt.aiJob!.status };
   }
 
   async get(userId: string, id: string) {

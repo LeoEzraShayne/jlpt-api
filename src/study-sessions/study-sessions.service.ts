@@ -2,7 +2,10 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
+import { SceneService } from '../scenes/scenes.service';
+import { presentSession, presentGrammar } from '../scenes/training-context';
 import { SessionStatus } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../database/prisma.service';
@@ -22,6 +25,7 @@ export class StudySessionsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly config?: ConfigService,
+    @Optional() private readonly scenes?: SceneService,
   ) {}
   async get(userId: string, id: string) {
     const session = await this.prisma.studySession.findFirst({
@@ -56,13 +60,45 @@ export class StudySessionsService {
         code: 'SESSION_NOT_FOUND',
         message: 'Study session not found',
       });
-    return this.withTimer(session);
+    return presentSession(this.withTimer(session));
   }
   async create(userId: string, timezone: string, dto: CreateStudySessionDto) {
-    return createStudySession(this.prisma, userId, timezone, dto);
+    const created = await createStudySession(
+      this.prisma,
+      userId,
+      timezone,
+      dto,
+      this.scenes,
+    );
+    await this.scenes?.recordShown(
+      userId,
+      created.session.id,
+      created.session.trainingContext,
+      created.session.mode !== 'REVIEW',
+    );
+    return {
+      ...created,
+      session: presentSession(created.session),
+      grammar: presentGrammar(
+        created.grammar,
+        created.session.mode === 'REVIEW',
+      ),
+    };
   }
   async reveal(userId: string, id: string) {
-    return this.withTimer(await revealStudyHint(this.prisma, userId, id));
+    // Commit the hint before accessing or returning reference content.
+    const session = await revealStudyHint(this.prisma, userId, id);
+    const grammar = this.scenes
+      ? await this.prisma.grammarPoint.findUnique({
+          where: { id: session.grammarId },
+          include: { examples: { orderBy: { sortOrder: 'asc' } } },
+        })
+      : undefined;
+    await this.scenes?.recordShown(userId, id, session.trainingContext, true);
+    return presentSession(
+      this.withTimer({ ...session, ...(grammar ? { grammar } : {}) }),
+      true,
+    );
   }
   async advanceTimer(userId: string, id: string) {
     return this.prisma.$transaction(async (tx) => {
@@ -100,7 +136,7 @@ export class StudySessionsService {
     id: string,
     dto: CompleteStudySessionDto,
   ) {
-    return completeStudySession(
+    const completed = await completeStudySession(
       this.prisma,
       this.config,
       userId,
@@ -108,6 +144,7 @@ export class StudySessionsService {
       id,
       dto,
     );
+    return presentSession(completed);
   }
   async recordActivity(userId: string, id: string) {
     return recordStudyActivity(this.prisma, userId, id);

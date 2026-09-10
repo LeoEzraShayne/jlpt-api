@@ -1,8 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Interval } from '@nestjs/schedule';
 import { AiJobStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
+import { SceneService } from '../scenes/scenes.service';
+import { readTrainingContext } from '../scenes/training-context';
 import { ProviderError } from './ai-provider';
 import { AiReviewService } from './ai-review.service';
 import { PROMPT_VERSION } from './prompt';
@@ -20,6 +22,7 @@ export class AiWorkerService {
     private readonly prisma: PrismaService,
     private readonly reviews: AiReviewService,
     private readonly config: ConfigService,
+    @Optional() private readonly scenes?: SceneService,
   ) {}
 
   @Interval(500)
@@ -47,6 +50,7 @@ export class AiWorkerService {
       include: {
         attempt: {
           include: {
+            studySession: true,
             grammar: {
               include: { examples: { take: 1, orderBy: { sortOrder: 'asc' } } },
             },
@@ -56,6 +60,9 @@ export class AiWorkerService {
     });
     if (!job) return;
     try {
+      const trainingContext = readTrainingContext(
+        job.attempt.studySession.trainingContext,
+      );
       const reviewed = await this.reviews.review({
         grammarLevel: job.attempt.grammar.level,
         grammarTitle: job.attempt.grammar.title,
@@ -64,6 +71,8 @@ export class AiWorkerService {
         exampleSentence: job.attempt.grammar.examples[0]?.sentence,
         sentence: job.attempt.sentence,
         scene: job.attempt.scene,
+        trainingMode: job.attempt.studySession.trainingMode,
+        trainingContext,
       });
       const result = reviewed.response.result;
       const cappedTotal = !result.used_target_grammar
@@ -101,6 +110,15 @@ export class AiWorkerService {
               result.alternative_sentence_translation_zh,
             explanationZh: result.explanation_zh,
             encouragement: result.encouragement,
+            contentResponse: result.content_response ?? null,
+            diversityAdvice: result.diversity_advice ?? null,
+            nextPractice: result.next_practice ?? null,
+            scenarioTaskCompleted:
+              trainingContext?.scenario &&
+              trainingContext.scenario.scenarioId ===
+                job.attempt.studySession.scenarioId
+                ? (result.scenario_task_completed ?? null)
+                : null,
             inputTokens: reviewed.response.usage.inputTokens,
             outputTokens: reviewed.response.usage.outputTokens,
             latencyMs: reviewed.response.latencyMs,
@@ -116,6 +134,19 @@ export class AiWorkerService {
           },
         }),
       ]);
+      await this.scenes
+        ?.recordUsed(
+          job.attempt.userId,
+          job.attempt.studySessionId,
+          trainingContext,
+          job.attempt.sentence,
+          result.alternative_sentence,
+        )
+        .catch(() =>
+          this.logger.warn(
+            'Exposure tracking unavailable; completed correction preserved',
+          ),
+        );
     } catch (error) {
       await this.fail(job.id, job.retryCount, error);
     }

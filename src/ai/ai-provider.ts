@@ -1,3 +1,4 @@
+import type { TrainingContext } from '../scenes/training-context';
 import type { ProviderResponse } from './review-schema';
 
 export interface ReviewProviderInput {
@@ -8,6 +9,8 @@ export interface ReviewProviderInput {
   exampleSentence?: string;
   sentence: string;
   scene?: string | null;
+  trainingMode?: string | null;
+  trainingContext?: TrainingContext | null;
 }
 
 export interface AiGrammarReviewProvider {
