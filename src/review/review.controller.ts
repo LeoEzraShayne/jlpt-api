@@ -1,9 +1,19 @@
+import { nextCalendarDate } from '../study-plans/study-plan-dates';
 import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
-import { Prisma } from '@prisma/client';
+import { JlptLevel, Prisma } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { SessionGuard } from '../auth/session.guard';
+import { localDayUtcRange } from '../dashboard/dashboard-statistics';
 import { localDate } from '../dashboard/dashboard.service';
 import {
   addCalendarDays,
@@ -17,6 +27,7 @@ import {
 import { PrismaService } from '../database/prisma.service';
 
 class ReviewQueueQueryDto {
+  @IsOptional() @IsEnum(JlptLevel) level?: JlptLevel;
   @IsOptional() @IsIn(['active', 'all']) scope?: 'active' | 'all';
   @IsOptional() @IsString() cursor?: string;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit = 50;
@@ -36,23 +47,36 @@ export class ReviewController {
   @Get()
   async getQueue(@Req() request: Request, @Query() query: ReviewQueueQueryDto) {
     const user = request.currentUser!;
-    const plan =
+    const plans =
       query.scope === 'all'
         ? null
-        : await this.prisma.studyPlan.findFirst({
-            where: { userId: user.id, status: 'ACTIVE' },
-            orderBy: { updatedAt: 'desc' },
+        : await this.prisma.studyPlan.findMany({
+            where: {
+              userId: user.id,
+              status: 'ACTIVE',
+              startDate: {
+                lt: nextCalendarDate(localDate(user.timezone).value),
+              },
+            },
+            select: { level: true },
           });
     const todayKey = localDate(user.timezone).key;
     const upperKey = addCalendarDays(todayKey, query.upcomingDays);
     const upperDate = new Date(`${upperKey}T00:00:00.000Z`);
-    const upperExclusive = new Date(
-      `${addCalendarDays(upperKey, 1)}T00:00:00.000Z`,
-    );
+    const upperExclusive = localDayUtcRange(upperKey, user.timezone).end;
     const where: Prisma.ReviewScheduleWhereInput = {
       progress: {
         userId: user.id,
-        ...(plan ? { grammar: { level: plan.level } } : {}),
+        grammar: {
+          status: 'PUBLISHED',
+          level: plans
+            ? {
+                in: plans
+                  .map((plan) => plan.level)
+                  .filter((level) => !query.level || level === query.level),
+              }
+            : query.level,
+        },
       },
       OR: [
         { nextReviewOn: { lte: upperDate } },

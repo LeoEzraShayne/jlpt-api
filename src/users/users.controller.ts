@@ -21,13 +21,18 @@ export class UsersController {
   ) {
     const { dailyNewLimit, ...userData } = dto;
     const user = await this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${request.currentUser!.id} FOR UPDATE`;
       const updated = await tx.user.update({
         where: { id: request.currentUser!.id },
         data: userData,
       });
       if (dailyNewLimit)
         await tx.studyPlan.updateMany({
-          where: { userId: updated.id, status: 'ACTIVE' },
+          where: {
+            userId: updated.id,
+            level: updated.targetLevel,
+            status: { in: ['ACTIVE', 'PAUSED'] },
+          },
           data: { dailyNewLimit },
         });
       return updated;

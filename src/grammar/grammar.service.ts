@@ -96,6 +96,48 @@ export class GrammarService {
     return this.withLearningState(item, timezone);
   }
 
+  async markNeedsWork(grammarId: string, userId: string, needsWork: boolean) {
+    const grammar = await this.prisma.grammarPoint.findFirst({
+      where: { id: grammarId, status: 'PUBLISHED' },
+    });
+    if (!grammar)
+      throw new NotFoundException({
+        code: 'GRAMMAR_NOT_FOUND',
+        message: 'Grammar point not found',
+      });
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+      const user = await tx.user.findUniqueOrThrow({ where: { id: userId } });
+      const current = await tx.userGrammarProgress.findUnique({
+        where: { userId_grammarId: { userId, grammarId } },
+      });
+      const progress = await tx.userGrammarProgress.upsert({
+        where: { userId_grammarId: { userId, grammarId } },
+        create: { userId, grammarId, needsWork, status: 'NOT_STARTED' },
+        update: {
+          needsWork,
+          ...(needsWork && current?.status !== 'NOT_STARTED'
+            ? { status: 'NEEDS_WORK' }
+            : {}),
+        },
+      });
+      if (needsWork) {
+        const date = new Date(`${localDateKey(user.timezone)}T00:00:00.000Z`);
+        await tx.reviewSchedule.updateMany({
+          where: {
+            progressId: progress.id,
+            OR: [
+              { nextReviewOn: { gt: date } },
+              { nextReviewOn: null, nextReviewAt: { gt: new Date() } },
+            ],
+          },
+          data: { nextReviewOn: date, nextReviewAt: new Date() },
+        });
+      }
+      return progress;
+    });
+  }
+
   async getLevels() {
     const counts = await this.prisma.grammarPoint.groupBy({
       by: ['level'],
@@ -132,7 +174,11 @@ export class GrammarService {
           ...progress,
           learningState: {
             status:
-              nextReviewOn && nextReviewOn <= today ? 'DUE' : progress.status,
+              progress.status === 'MASTERED'
+                ? 'MASTERED'
+                : nextReviewOn && nextReviewOn <= today
+                  ? 'DUE'
+                  : progress.status,
             stabilityEstimateDays: schedule?.stability ?? null,
             difficultyEstimate: schedule?.difficulty ?? null,
             estimatedRetrievability: schedule

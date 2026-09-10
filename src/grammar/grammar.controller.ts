@@ -1,6 +1,23 @@
-import { Controller, Get, Param, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Put,
+  Param,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request } from 'express';
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ContentStatus, JlptLevel } from '@prisma/client';
 import { GrammarService } from './grammar.service';
@@ -12,6 +29,10 @@ class GrammarQueryDto {
   @IsOptional() @IsString() query?: string;
   @IsOptional() @IsString() cursor?: string;
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(100) limit?: number;
+}
+
+class NeedsWorkDto {
+  @IsBoolean() needsWork!: boolean;
 }
 
 @Controller()
@@ -36,6 +57,21 @@ export class GrammarController {
         id,
         request.currentUser!.id,
         request.currentUser!.timezone,
+      ),
+    };
+  }
+
+  @Put('grammar-points/:id/needs-work')
+  async markNeedsWork(
+    @Req() request: Request,
+    @Param('id') id: string,
+    @Body() dto: NeedsWorkDto,
+  ) {
+    return {
+      data: await this.grammar.markNeedsWork(
+        id,
+        request.currentUser!.id,
+        dto.needsWork,
       ),
     };
   }

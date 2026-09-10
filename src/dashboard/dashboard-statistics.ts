@@ -25,6 +25,7 @@ type StatisticsInput = {
   timezone: string;
   todayKey: string;
   level?: JlptLevel;
+  levels?: JlptLevel[];
   plannedReviews: PlannedReview[];
 };
 
@@ -42,24 +43,28 @@ export async function loadDashboardStatistics(
       { taskId: null, session: { mode: SessionMode.REVIEW } },
     ],
   };
-  const schedulesPromise: Promise<DashboardSchedule[]> = input.level
-    ? prisma.reviewSchedule.findMany({
-        where: {
-          progress: {
-            userId: input.userId,
-            grammar: {
-              is: { level: input.level, status: 'PUBLISHED' },
+  const schedulesPromise: Promise<DashboardSchedule[]> =
+    input.level || input.levels
+      ? prisma.reviewSchedule.findMany({
+          where: {
+            progress: {
+              userId: input.userId,
+              grammar: {
+                is: {
+                  level: input.levels ? { in: input.levels } : input.level,
+                  status: 'PUBLISHED',
+                },
+              },
             },
           },
-        },
-        select: {
-          progressId: true,
-          nextReviewOn: true,
-          nextReviewAt: true,
-          progress: { select: { grammarId: true } },
-        },
-      })
-    : Promise.resolve([]);
+          select: {
+            progressId: true,
+            nextReviewOn: true,
+            nextReviewAt: true,
+            progress: { select: { grammarId: true } },
+          },
+        })
+      : Promise.resolve([]);
   const [
     schedules,
     completedTodayNewCount,
@@ -164,7 +169,7 @@ export function buildLearningTaskStatistics(
   };
 }
 
-function localDayUtcRange(key: string, timezone: string) {
+export function localDayUtcRange(key: string, timezone: string) {
   return {
     start: zonedMidnight(key, timezone),
     end: zonedMidnight(addDay(key), timezone),

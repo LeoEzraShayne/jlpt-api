@@ -1,27 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { TaskStatus, TaskType } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
-import {
-  calculateNewGrammarCount,
-  NEEDS_WORK_REVIEW_MINUTES,
-  NEW_GRAMMAR_MINUTES,
-  REVIEW_MINUTES,
-  reviewMinutes,
-  selectReviews,
-  sortReviewCandidates,
-} from './task-planning';
+import { NEW_GRAMMAR_MINUTES, reviewMinutes } from './task-planning';
+import { generateDailyTasks } from './daily-task-generation';
+import { budgetGroup } from './daily-allocation';
 import { buildProgressSummary } from './progress-summary';
 import {
   buildLearningTaskStatistics,
   loadDashboardStatistics,
 } from './dashboard-statistics';
 import { calendarDayDifference } from '../review/adaptive-review';
-import {
-  DEFAULT_TIME_ESTIMATES,
-  estimateReviewMinutes,
-  safeRetrievability,
-  sampledMedian,
-} from './dashboard-estimates';
 
 export function localDate(timezone: string, date = new Date()) {
   const parts = new Intl.DateTimeFormat('en-CA', {
@@ -41,22 +29,14 @@ export class DashboardService {
 
   async getToday(userId: string, timezone: string) {
     const generation = await this.ensureDailyTasks(userId, timezone);
-    const legacyGeneration = generation as unknown as
-      NonNullable<typeof generation>['plan'] | undefined;
-    const plan = generation?.plan ?? legacyGeneration;
-    const { key, value: taskDate } = localDate(timezone);
+    const plan = generation.plan;
+    const primaryLevel = generation.user.targetLevel;
+    const { key } = localDate(timezone);
     const tasks = await this.prisma.studyTask.findMany({
       where: {
         userId,
+        id: { in: generation.scheduledIds },
         status: { not: TaskStatus.SKIPPED },
-        OR: [
-          { taskDate },
-          {
-            taskDate: { lt: taskDate },
-            status: { in: [TaskStatus.PENDING, TaskStatus.IN_PROGRESS] },
-          },
-        ],
-        ...(plan ? { grammar: { level: plan.level } } : {}),
       },
       include: {
         grammar: {
@@ -70,11 +50,24 @@ export class DashboardService {
         },
       },
     });
+    const enabledIds = new Set(generation.plans.map((item) => item.id));
     const requiredReviewRemaining = tasks.filter(
       (task) =>
-        task.type === TaskType.REVIEW && task.status !== TaskStatus.COMPLETED,
+        task.type === TaskType.REVIEW &&
+        task.status !== TaskStatus.COMPLETED &&
+        enabledIds.has(task.planId ?? ''),
     ).length;
-    const newLearningUnlocked = requiredReviewRemaining === 0;
+    const pendingReviewsByGroup = { PRIMARY: 0, FOUNDATION: 0 };
+    for (const task of tasks) {
+      if (
+        task.type === TaskType.REVIEW &&
+        task.status !== TaskStatus.COMPLETED &&
+        enabledIds.has(task.planId ?? '')
+      )
+        pendingReviewsByGroup[budgetGroup(task.grammar?.level, primaryLevel)] +=
+          1;
+    }
+    const newLearningUnlocked = pendingReviewsByGroup.PRIMARY === 0;
     const presented = tasks
       .map((task) => {
         const progress = task.grammar?.progress[0];
@@ -93,6 +86,7 @@ export class DashboardService {
             : task.taskDate.toISOString().slice(0, 10);
         return {
           ...task,
+          group: budgetGroup(task.grammar?.level, primaryLevel),
           estimatedMinutes,
           dueOn: task.type === TaskType.REVIEW ? dueKey : null,
           overdueDays:
@@ -108,7 +102,9 @@ export class DashboardService {
           locked:
             task.type === TaskType.LEARN &&
             task.status !== TaskStatus.COMPLETED &&
-            !newLearningUnlocked,
+            pendingReviewsByGroup[
+              budgetGroup(task.grammar?.level, primaryLevel)
+            ] > 0,
         };
       })
       .sort((left, right) => {
@@ -172,7 +168,7 @@ export class DashboardService {
         userId,
         timezone,
         todayKey: key,
-        level: plan?.level,
+        levels: generation.plans.map((item) => item.level),
         plannedReviews: pending
           .filter((task) => task.type === TaskType.REVIEW)
           .map((task) => ({
@@ -184,10 +180,55 @@ export class DashboardService {
     const progressSummary = buildProgressSummary(totalGrammar, progressCounts);
     const nextTask =
       pending.find((task) => task.type === TaskType.REVIEW) ??
-      (newLearningUnlocked
-        ? pending.find((task) => task.type === TaskType.LEARN)
-        : undefined);
+      pending.find((task) => task.type === TaskType.LEARN && !task.locked);
+    const levels = await Promise.all(
+      generation.plans.map(async (item) => {
+        const [counts, total] = await Promise.all([
+          this.prisma.userGrammarProgress.groupBy({
+            by: ['status'],
+            where: {
+              userId,
+              grammar: { level: item.level, status: 'PUBLISHED' },
+            },
+            _count: { _all: true },
+          }),
+          this.prisma.grammarPoint.count({
+            where: { level: item.level, status: 'PUBLISHED' },
+          }),
+        ]);
+        const levelTasks = presented.filter(
+          (task) => task.grammar?.level === item.level,
+        );
+        return {
+          planId: item.id,
+          level: item.level,
+          mode: item.mode,
+          isPrimary: item.level === primaryLevel,
+          ...buildProgressSummary(total, counts),
+          totalGrammar: total,
+          newCount: levelTasks.filter(
+            (task) =>
+              task.type === TaskType.LEARN &&
+              task.status !== TaskStatus.COMPLETED,
+          ).length,
+          reviewCount: levelTasks.filter(
+            (task) =>
+              task.type === TaskType.REVIEW &&
+              task.status !== TaskStatus.COMPLETED,
+          ).length,
+          completedCount: levelTasks.filter(
+            (task) => task.status === TaskStatus.COMPLETED,
+          ).length,
+          estimatedMinutes: levelTasks
+            .filter((task) => task.status !== TaskStatus.COMPLETED)
+            .reduce((sum, task) => sum + task.estimatedMinutes, 0),
+        };
+      }),
+    );
     return {
+      levels,
+      allocation: generation.allocation,
+      backlog: generation.backlog,
       summary: {
         ...grouped,
         ...learningTaskStatistics,
@@ -198,7 +239,7 @@ export class DashboardService {
         completedTodayReviewCount: statistics.completedTodayReviewCount,
         completedTodayNewCount: statistics.completedTodayNewCount,
         caughtUpOverdueTodayCount: statistics.caughtUpOverdueTodayCount,
-        studyMinutesToday: statistics.studyMinutesToday,
+        studyMinutesToday: Math.ceil(generation.allocation.spentMinutes),
         level: plan?.level ?? null,
         totalGrammar,
         ...progressSummary,
@@ -208,20 +249,15 @@ export class DashboardService {
         0,
       ),
       planning: {
-        budgetMinutes: plan?.dailyMinutes ?? 0,
+        budgetMinutes: generation.user.dailyMinutes,
         plannedMinutes: pending.reduce(
           (total, task) => total + task.estimatedMinutes,
           0,
         ),
-        dueUnscheduledCount:
-          statistics.overdueUnscheduledCount +
-          statistics.dueTodayUnscheduledCount,
+        dueUnscheduledCount: generation.backlog.count,
         overdueUnscheduledCount: statistics.overdueUnscheduledCount,
         dueTodayUnscheduledCount: statistics.dueTodayUnscheduledCount,
-        planAtRisk:
-          statistics.overdueUnscheduledCount +
-            statistics.dueTodayUnscheduledCount >
-          0,
+        planAtRisk: generation.backlog.count > 0,
         algorithmVersion: generation?.algorithmVersion ?? 'legacy-v1',
       },
       requiredReviewRemaining,
@@ -232,247 +268,6 @@ export class DashboardService {
   }
 
   async ensureDailyTasks(userId: string, timezone: string) {
-    const plan = await this.prisma.studyPlan.findFirst({
-      where: { userId, status: 'ACTIVE' },
-      orderBy: { updatedAt: 'desc' },
-    });
-    if (!plan) return;
-    const now = new Date();
-    const { key, value: taskDate } = localDate(timezone, now);
-    const [dueSchedules, existingTasks] = await Promise.all([
-      this.prisma.reviewSchedule.findMany({
-        where: {
-          progress: { userId, grammar: { level: plan.level } },
-          OR: [
-            { nextReviewOn: { lte: taskDate } },
-            { nextReviewOn: null, nextReviewAt: { lte: now } },
-          ],
-        },
-        include: { progress: true },
-        orderBy: [{ nextReviewOn: 'asc' }, { nextReviewAt: 'asc' }],
-      }),
-      this.prisma.studyTask.findMany({
-        where: {
-          userId,
-          status: { not: TaskStatus.SKIPPED },
-          grammar: { level: plan.level },
-          OR: [
-            { taskDate },
-            {
-              taskDate: { lt: taskDate },
-              status: { in: [TaskStatus.PENDING, TaskStatus.IN_PROGRESS] },
-            },
-          ],
-        },
-        include: {
-          studySession: { select: { id: true } },
-          grammar: {
-            include: { progress: { where: { userId }, take: 1 } },
-          },
-        },
-      }),
-    ]);
-    const timeEstimates = await this.getTimeEstimates(userId);
-    const preserved = existingTasks.filter(
-      (task) =>
-        task.taskDate < taskDate ||
-        task.status !== TaskStatus.PENDING ||
-        task.studySession,
-    );
-    const preservedReview = preserved.filter(
-      (task) => task.type === TaskType.REVIEW,
-    );
-    const preservedNew = preserved.filter(
-      (task) => task.type === TaskType.LEARN,
-    );
-    const preservedReviewIds = new Set(
-      preservedReview.map((task) => task.progressId ?? task.grammarId),
-    );
-    const candidates = dueSchedules
-      .filter(
-        (item) =>
-          !preservedReviewIds.has(item.progressId) &&
-          !preservedReviewIds.has(item.progress.grammarId),
-      )
-      .map((item) => ({
-        schedule: item,
-        grammarId: item.progress.grammarId,
-        nextReviewAt: item.nextReviewAt,
-        priorityDay: item.nextReviewOn
-          ? item.nextReviewOn.toISOString().slice(0, 10)
-          : localDate(timezone, item.nextReviewAt).key,
-        status: item.progress.status,
-        masteryScore: item.progress.masteryScore,
-        lastScore: item.progress.lastScore,
-        stability: item.stability,
-        estimatedRetrievability: safeRetrievability(item),
-      }));
-    const preservedReviewMinutes = preservedReview.reduce((total, task) => {
-      const item = task.grammar?.progress[0];
-      return (
-        total +
-        estimateReviewMinutes(
-          {
-            status: item?.status ?? 'LEARNING',
-            lastScore: item?.lastScore ?? null,
-          },
-          timeEstimates,
-        )
-      );
-    }, 0);
-    const selectedReview = selectReviews(
-      candidates,
-      plan.dailyMinutes,
-      preservedReviewMinutes,
-      (candidate) => estimateReviewMinutes(candidate, timeEstimates),
-    );
-    const preservedNewMinutes = preservedNew.length * timeEstimates.newMinutes;
-    const allDuePlanned = selectedReview.selected.length === candidates.length;
-    const newCount = allDuePlanned
-      ? calculateNewGrammarCount({
-          dailyMinutes: plan.dailyMinutes,
-          dailyNewLimit: plan.dailyNewLimit,
-          usedMinutes: selectedReview.selectedMinutes + preservedNewMinutes,
-          hasDueReviews: dueSchedules.length > 0 || preservedReview.length > 0,
-          preservedNewCount: preservedNew.length,
-          newGrammarMinutes: timeEstimates.newMinutes,
-        })
-      : 0;
-    const preservedGrammarIds = new Set(
-      preserved.map((task) => task.grammarId).filter(Boolean),
-    );
-    const newGrammar = newCount
-      ? await this.prisma.grammarPoint.findMany({
-          where: {
-            level: plan.level,
-            status: 'PUBLISHED',
-            id: { notIn: [...preservedGrammarIds] as string[] },
-            progress: { none: { userId } },
-          },
-          orderBy: { sortOrder: 'asc' },
-          take: newCount,
-        })
-      : [];
-    const desiredKeys = new Set([
-      ...preserved.map((task) => task.idempotencyKey),
-      ...selectedReview.selected.map(
-        (item) => `${userId}:${key}:REVIEW:${item.grammarId}`,
-      ),
-      ...newGrammar.map((grammar) => `${userId}:${key}:LEARN:${grammar.id}`),
-    ]);
-    await this.prisma.$transaction(async (tx) => {
-      for (const task of existingTasks) {
-        if (
-          task.status === TaskStatus.PENDING &&
-          !task.studySession &&
-          !desiredKeys.has(task.idempotencyKey)
-        )
-          await tx.studyTask.delete({ where: { id: task.id } });
-      }
-      for (const item of sortReviewCandidates(selectedReview.selected))
-        await tx.studyTask.upsert({
-          where: {
-            idempotencyKey: `${userId}:${key}:REVIEW:${item.grammarId}`,
-          },
-          create: {
-            userId,
-            planId: plan.id,
-            progressId: item.schedule.progressId,
-            grammarId: item.grammarId,
-            taskDate,
-            type: TaskType.REVIEW,
-            estimatedMinutes: estimateReviewMinutes(item, timeEstimates),
-            idempotencyKey: `${userId}:${key}:REVIEW:${item.grammarId}`,
-          },
-          update: {
-            planId: plan.id,
-            progressId: item.schedule.progressId,
-            grammarId: item.grammarId,
-            taskDate,
-            type: TaskType.REVIEW,
-            status: TaskStatus.PENDING,
-            skipReason: null,
-            estimatedMinutes: estimateReviewMinutes(item, timeEstimates),
-          },
-        });
-      for (const grammar of newGrammar)
-        await tx.studyTask.upsert({
-          where: { idempotencyKey: `${userId}:${key}:LEARN:${grammar.id}` },
-          create: {
-            userId,
-            planId: plan.id,
-            grammarId: grammar.id,
-            taskDate,
-            type: TaskType.LEARN,
-            estimatedMinutes: timeEstimates.newMinutes,
-            idempotencyKey: `${userId}:${key}:LEARN:${grammar.id}`,
-          },
-          update: {
-            planId: plan.id,
-            progressId: null,
-            grammarId: grammar.id,
-            taskDate,
-            type: TaskType.LEARN,
-            status: TaskStatus.PENDING,
-            skipReason: null,
-            estimatedMinutes: timeEstimates.newMinutes,
-          },
-        });
-    });
-    return {
-      plan,
-      dueUnscheduledCount: Math.max(
-        0,
-        candidates.length - selectedReview.selected.length,
-      ),
-      algorithmVersion:
-        dueSchedules.find((item) => item.algorithmVersion !== 'legacy-v1')
-          ?.algorithmVersion ?? 'legacy-v1',
-    };
-  }
-
-  private async getTimeEstimates(userId: string) {
-    if (!this.prisma.studySession?.findMany) return DEFAULT_TIME_ESTIMATES;
-    const sessions = await this.prisma.studySession.findMany({
-      where: {
-        userId,
-        status: 'COMPLETED',
-        activeSeconds: { gt: 0 },
-      },
-      select: {
-        mode: true,
-        activeSeconds: true,
-        reviewEvent: { select: { effectiveRating: true } },
-      },
-      orderBy: { completedAt: 'desc' },
-      take: 40,
-    });
-    const learning = sessions
-      .filter((session) => session.mode === 'LEARN')
-      .map((session) => session.activeSeconds / 60);
-    const normalReviews = sessions
-      .filter(
-        (session) =>
-          session.mode !== 'LEARN' &&
-          session.reviewEvent?.effectiveRating === 'REMEMBERED',
-      )
-      .map((session) => session.activeSeconds / 60);
-    const weakReviews = sessions
-      .filter(
-        (session) =>
-          session.mode !== 'LEARN' &&
-          session.reviewEvent?.effectiveRating !== 'REMEMBERED',
-      )
-      .map((session) => session.activeSeconds / 60);
-    return {
-      newMinutes: sampledMedian(learning, 4, 20, NEW_GRAMMAR_MINUTES),
-      reviewMinutes: sampledMedian(normalReviews, 2, 15, REVIEW_MINUTES),
-      needsWorkMinutes: sampledMedian(
-        weakReviews,
-        2,
-        15,
-        NEEDS_WORK_REVIEW_MINUTES,
-      ),
-    };
+    return generateDailyTasks(this.prisma, userId, timezone);
   }
 }

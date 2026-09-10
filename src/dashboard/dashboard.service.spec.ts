@@ -1,193 +1,239 @@
-import { ProgressStatus, TaskStatus, TaskType } from '@prisma/client';
 import { DashboardService, localDate } from './dashboard.service';
 
-describe('DashboardService daily task generation', () => {
-  it('preserves completed tasks and does not generate beyond the daily limit', async () => {
-    const grammarFindMany = jest.fn();
-    const existingTask = {
-      id: 'task-1',
-      userId: 'user-1',
-      grammarId: 'grammar-1',
-      taskDate: localDate('Asia/Tokyo').value,
-      type: TaskType.LEARN,
-      status: TaskStatus.COMPLETED,
-      idempotencyKey: 'user-1:today:LEARN:grammar-1',
-      studySession: null,
-      grammar: { progress: [] },
-    };
-    const transaction = jest.fn((callback: (tx: object) => unknown) =>
-      Promise.resolve(callback({})),
-    );
-    const prisma = {
-      studyPlan: {
-        findFirst: jest.fn().mockResolvedValue({
-          level: 'N1',
-          dailyMinutes: 20,
-          dailyNewLimit: 1,
+const today = () => localDate('Asia/Tokyo').value;
+const plan = (level = 'N1', mode = 'SYSTEM') => ({
+  id: `plan-${level}`,
+  level,
+  mode,
+  dailyNewLimit: 2,
+  status: 'ACTIVE',
+  startDate: new Date('2020-01-01'),
+});
+const grammar = (id: string, level = 'N1') => ({ id, level, progress: [] });
+
+interface MockTask {
+  id: string;
+  grammarId: string;
+  grammar: ReturnType<typeof grammar>;
+  type: string;
+  status: string;
+  studySession: null;
+  taskDate?: Date;
+  progressId?: string | null;
+  estimatedMinutes?: number;
+  idempotencyKey?: string;
+}
+
+function fixture() {
+  const tasks: MockTask[] = [];
+  const plans = [plan()];
+  const user = {
+    id: 'u',
+    dailyMinutes: 20,
+    primaryShare: 80,
+    targetLevel: 'N1',
+  };
+  const tx = {
+    $queryRaw: jest.fn().mockResolvedValue([]),
+    user: { findUniqueOrThrow: jest.fn().mockResolvedValue(user) },
+    studyPlan: {
+      findMany: jest.fn().mockImplementation(() => Promise.resolve(plans)),
+    },
+    studyTask: {
+      findMany: jest.fn().mockImplementation(() => Promise.resolve([...tasks])),
+      delete: jest
+        .fn()
+        .mockImplementation(({ where }: { where: { id: string } }) => {
+          tasks.splice(
+            tasks.findIndex((task) => task.id === where.id),
+            1,
+          );
+          return Promise.resolve({});
         }),
-      },
-      reviewSchedule: { findMany: jest.fn().mockResolvedValue([]) },
-      studyTask: { findMany: jest.fn().mockResolvedValue([existingTask]) },
-      grammarPoint: { findMany: grammarFindMany },
-      $transaction: transaction,
-    };
-
-    await new DashboardService(prisma as never).ensureDailyTasks(
-      'user-1',
-      'Asia/Tokyo',
-    );
-
-    expect(grammarFindMany).not.toHaveBeenCalled();
-    expect(transaction).toHaveBeenCalledTimes(1);
-  });
-
-  it('reactivates a same-day learning task skipped by a replaced plan', async () => {
-    const upsert = jest.fn(
-      (input: {
-        where: { idempotencyKey: string };
-        update: {
-          planId: string;
-          status: TaskStatus;
-          skipReason: null;
-        };
-      }) => Promise.resolve(input),
-    );
-    const prisma = {
-      studyPlan: {
-        findFirst: jest.fn().mockResolvedValue({
-          id: 'plan-2',
-          level: 'N1',
-          dailyMinutes: 20,
-          dailyNewLimit: 1,
-        }),
-      },
-      reviewSchedule: { findMany: jest.fn().mockResolvedValue([]) },
-      studyTask: { findMany: jest.fn().mockResolvedValue([]) },
-      grammarPoint: {
-        findMany: jest.fn().mockResolvedValue([{ id: 'grammar-1' }]),
-      },
-      $transaction: jest.fn(
-        (callback: (tx: { studyTask: { upsert: typeof upsert } }) => unknown) =>
-          Promise.resolve(callback({ studyTask: { upsert } })),
+      update: jest
+        .fn()
+        .mockImplementation(
+          ({
+            where,
+            data,
+          }: {
+            where: { id: string };
+            data: Partial<MockTask>;
+          }) => {
+            const task = tasks.find((item) => item.id === where.id)!;
+            Object.assign(task, data);
+            return Promise.resolve(task);
+          },
+        ),
+      upsert: jest
+        .fn()
+        .mockImplementation(
+          ({
+            where,
+            create,
+            update,
+          }: {
+            where: { idempotencyKey: string };
+            create: MockTask;
+            update: Partial<MockTask>;
+          }) => {
+            let task = tasks.find(
+              (item) => item.idempotencyKey === where.idempotencyKey,
+            );
+            if (!task) {
+              task = {
+                ...create,
+                id: `task-${tasks.length}`,
+                status: 'PENDING',
+                studySession: null,
+                grammar: grammar(create.grammarId),
+              };
+              tasks.push(task);
+            } else Object.assign(task, update);
+            return Promise.resolve(task);
+          },
+        ),
+    },
+    studySession: { findMany: jest.fn().mockResolvedValue([]) },
+    studyActivityDay: { findMany: jest.fn().mockResolvedValue([]) },
+    dailyStudyStat: { findUnique: jest.fn().mockResolvedValue(null) },
+    reviewSchedule: { findMany: jest.fn().mockResolvedValue([]) },
+    userGrammarProgress: { findMany: jest.fn().mockResolvedValue([]) },
+    grammarPoint: {
+      findMany: jest
+        .fn()
+        .mockImplementation(({ take }: { take: number }) =>
+          Promise.resolve([grammar('g1'), grammar('g2')].slice(0, take)),
+        ),
+    },
+  };
+  const prisma = {
+    ...tx,
+    $transaction: jest
+      .fn()
+      .mockImplementation((callback: (input: typeof tx) => Promise<unknown>) =>
+        callback(tx),
       ),
-    };
+  };
+  return {
+    tasks,
+    plans,
+    user,
+    tx,
+    service: new DashboardService(prisma as never),
+  };
+}
 
-    await new DashboardService(prisma as never).ensureDailyTasks(
-      'user-1',
-      'Asia/Tokyo',
-    );
+describe('DashboardService shared daily generation', () => {
+  it('refresh reuses pending rows and never duplicates the budget', async () => {
+    const { service, tasks, tx } = fixture();
+    await service.ensureDailyTasks('u', 'Asia/Tokyo');
+    await service.ensureDailyTasks('u', 'Asia/Tokyo');
+    expect(tasks).toHaveLength(2);
+    expect(
+      tasks.reduce((sum, task) => sum + (task.estimatedMinutes ?? 0), 0),
+    ).toBe(16);
+    expect(tx.$queryRaw).toHaveBeenCalledTimes(2);
+  });
 
-    expect(upsert).toHaveBeenCalledTimes(1);
-    const input = upsert.mock.calls[0][0];
-    expect(input.where.idempotencyKey).toContain(':LEARN:grammar-1');
-    expect(input.update).toMatchObject({
-      planId: 'plan-2',
-      status: TaskStatus.PENDING,
-      skipReason: null,
+  it('preserves completed tasks and limits newly issued learning', async () => {
+    const { service, tasks, tx } = fixture();
+    tasks.push({
+      id: 'done',
+      grammarId: 'g1',
+      grammar: grammar('g1'),
+      taskDate: today(),
+      type: 'LEARN',
+      status: 'COMPLETED',
+      studySession: null,
+    });
+    tx.grammarPoint.findMany.mockResolvedValue([grammar('g2')]);
+    tx.dailyStudyStat.findUnique.mockResolvedValue({ studyMinutes: 12 });
+    const result = await service.ensureDailyTasks('u', 'Asia/Tokyo');
+    expect(tasks).toHaveLength(2);
+    expect(tasks.find((task) => task.id === 'done')!.status).toBe('COMPLETED');
+    expect(result.allocation.spentMinutes).toBe(12);
+    expect(result.allocation.remainingMinutes).toBe(0);
+  });
+
+  it('reuses a previous-day review even when progressId was missing', async () => {
+    const { service, tasks, tx } = fixture();
+    tasks.push({
+      id: 'old',
+      grammarId: 'g1',
+      progressId: null,
+      grammar: grammar('g1'),
+      taskDate: new Date('2020-01-01'),
+      type: 'REVIEW',
+      status: 'PENDING',
+      studySession: null,
+    });
+    tx.reviewSchedule.findMany.mockResolvedValue([
+      {
+        progressId: 'p1',
+        nextReviewOn: new Date('2020-01-01'),
+        nextReviewAt: new Date('2020-01-01'),
+        progress: {
+          grammarId: 'g1',
+          grammar: grammar('g1'),
+          status: 'LEARNING',
+          masteryScore: 20,
+          lastScore: 80,
+        },
+      },
+    ]);
+    tx.grammarPoint.findMany.mockResolvedValue([]);
+    await service.ensureDailyTasks('u', 'Asia/Tokyo');
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0]).toMatchObject({
+      id: 'old',
+      progressId: 'p1',
+      taskDate: today(),
     });
   });
 
-  it('keeps legacy fields while exposing schedule-backed atomic counts', async () => {
-    const dueAt = new Date('2026-08-01T00:00:00.000Z');
-    const task = (id: string, status: TaskStatus) => ({
-      id,
-      type: TaskType.REVIEW,
-      status,
-      createdAt: new Date('2026-08-11T00:00:00.000Z'),
-      grammar: {
-        progress: [
-          {
-            status: ProgressStatus.LEARNING,
-            lastScore: 80,
-            schedule: { nextReviewAt: dueAt },
-          },
-        ],
+  it('gap-fill schedules an untouched needs-work check but no ordinary new grammar', async () => {
+    const { service, plans, tx, tasks } = fixture();
+    plans.splice(0, 1, plan('N2', 'GAP_FILL'));
+    tx.userGrammarProgress.findMany.mockResolvedValue([
+      {
+        id: 'p2',
+        grammarId: 'g2',
+        grammar: grammar('g2', 'N2'),
+        status: 'NOT_STARTED',
       },
+    ]);
+    await service.ensureDailyTasks('u', 'Asia/Tokyo');
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0]).toMatchObject({
+      type: 'REVIEW',
+      progressId: 'p2',
+      planId: 'plan-N2',
     });
-    const prisma = {
-      studyTask: {
-        findMany: jest
-          .fn()
-          .mockResolvedValue([
-            task('pending-overdue', TaskStatus.PENDING),
-            task('completed-overdue', TaskStatus.COMPLETED),
-          ]),
-        count: jest.fn().mockResolvedValue(0),
-      },
-      userGrammarProgress: {
-        groupBy: jest.fn().mockResolvedValue([
-          { status: ProgressStatus.MASTERED, _count: { _all: 9 } },
-          { status: ProgressStatus.LEARNING, _count: { _all: 1 } },
-        ]),
-      },
-      grammarPoint: { count: jest.fn().mockResolvedValue(40) },
-      reviewSchedule: {
-        findMany: jest.fn().mockResolvedValue([
-          {
-            progressId: 'progress-1',
-            nextReviewOn: dueAt,
-            nextReviewAt: dueAt,
-            progress: { grammarId: 'grammar-1' },
-          },
-        ]),
-      },
-      reviewEvent: { count: jest.fn().mockResolvedValue(0) },
-      studySession: {
-        aggregate: jest
-          .fn()
-          .mockResolvedValue({ _sum: { activeSeconds: null } }),
-      },
-    };
-    const service = new DashboardService(prisma as never);
-    jest
-      .spyOn(service, 'ensureDailyTasks')
-      .mockResolvedValue({ level: 'N1' } as never);
+    expect(tx.grammarPoint.findMany).not.toHaveBeenCalled();
+  });
 
-    const result = await service.getToday('user-1', 'Asia/Tokyo');
-
-    expect(result.summary).toMatchObject({
-      newCount: 0,
-      reviewCount: 1,
-      completedCount: 1,
-      overdueReviewCount: 1,
-      dueTodayReviewCount: 0,
-      upcomingReviewCount: 0,
-      pendingReviewCount: 1,
-      inProgressReviewCount: 0,
-      plannedReviewRemainingCount: 1,
-      pendingNewCount: 0,
-      inProgressNewCount: 0,
-      completedTodayCount: 0,
-      completedTodayReviewCount: 0,
-      completedTodayNewCount: 0,
-      caughtUpOverdueTodayCount: 0,
-      studyMinutesToday: 0,
-      masteryPercent: 23,
-      masteredGrammar: 9,
-      learningGrammar: 1,
-      needsWorkGrammar: 0,
-      notStartedGrammar: 30,
-      unmasteredGrammar: 31,
-      learnedGrammar: 10,
-      trackedGrammar: 10,
+  it('all paused plans remove unstarted tasks while retaining historical completions', async () => {
+    const { service, plans, tasks } = fixture();
+    plans.splice(0);
+    tasks.push({
+      id: 'old',
+      grammarId: 'g1',
+      grammar: grammar('g1'),
+      type: 'REVIEW',
+      status: 'PENDING',
+      studySession: null,
     });
-    expect(result.planning).toMatchObject({
-      dueUnscheduledCount: 1,
-      overdueUnscheduledCount: 1,
-      dueTodayUnscheduledCount: 0,
-      planAtRisk: true,
+    tasks.push({
+      id: 'done',
+      grammarId: 'g2',
+      grammar: grammar('g2'),
+      type: 'LEARN',
+      status: 'COMPLETED',
+      studySession: null,
     });
-    expect(result.tasks[0]).toMatchObject({
-      dueOn: '2026-08-01',
-    });
-    expect(typeof result.tasks[0].overdueDays).toBe('number');
-    expect(prisma.userGrammarProgress.groupBy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: {
-          userId: 'user-1',
-          grammar: { level: 'N1', status: 'PUBLISHED' },
-        },
-      }),
-    );
+    const result = await service.ensureDailyTasks('u', 'Asia/Tokyo');
+    expect(result.scheduledIds).toEqual(['done']);
+    expect(tasks).toHaveLength(1);
   });
 });
