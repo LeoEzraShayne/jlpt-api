@@ -99,5 +99,16 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "overrides": {
+    "@prisma/config@7.9.1": {
+      "deepmerge-ts": "8.0.2"
+    },
+    "prisma": {
+      "mysql2": "3.24.4"
+    },
+    "@nestjs/platform-express": {
+      "multer": "2.3.0"
+    }
   }
 }
