@@ -69,7 +69,7 @@ export async function completeStudySession(
 
     // Serializes different sessions for the same grammar, including first creation.
     await tx.$queryRaw(
-      Prisma.sql`SELECT pg_advisory_xact_lock(hashtextextended(${`${userId}:${owned.grammarId}`}, 0))`,
+      Prisma.sql`SELECT 1 AS locked FROM pg_advisory_xact_lock(hashtextextended(${`${userId}:${owned.grammarId}`}, 0))`,
     );
     const user = await tx.user.findUniqueOrThrow({
       where: { id: userId },
