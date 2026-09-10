@@ -8,9 +8,39 @@ import {
   TaskStatus,
   TaskType,
 } from '@prisma/client';
+import { localDateKey } from '../review/adaptive-review';
 import { StudySessionsService } from './study-sessions.service';
 
 const grammar = { id: 'grammar-1', level: JlptLevel.N1, examples: [] };
+
+function transactionDefaults<T extends object>(client: T) {
+  return Object.assign(client, {
+    $queryRaw: jest.fn().mockResolvedValue([]),
+    user: {
+      findUniqueOrThrow: jest.fn().mockResolvedValue({
+        targetLevel: JlptLevel.N1,
+        timezone: 'Asia/Tokyo',
+        learningV2Enabled: false,
+      }),
+    },
+    studyActivityDay: {
+      aggregate: jest.fn().mockResolvedValue({ _sum: { activeSeconds: 0 } }),
+      upsert: jest.fn().mockResolvedValue({}),
+    },
+    ...(!('dailyStudyStat' in client)
+      ? { dailyStudyStat: { upsert: jest.fn().mockResolvedValue({}) } }
+      : {}),
+  });
+}
+function transactional<T extends object>(client: T) {
+  const tx = transactionDefaults(client);
+  return {
+    ...tx,
+    $transaction: jest.fn((callback: (client: typeof tx) => unknown) =>
+      callback(tx),
+    ),
+  };
+}
 
 describe('StudySessionsService task gating', () => {
   it('counts every hint reveal in an active review session', async () => {
@@ -38,7 +68,7 @@ describe('StudySessionsService task gating', () => {
       },
     };
 
-    await new StudySessionsService(prisma as never).reveal(
+    await new StudySessionsService(transactional(prisma) as never).reveal(
       'user-1',
       session.id,
     );
@@ -74,7 +104,7 @@ describe('StudySessionsService task gating', () => {
       },
       studySession: { findUnique: jest.fn().mockResolvedValue(null) },
     };
-    const service = new StudySessionsService(prisma as never);
+    const service = new StudySessionsService(transactional(prisma) as never);
 
     await expect(
       service.create('user-1', 'Asia/Tokyo', {
@@ -86,9 +116,15 @@ describe('StudySessionsService task gating', () => {
     expect(prisma.studyTask.count).toHaveBeenCalledWith({
       where: {
         userId: 'user-1',
-        taskDate: new Date('2026-08-11T00:00:00.000Z'),
+        taskDate: new Date(`${localDateKey('Asia/Tokyo')}T00:00:00.000Z`),
         type: TaskType.REVIEW,
-        status: { not: TaskStatus.COMPLETED },
+        status: { in: [TaskStatus.PENDING, TaskStatus.IN_PROGRESS] },
+        plan: {
+          status: 'ACTIVE',
+          startDate: {
+            lte: new Date(`${localDateKey('Asia/Tokyo')}T00:00:00.000Z`),
+          },
+        },
         grammar: { level: JlptLevel.N1 },
       },
     });
@@ -121,7 +157,7 @@ describe('StudySessionsService task gating', () => {
         ),
       },
     };
-    const service = new StudySessionsService(prisma as never);
+    const service = new StudySessionsService(transactional(prisma) as never);
 
     const result = await service.create('user-1', 'Asia/Tokyo', {
       grammarId: grammar.id,
@@ -193,7 +229,7 @@ describe('StudySessionsService task gating', () => {
     const prisma = {
       aiReviewJob: { findUnique: jest.fn() },
       $transaction: jest.fn((callback: (client: typeof tx) => unknown) =>
-        Promise.resolve(callback(tx)),
+        Promise.resolve(callback(transactionDefaults(tx))),
       ),
     };
     const service = new StudySessionsService(prisma as never);
@@ -235,7 +271,7 @@ describe('StudySessionsService task gating', () => {
     };
     const prisma = {
       $transaction: jest.fn((callback: (client: typeof tx) => unknown) =>
-        Promise.resolve(callback(tx)),
+        Promise.resolve(callback(transactionDefaults(tx))),
       ),
     };
     const result = await new StudySessionsService(
