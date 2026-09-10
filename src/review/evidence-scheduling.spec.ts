@@ -66,6 +66,25 @@ describe('evidence-constrained FSRS', () => {
       expect(actual.nextReviewOn.toISOString().slice(0, 10)).toBe('2026-08-11');
     }
   });
+  it('schedules a graded overdue lapse tomorrow, not back into the past', () => {
+    const actual = calculateEvidenceReview({
+      ...input,
+      rating: RecallRating.FORGOT,
+      now: new Date('2026-09-10T03:00:00Z'),
+    });
+    expect(actual.nextReviewOn.toISOString().slice(0, 10)).toBe('2026-09-11');
+    expect(actual.intervalDays).toBe(1);
+  });
+  it('keeps an unscored overdue card due without increasing stability', () => {
+    const actual = calculateEvidenceReview({
+      ...input,
+      rating: RecallRating.FUZZY,
+      hasScore: false,
+      now: new Date('2026-09-10T03:00:00Z'),
+    });
+    expect(actual.nextReviewOn).toEqual(schedule.nextReviewOn);
+    expect(actual.stabilityAfter).toBe(30);
+  });
   it('gives an unscored initial check a short date without fabricated FSRS state', () => {
     const actual = calculateEvidenceReview({
       ...input,

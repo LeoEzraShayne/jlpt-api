@@ -1,3 +1,4 @@
+import { ContentModule } from './content/content.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -29,6 +30,7 @@ import { HistoryModule } from './history/history.module';
     AuthModule,
     AdminModule,
     ImportsModule,
+    ContentModule,
     UsersModule,
     GrammarModule,
     DashboardModule,

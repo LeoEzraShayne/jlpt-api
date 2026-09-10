@@ -32,7 +32,11 @@ export function calculateEvidenceReview(input: {
     nextKey = [
       nextKey,
       addCalendarDays(today, 1),
-      ...(existingKey ? [existingKey] : []),
+      // A graded due failure starts a new short check; the old overdue date
+      // must not remain in the past. Missing assessments retain that old date.
+      ...(existingKey && (!input.hasScore || existingKey > today)
+        ? [existingKey]
+        : []),
     ].sort()[0];
   } else if (!input.dueReview && !input.initial && existingKey) {
     nextKey = existingKey;
