@@ -264,3 +264,54 @@ test('early and same-day parallel success do not manufacture evidence or advance
   event = events.find((e) => e.dueReview)!;
   expect(event.firstScore).toBe(100);
 });
+
+test('initial learning and early-start review crossing due midnight cannot count toward mastery', async () => {
+  freezeDate(new Date('2026-09-10T14:59:30Z'));
+  const { user, http } = await h.login('memory-initial-crossday');
+  const initial = await reviewSession(
+    h,
+    user.id,
+    'initial',
+    'initial',
+    'LEARN',
+  );
+  await reviewedAttempt(h, initial, 100);
+  await http
+    .post(`/study-sessions/${initial.id}/complete`, {
+      recallRating: 'REMEMBERED',
+    })
+    .expect(201);
+  const initialEvent = await h.prisma.reviewEvent.findUniqueOrThrow({
+    where: { sessionId: initial.id },
+  });
+  expect(initialEvent.dueReview).toBe(false);
+  const progress = await h.prisma.userGrammarProgress.findUniqueOrThrow({
+    where: { userId_grammarId: { userId: user.id, grammarId: 'f-N1-0' } },
+  });
+  expect(progress.status).toBe('LEARNING');
+  await h.prisma.reviewSchedule.update({
+    where: { progressId: progress.id },
+    data: {
+      nextReviewAt: new Date('2026-09-11T00:00:00Z'),
+      nextReviewOn: new Date('2026-09-11T00:00:00Z'),
+    },
+  });
+  const early = await reviewSession(h, user.id, 'early', 'early');
+  jest.setSystemTime(new Date('2026-09-10T15:00:30Z'));
+  await reviewedAttempt(h, early, 100);
+  await http
+    .post(`/study-sessions/${early.id}/complete`, {
+      recallRating: 'REMEMBERED',
+    })
+    .expect(201);
+  const event = await h.prisma.reviewEvent.findUniqueOrThrow({
+    where: { sessionId: early.id },
+  });
+  expect(event.dueReview).toBe(false);
+  expect(event.affectsSchedule).toBe(false);
+  expect(
+    await h.prisma.reviewEvent.count({
+      where: { userId: user.id, dueReview: true },
+    }),
+  ).toBe(0);
+});

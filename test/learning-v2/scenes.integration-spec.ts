@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument -- Supertest JSON bodies are deliberately validated by runtime assertions. */
 import { startHarness, type Harness } from './harness';
-import { reviewSession, reviewedAttempt } from './review-fixtures';
+import {
+  reviewSession,
+  reviewedAttempt,
+  freezeDate,
+  existingProgress,
+} from './review-fixtures';
 let h: Harness;
 beforeAll(async () => {
   h = await startHarness();
@@ -133,4 +138,101 @@ test('unrevealed session GET does not expose training references through auxilia
   expect(JSON.stringify(activity.body)).not.toContain('f-secret-reference');
   expect(JSON.stringify(timer.body)).not.toContain('f-secret-reference');
   await reviewedAttempt(h, session, 80);
+});
+
+test('five real HTTP sessions connect assigned scenes to strict mastery and keep auxiliary grammar ungraded', async () => {
+  freezeDate(new Date());
+  try {
+    const owner = await h.login('scene-full-mastery');
+    const p = await existingProgress(h, owner.user.id);
+    await h.prisma.userGrammarProgress.create({
+      data: {
+        userId: owner.user.id,
+        grammarId: 'f-N2-0',
+        status: 'LEARNING',
+        lastStudiedAt: new Date(),
+        lastScore: 79,
+        reviewCount: 2,
+      },
+    });
+    const modes: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      const schedule = await h.prisma.reviewSchedule.findUniqueOrThrow({
+        where: { progressId: p.id },
+      });
+      if (i > 0)
+        jest.setSystemTime(
+          new Date(schedule.nextReviewOn!.getTime() + 3 * 3600000),
+        );
+      const { http } = await h.login('scene-full-mastery');
+      const created = (
+        await http
+          .post('/study-sessions', { grammarId: 'f-N1-0', mode: 'REVIEW' })
+          .expect(201)
+      ).body.data;
+      modes.push(created.session.trainingMode);
+      const session = await h.prisma.studySession.findUniqueOrThrow({
+        where: { id: created.session.id },
+      });
+      await reviewedAttempt(h, session, 80);
+      const completed = (
+        await http
+          .post(`/study-sessions/${session.id}/complete`, {
+            recallRating: 'REMEMBERED',
+            scenarioTaskCompleted: true,
+            crossScenarioValid: true,
+          })
+          .expect(201)
+      ).body.data;
+      expect(completed.status).toBe('COMPLETED');
+      expect(completed.trainingContext.referenceHidden).toBe(true);
+    }
+    expect(modes).toEqual([
+      'UNDERSTAND',
+      'SUBSTITUTE',
+      'SUBSTITUTE',
+      'COMBINE',
+      'TRANSFER',
+    ]);
+    const events = await h.prisma.reviewEvent.findMany({
+      where: { progressId: p.id },
+      orderBy: { reviewedAt: 'asc' },
+    });
+    expect(
+      events.every(
+        (e) => e.dueReview && e.firstScore === 80 && e.scenarioTaskCompleted,
+      ),
+    ).toBe(true);
+    expect(events[4].crossScenarioValid).toBe(true);
+    expect(
+      (
+        await h.prisma.userGrammarProgress.findUniqueOrThrow({
+          where: { id: p.id },
+        })
+      ).status,
+    ).toBe('MASTERED');
+    const support = await h.prisma.userGrammarProgress.findUniqueOrThrow({
+      where: {
+        userId_grammarId: { userId: owner.user.id, grammarId: 'f-N2-0' },
+      },
+    });
+    expect(support.lastScore).toBe(79);
+    expect(support.reviewCount).toBe(2);
+    expect(
+      await h.prisma.reviewEvent.count({
+        where: { userId: owner.user.id, grammarId: 'f-N2-0' },
+      }),
+    ).toBe(0);
+    expect(
+      await h.prisma.contentExposure.count({
+        where: {
+          userId: owner.user.id,
+          contentId: 'f-N2-0',
+          interaction: 'EXPOSED',
+        },
+      }),
+    ).toBeGreaterThan(0);
+  } finally {
+    jest.useRealTimers();
+  }
 });

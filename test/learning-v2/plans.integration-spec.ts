@@ -207,3 +207,47 @@ test('completed and manual time remains charged after refresh and budget edits; 
   expect(overrun.allocation.overrunMinutes).toBe(5);
   expect(overrun.tasks).toEqual([]);
 });
+
+test('forecast first-day allocation matches actual shared-budget tasks and paused queue filtering', async () => {
+  const { user, http } = await h.login('forecast-shared');
+  const n1 = (await http.post('/study-plans', planInput()).expect(201)).body
+    .data.id;
+  const n2 = (await http.post('/study-plans', planInput('N2')).expect(201)).body
+    .data.id;
+  await due(user.id, 'N1', 2);
+  await due(user.id, 'N2', 8);
+  const today = (await http.get('/dashboard/today').expect(200)).body.data;
+  for (const [level, id] of [
+    ['N1', n1],
+    ['N2', n2],
+  ]) {
+    const forecast = (
+      await http.get(`/study-plans/${String(id)}/forecast?days=7`).expect(200)
+    ).body;
+    const actual = today.tasks.filter(
+      (t: { grammar: { level: string } }) => t.grammar.level === level,
+    );
+    expect(forecast.meta.isEstimate).toBe(true);
+    expect(forecast.data[0].reviewCount).toBe(
+      actual.filter((t: { type: string }) => t.type === 'REVIEW').length,
+    );
+    expect(forecast.data[0].newCount).toBe(
+      actual.filter((t: { type: string }) => t.type === 'LEARN').length,
+    );
+  }
+  expect((await http.get('/review-queue').expect(200)).body.data).toHaveLength(
+    10,
+  );
+  expect(
+    (await http.get('/review-queue?level=N2').expect(200)).body.data,
+  ).toHaveLength(8);
+  await http
+    .patch(`/study-plans/${String(n2)}`, { status: 'PAUSED' })
+    .expect(200);
+  expect((await http.get('/review-queue').expect(200)).body.data).toHaveLength(
+    2,
+  );
+  expect(
+    (await http.get('/review-queue?scope=all').expect(200)).body.data,
+  ).toHaveLength(10);
+});

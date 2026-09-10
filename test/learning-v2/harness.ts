@@ -34,7 +34,7 @@ class DiagnosticFilter extends ApiExceptionFilter {
   }
 }
 export type Harness = Awaited<ReturnType<typeof startHarness>>;
-export async function startHarness() {
+export async function startHarness(legacySeed?: (db: Client) => Promise<void>) {
   const adminUrl = new URL(
     process.env.TEST_DATABASE_ADMIN_URL ??
       'postgres://shen@localhost:5432/postgres',
@@ -57,9 +57,18 @@ export async function startHarness() {
   }
   try {
     await db.connect();
+    let legacySeeded = false;
     for (const name of (await readdir('prisma/migrations'))
       .filter((n) => /^\d/.test(n))
       .sort()) {
+      if (
+        !legacySeeded &&
+        legacySeed &&
+        name >= '202609100002_learning_v2_enums'
+      ) {
+        await legacySeed(db);
+        legacySeeded = true;
+      }
       await db.query(
         await readFile(`prisma/migrations/${name}/migration.sql`, 'utf8'),
       );
