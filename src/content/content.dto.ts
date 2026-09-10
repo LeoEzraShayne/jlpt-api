@@ -9,6 +9,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUrl,
   Max,
   MaxLength,
   Min,
@@ -47,7 +48,10 @@ export class PreviewImportDto {
   @IsString() @MinLength(1) @MaxLength(255) fileName!: string;
   @IsString() @MinLength(1) @MaxLength(500) sourceName!: string;
   @IsString() @MinLength(1) @MaxLength(100) sourceVersion!: string;
-  @IsOptional() @IsString() @MaxLength(2000) sourceUrl?: string;
+  @IsOptional()
+  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  @MaxLength(2000)
+  sourceUrl?: string;
   @IsOptional() @IsString() @MaxLength(200) license?: string;
   @IsArray()
   @ArrayMinSize(1)
