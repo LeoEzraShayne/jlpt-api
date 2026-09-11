@@ -28,7 +28,6 @@ interface ForecastItem {
 
 export function buildStudyPlanForecast({
   timezone,
-  dailyMinutes,
   dailyNewLimit,
   targetDate,
   horizonDays,
@@ -75,7 +74,6 @@ export function buildStudyPlanForecast({
         item.status === ProgressStatus.NEEDS_WORK
           ? NEEDS_WORK_REVIEW_MINUTES
           : REVIEW_MINUTES;
-      if (selected.length && plannedMinutes + minutes > dailyMinutes) break;
       selected.push(item);
       plannedMinutes += minutes;
     }
@@ -83,25 +81,7 @@ export function buildStudyPlanForecast({
       applyRememberedReview(item, algorithmVersion, reviewAt, timezone);
 
     const dueUnscheduledCount = due.length - selected.length;
-    const targetDaysRemaining = Math.max(
-      1,
-      calendarDayDifference(date, targetKey) + 1,
-    );
-    const targetPace = newRemaining
-      ? Math.ceil(newRemaining / targetDaysRemaining)
-      : 0;
-    const availableForNew = Math.max(0, dailyMinutes - plannedMinutes);
-    let newCount =
-      dueUnscheduledCount === 0
-        ? Math.min(
-            newRemaining,
-            dailyNewLimit,
-            targetPace,
-            Math.floor(availableForNew / NEW_GRAMMAR_MINUTES),
-          )
-        : 0;
-    if (!due.length && newRemaining > 0 && newCount === 0)
-      newCount = Math.min(1, dailyNewLimit, newRemaining);
+    const newCount = Math.min(newRemaining, dailyNewLimit);
     for (let index = 0; index < newCount; index += 1) {
       const item = newForecastItem(offset, index, reviewAt, timezone);
       applyRememberedReview(item, algorithmVersion, reviewAt, timezone, true);
@@ -111,7 +91,7 @@ export function buildStudyPlanForecast({
     if (newRemaining === 0 && !projectedCompletionDate)
       projectedCompletionDate = date;
     plannedMinutes += newCount * NEW_GRAMMAR_MINUTES;
-    const overloaded = dueUnscheduledCount > 0 || plannedMinutes > dailyMinutes;
+    const overloaded = dueUnscheduledCount > 0;
     if (date <= targetKey) anyOverload ||= overloaded;
     if (offset === horizonDays - 1) remainingNewAfterHorizon = newRemaining;
     if (offset < horizonDays)
@@ -120,7 +100,8 @@ export function buildStudyPlanForecast({
         reviewCount: selected.length,
         newCount,
         estimatedMinutes: plannedMinutes,
-        capacityMinutes: dailyMinutes,
+        capacityMinutes: 0,
+        timeLimited: false,
         dueUnscheduledCount,
         overloaded,
       });

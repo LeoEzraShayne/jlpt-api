@@ -249,7 +249,9 @@ export class DashboardService {
         0,
       ),
       planning: {
-        budgetMinutes: generation.user.dailyMinutes,
+        // Compatibility field; time no longer limits scheduling.
+        budgetMinutes: 0,
+        timeLimited: false,
         plannedMinutes: pending.reduce(
           (total, task) => total + task.estimatedMinutes,
           0,

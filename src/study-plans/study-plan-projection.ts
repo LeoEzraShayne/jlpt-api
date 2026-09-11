@@ -100,7 +100,9 @@ export function forecastPlans(input: {
   for (let offset = 0; offset < simulationDays; offset += 1) {
     const date = addCalendarDays(today, offset);
     const active = plans.filter(
-      (plan) => plan.startDate.toISOString().slice(0, 10) <= date,
+      (plan) =>
+        plan.status === 'ACTIVE' &&
+        plan.startDate.toISOString().slice(0, 10) <= date,
     );
     const activeIds = new Set(active.map((plan) => plan.id));
     const due = sortReviewCandidates(
@@ -223,10 +225,10 @@ export function forecastPlans(input: {
         reviewCount: own.filter((task) => task.type === 'REVIEW').length,
         newCount: own.filter((task) => task.type === 'LEARN').length,
         estimatedMinutes,
-        capacityMinutes: user.dailyMinutes,
+        capacityMinutes: 0,
         dueUnscheduledCount,
         overloaded: dueUnscheduledCount > 0,
-        sharedBudgetMinutes: user.dailyMinutes,
+        timeLimited: false,
       });
   }
   return {
@@ -242,7 +244,7 @@ export function forecastPlans(input: {
         atRisk ||
         !projectedCompletionDate ||
         projectedCompletionDate > targetKey,
-      scope: 'SHARED_BUDGET' as const,
+      scope: 'ACTIVE_PLANS' as const,
       planId: selected.id,
     },
   };

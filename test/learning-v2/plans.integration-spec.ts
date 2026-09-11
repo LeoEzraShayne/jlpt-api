@@ -70,7 +70,7 @@ test('HTTP cookie authentication and same-level concurrent create preserve one p
     .expect(404);
 });
 
-test('80/20 allocation, concurrent refresh, backlog and group-local learning gate', async () => {
+test('all due reviews, concurrent refresh, per-plan new limit and group-local learning gate', async () => {
   const { user, http } = await h.login('budget-groups');
   await http.post('/study-plans', planInput()).expect(201);
   await http.post('/study-plans', planInput('N2')).expect(201);
@@ -80,19 +80,18 @@ test('80/20 allocation, concurrent refresh, backlog and group-local learning gat
   );
   const first = responses[0].body.data;
   expect(first.allocation).toMatchObject({
-    primaryMinutes: 32,
-    foundationMinutes: 8,
-    primaryPlannedMinutes: 32,
-    foundationPlannedMinutes: 8,
+    timeLimited: false,
+    primaryPlannedMinutes: 80,
+    foundationPlannedMinutes: 80,
   });
-  expect(first.backlog.count).toBe(18);
+  expect(first.backlog.count).toBe(0);
   const ids = first.tasks.map((t: { id: string }) => t.id).sort();
   for (const response of responses)
     expect(
       response.body.data.tasks.map((t: { id: string }) => t.id).sort(),
     ).toEqual(ids);
   expect(await h.prisma.studyTask.count({ where: { userId: user.id } })).toBe(
-    6,
+    30,
   );
   const newTask = first.tasks.find((t: { type: string }) => t.type === 'LEARN');
   expect(newTask.locked).toBe(false);
@@ -105,7 +104,7 @@ test('80/20 allocation, concurrent refresh, backlog and group-local learning gat
     .expect(201);
 });
 
-test('unused foundation lends to primary; paused primary lends to foundation; all paused stays initialized', async () => {
+test('pausing a level excludes its automatic work and all paused stays initialized', async () => {
   const { user, http } = await h.login('budget-loans');
   const n1 = (await http.post('/study-plans', planInput()).expect(201)).body
     .data.id;
@@ -114,11 +113,11 @@ test('unused foundation lends to primary; paused primary lends to foundation; al
   expect(
     (await http.get('/dashboard/today').expect(200)).body.data.allocation
       .primaryPlannedMinutes,
-  ).toBe(40);
+  ).toBe(80);
   await due(user.id, 'N2', 20);
   await http.patch(`/study-plans/${n1}`, { status: 'PAUSED' }).expect(200);
   const paused = (await http.get('/dashboard/today').expect(200)).body.data;
-  expect(paused.allocation.foundationPlannedMinutes).toBe(40);
+  expect(paused.allocation.foundationPlannedMinutes).toBe(80);
   expect(
     paused.tasks.every(
       (t: { grammar: { level: string } }) => t.grammar.level === 'N2',
@@ -172,7 +171,7 @@ test('noon start is today; future plans excluded; gap mark never asserts learnin
   ).toHaveLength(1);
 });
 
-test('completed and manual time remains charged after refresh and budget edits; overrun visible', async () => {
+test('actual time survives refresh and legacy preference edits without limiting tasks', async () => {
   const { user, http } = await h.login('spent-budget');
   await http.post('/study-plans', planInput()).expect(201);
   const session = await h.prisma.studySession.create({
@@ -200,15 +199,17 @@ test('completed and manual time remains charged after refresh and budget edits; 
   for (let i = 0; i < 2; i++) {
     const today = (await http.get('/dashboard/today').expect(200)).body.data;
     expect(today.allocation.spentMinutes).toBe(25);
-    expect(today.estimatedMinutes).toBeLessThanOrEqual(15);
+    expect(today.estimatedMinutes).toBe(80);
+    expect(today.tasks).toHaveLength(10);
   }
   await http.put('/me/preferences', { dailyMinutes: 20 }).expect(200);
   const overrun = (await http.get('/dashboard/today').expect(200)).body.data;
-  expect(overrun.allocation.overrunMinutes).toBe(5);
-  expect(overrun.tasks).toEqual([]);
+  expect(overrun.allocation.overrunMinutes).toBe(0);
+  expect(overrun.allocation.spentMinutes).toBe(25);
+  expect(overrun.tasks).toHaveLength(10);
 });
 
-test('forecast first-day allocation matches actual shared-budget tasks and paused queue filtering', async () => {
+test('forecast first-day allocation matches actual uncapped tasks and paused queue filtering', async () => {
   const { user, http } = await h.login('forecast-shared');
   const n1 = (await http.post('/study-plans', planInput()).expect(201)).body
     .data.id;
@@ -250,4 +251,47 @@ test('forecast first-day allocation matches actual shared-budget tasks and pause
   expect(
     (await http.get('/review-queue?scope=all').expect(200)).body.data,
   ).toHaveLength(10);
+});
+
+test('15 due reviews remain on the homepage with 117.65 actual minutes and a 4 minute reservation', async () => {
+  const { user, http } = await h.login('uncapped-production-regression');
+  const withoutTime: Partial<ReturnType<typeof planInput>> = planInput();
+  delete withoutTime.dailyMinutes;
+  await http.post('/study-plans', withoutTime).expect(201);
+  await http.put('/me/preferences', { dailyMinutes: 120 }).expect(200);
+  await due(user.id, 'N1', 15);
+  const completed = await h.prisma.studySession.create({
+    data: {
+      userId: user.id,
+      grammarId: 'f-N1-29',
+      mode: 'PRACTICE',
+      status: 'COMPLETED',
+      activeSeconds: 7059,
+      timerPhaseEndsAt: new Date(),
+    },
+  });
+  await h.prisma.studyActivityDay.create({
+    data: {
+      userId: user.id,
+      sessionId: completed.id,
+      studyDate: new Date(day),
+      activeSeconds: 7059,
+    },
+  });
+  await http
+    .post('/study-sessions', { grammarId: 'f-N1-28', mode: 'PRACTICE' })
+    .expect(201);
+  const first = (await http.get('/dashboard/today').expect(200)).body.data;
+  expect(first.allocation.spentMinutes).toBe(117.65);
+  expect(first.allocation.reservedMinutes).toBeGreaterThan(0);
+  expect(first.summary.pendingReviewCount).toBe(15);
+  expect(first.backlog.count).toBe(0);
+  const expectedIds = first.tasks.map((t: { id: string }) => t.id).sort();
+  const refreshed = (await http.get('/dashboard/today').expect(200)).body.data;
+  expect(refreshed.tasks.map((t: { id: string }) => t.id).sort()).toEqual(
+    expectedIds,
+  );
+  expect((await http.get('/review-queue').expect(200)).body.data).toHaveLength(
+    15,
+  );
 });

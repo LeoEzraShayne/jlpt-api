@@ -8,7 +8,7 @@ import {
 const now = new Date('2026-08-12T03:00:00.000Z');
 
 describe('study plan forecast', () => {
-  it('schedules one new item when the soft budget is shorter than one lesson', () => {
+  it('uses the daily new limit regardless of the old time setting', () => {
     const forecast = buildStudyPlanForecast({
       timezone: 'Asia/Tokyo',
       dailyMinutes: 5,
@@ -21,14 +21,14 @@ describe('study plan forecast', () => {
       now,
     });
     expect(forecast.days[0]).toMatchObject({
-      newCount: 1,
-      estimatedMinutes: 8,
-      overloaded: true,
+      newCount: 2,
+      estimatedMinutes: 16,
+      overloaded: false,
     });
     expect(forecast.meta.isEstimate).toBe(true);
   });
 
-  it('does not add new grammar while due reviews remain outside capacity', () => {
+  it('forecasts every due review plus capped new grammar without a time limit', () => {
     const learned = calculateAdaptiveReview({
       rating: RecallRating.REMEMBERED,
       now: new Date('2026-08-01T03:00:00.000Z'),
@@ -65,10 +65,10 @@ describe('study plan forecast', () => {
       now,
     });
     expect(forecast.days[0]).toMatchObject({
-      reviewCount: 1,
-      newCount: 0,
-      dueUnscheduledCount: 1,
-      overloaded: true,
+      reviewCount: 2,
+      newCount: 2,
+      dueUnscheduledCount: 0,
+      overloaded: false,
     });
   });
 

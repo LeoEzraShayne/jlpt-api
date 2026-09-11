@@ -44,12 +44,13 @@ describe('shared FSRS plan projection', () => {
     expect(result.meta.algorithmVersion).toBe('adaptive-v1');
   });
 
-  it('has no forced work after today budget was already spent', () => {
+  it('keeps the daily new limit after the legacy time setting is exceeded', () => {
     const result = forecastPlans({
       ...input(),
       spentToday: { PRIMARY: 35, FOUNDATION: 5 },
     } as never);
-    expect(result.days[0].estimatedMinutes).toBe(0);
+    expect(result.days[0].newCount).toBe(4);
+    expect(result.days[0].estimatedMinutes).toBe(32);
     expect(result.days[1].newCount).toBeGreaterThan(0);
   });
 

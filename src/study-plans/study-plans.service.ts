@@ -6,7 +6,6 @@ import {
 import { Prisma, StudyPlan } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { CreateStudyPlanDto, UpdateStudyPlanDto } from './dto/study-plan.dto';
-import { NEW_GRAMMAR_MINUTES } from '../dashboard/task-planning';
 import { localDayUtcRange } from '../dashboard/dashboard-statistics';
 import { loadDailyBudget } from '../dashboard/daily-budget';
 import { localDateKey } from '../review/adaptive-review';
@@ -33,6 +32,7 @@ export class StudyPlansService {
       if (existing) return existing;
       const data = {
         ...dto,
+        dailyMinutes: dto.dailyMinutes ?? 20,
         startDate: calendarDate(dto.startDate),
         targetDate: calendarDate(dto.targetDate),
       };
@@ -47,7 +47,7 @@ export class StudyPlansService {
         });
       const user = await tx.user.findUniqueOrThrow({ where: { id: userId } });
       const previousCount = await tx.studyPlan.count({ where: { userId } });
-      // The first setup inherits its time budget. Adding a level never changes the target.
+      // Preserve the legacy setting for older clients; it no longer limits tasks.
       if (previousCount === 0)
         await tx.user.update({
           where: { id: userId },
@@ -246,7 +246,7 @@ export class StudyPlansService {
   }
 
   private async describe(userId: string, plan: StudyPlan) {
-    const [total, learned, user, activePlans] = await Promise.all([
+    const [total, learned, user] = await Promise.all([
       this.prisma.grammarPoint.count({
         where: { level: plan.level, status: 'PUBLISHED' },
       }),
@@ -258,21 +258,8 @@ export class StudyPlansService {
         },
       }),
       this.prisma.user.findUniqueOrThrow({ where: { id: userId } }),
-      this.prisma.studyPlan.findMany({
-        where: { userId, status: 'ACTIVE' },
-        select: { level: true },
-      }),
     ]);
     const isPrimary = user.targetLevel === plan.level;
-    const foundationCount = activePlans.filter(
-      (item) => item.level !== user.targetLevel,
-    ).length;
-    const allocated =
-      (user.dailyMinutes *
-        (isPrimary
-          ? user.primaryShare
-          : (100 - user.primaryShare) / Math.max(1, foundationCount))) /
-      100;
     const requiredDailyNew = Math.ceil(
       Math.max(0, total - learned) /
         Math.max(
@@ -280,7 +267,6 @@ export class StudyPlansService {
           Math.ceil((plan.targetDate.getTime() - Date.now()) / 86_400_000),
         ),
     );
-    const maxNew = Math.floor(allocated / NEW_GRAMMAR_MINUTES);
     return {
       ...plan,
       dailyMinutes: user.dailyMinutes,
@@ -291,10 +277,9 @@ export class StudyPlansService {
       recommendedDailyNew:
         plan.mode === 'GAP_FILL'
           ? 0
-          : Math.min(plan.dailyNewLimit, maxNew, requiredDailyNew),
+          : Math.min(plan.dailyNewLimit, requiredDailyNew),
       planAtRisk:
-        plan.mode === 'SYSTEM' &&
-        (requiredDailyNew > plan.dailyNewLimit || requiredDailyNew > maxNew),
+        plan.mode === 'SYSTEM' && requiredDailyNew > plan.dailyNewLimit,
     };
   }
 

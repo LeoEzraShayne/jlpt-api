@@ -271,10 +271,6 @@ export async function generateDailyTasks(
           ...allocated.allocation,
           spentMinutes: actual.PRIMARY + actual.FOUNDATION,
           reservedMinutes: reserved.PRIMARY + reserved.FOUNDATION,
-          overrunMinutes: Math.max(
-            0,
-            actual.PRIMARY + actual.FOUNDATION - user.dailyMinutes,
-          ),
         },
         backlog: {
           count:
