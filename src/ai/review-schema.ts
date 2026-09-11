@@ -24,7 +24,11 @@ const reviewFields = z.object({
     'NEEDS_REVISION',
     'INCORRECT',
   ]),
-  error_spans: z.array(errorSpanSchema),
+  error_spans: z
+    .array(errorSpanSchema)
+    .transform((spans) =>
+      spans.filter((span) => span.text.trim() !== span.replacement.trim()),
+    ),
   corrected_sentence: z.string(),
   corrected_sentence_furigana: z.string().min(1),
   corrected_sentence_translation_zh: z.string().min(1),

@@ -50,6 +50,32 @@ describe('progressive review boundary', () => {
     expect(result.alternative_sentence).toBeUndefined();
     expect(result.next_practice).toBeUndefined();
   });
+  it('keeps real corrections but removes unchanged fragments incorrectly labelled as errors', () => {
+    const changed = {
+      text: '彼は',
+      replacement: '私は',
+      start: 0,
+      end: 2,
+      reason: '前后两个动作需要同一主体。',
+    };
+    const result = parseReviewJson(
+      JSON.stringify({
+        ...core,
+        error_spans: [
+          changed,
+          {
+            text: '勉強します',
+            replacement: '勉強します',
+            start: 3,
+            end: 8,
+            reason: '这部分可以保留。',
+          },
+        ],
+      }),
+      true,
+    );
+    expect(result.error_spans).toEqual([changed]);
+  });
   it('requests grading, detailed corrections and scene evidence without extras', () => {
     const coreKeys = Object.keys(geminiJsonSchema('CORE').properties);
     const extensionKeys = Object.keys(extra);
