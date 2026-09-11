@@ -240,16 +240,21 @@ describe('server scene training', () => {
         count: jest.fn().mockResolvedValue(0),
       },
       trainingScenario: {
-        findMany: jest.fn().mockResolvedValue([scenario('life', 'PLAN')]),
+        upsert: jest
+          .fn()
+          .mockImplementation(({ create }: { create: unknown }) =>
+            Promise.resolve(create),
+          ),
       },
     };
     const assigned = await service.assign(tx as never, 'u1', 's1', {
       id: 'g1',
+      title: 'ながら',
       level: 'N1',
       chineseExplanation: '目标',
     });
     expect(assigned).toMatchObject({
-      scenarioId: 'life',
+      scenarioId: 'grammar-context-v2:g1:INTRODUCE_PARALLEL_ROUTINE',
       trainingMode: 'UNDERSTAND',
       trainingContext: { words: [], expressions: [] },
     });

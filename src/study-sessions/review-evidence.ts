@@ -171,7 +171,14 @@ export function validateScenarioEvidence(input: {
     input.trainingMode === 'TRANSFER' &&
     input.previous.some((previous) => {
       const other = readScenarioContext(previous.trainingContext);
+      const currentVersion = (
+        input.trainingContext as { selectionVersion?: string }
+      )?.selectionVersion;
+      const previousVersion = (
+        previous.trainingContext as { selectionVersion?: string } | null
+      )?.selectionVersion;
       return (
+        (!currentVersion || currentVersion === previousVersion) &&
         !!current &&
         !!other &&
         other.scenarioId === previous.scenarioId &&

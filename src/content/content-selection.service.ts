@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { JlptLevel, VocabularyEntry } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
-import { fingerprint } from './content-fingerprint';
+import type { PracticeTask } from '../scenes/grammar-practice-catalog';
+import { practiceMeaning, PRACTICE_GLOSS_SOURCE } from './practice-vocabulary';
 
 @Injectable()
 export class ContentSelectionService {
@@ -13,6 +14,7 @@ export class ContentSelectionService {
     grammarId: string,
     level: JlptLevel,
     sessionId?: string,
+    task?: PracticeTask,
   ) {
     const [expressions, bookmarks, imports] = await Promise.all([
       this.prisma.personalExpression.findMany({
@@ -36,14 +38,6 @@ export class ContentSelectionService {
       validationStatus: 'VALIDATED',
       OR: [{ ownerId: null }, { ownerId: userId }],
     };
-    const seed = Number.parseInt(
-      fingerprint([
-        userId,
-        grammarId,
-        sessionId ?? new Date().toISOString().slice(0, 10),
-      ]).slice(0, 8),
-      16,
-    );
     const recent = await this.prisma.contentExposure.findMany({
       where: {
         userId,
@@ -55,58 +49,46 @@ export class ContentSelectionService {
       select: { contentId: true },
     });
     const recentIds = new Set(recent.map((row) => row.contentId));
-    const bookmarkIds = bookmarks
-      .map((row) => row.vocabularyId)
-      .filter((id) => !recentIds.has(id));
-    const rotation = bookmarkIds.length ? seed % bookmarkIds.length : 0;
-    const preferredIds = [
-      ...bookmarkIds.slice(rotation),
-      ...bookmarkIds.slice(0, rotation),
-    ];
-    const preferred = await this.prisma.vocabularyEntry.findMany({
-      where: {
-        ...visible,
-        id: { in: preferredIds },
-        level: { in: allowedLevels },
-      },
-      orderBy: { id: 'asc' },
-    });
+    const bookmarkIds = new Set(bookmarks.map((row) => row.vocabularyId));
+    const candidates = task?.words.length
+      ? await this.prisma.vocabularyEntry.findMany({
+          where: {
+            ...visible,
+            level: { in: allowedLevels },
+            word: { in: task.words },
+          },
+          orderBy: { id: 'asc' },
+        })
+      : [];
+    // Personal priority only ranks already relevant words; it never widens the pool.
+    const ranked = candidates
+      .flatMap((entry) => {
+        const meaning = practiceMeaning(entry);
+        return meaning
+          ? [
+              {
+                ...entry,
+                chineseGloss: meaning.chineseGloss,
+                chineseGlossSource: PRACTICE_GLOSS_SOURCE,
+              },
+            ]
+          : [];
+      })
+      .sort(
+        (a, b) =>
+          Number(recentIds.has(a.id)) - Number(recentIds.has(b.id)) ||
+          Number(bookmarkIds.has(b.id)) - Number(bookmarkIds.has(a.id)) ||
+          task!.words.indexOf(a.word) - task!.words.indexOf(b.word),
+      );
     const words: VocabularyEntry[] = [];
-    for (const id of preferredIds) {
-      const entry = preferred.find((row) => row.id === id);
+    for (const entry of ranked) {
       if (
-        entry &&
         !words.some(
           (row) => row.word === entry.word && row.reading === entry.reading,
         )
-      ) {
+      )
         words.push(entry);
-      }
       if (words.length === 2) break;
-    }
-    while (words.length < 2) {
-      const where = {
-        ...visible,
-        level: { in: allowedLevels },
-        id: { notIn: [...recentIds] },
-        // Keep senses in the dictionary, but give each word + reading one slot.
-        NOT: words.map(({ word, reading }) => ({ word, reading })),
-      };
-      let count = await this.prisma.vocabularyEntry.count({ where });
-      // Recycle recent content without reselecting a word already in this session.
-      if (!count) {
-        where.id.notIn = [];
-        count = await this.prisma.vocabularyEntry.count({ where });
-      }
-      if (!count) break;
-      const [entry] = await this.prisma.vocabularyEntry.findMany({
-        where,
-        orderBy: { id: 'asc' },
-        skip: (seed + words.length) % count,
-        take: 1,
-      });
-      if (!entry) break;
-      words.push(entry);
     }
     const phrases = await this.prisma.contentCandidate.findMany({
       where: {
@@ -118,7 +100,13 @@ export class ContentSelectionService {
       orderBy: { updatedAt: 'desc' },
       take: 3,
     });
-    return { expressions, words, phrases };
+    return {
+      expressions,
+      words,
+      phrases: phrases.filter((phrase) =>
+        task?.words.some((word) => phrase.word.includes(word)),
+      ),
+    };
   }
   // Never changes review events, grades, or grammar mastery.
   async recordExposure(

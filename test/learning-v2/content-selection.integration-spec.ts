@@ -1,4 +1,5 @@
 import { ContentSelectionService } from '../../src/content/content-selection.service';
+import { practiceProfile } from '../../src/scenes/grammar-practice-catalog';
 import { startHarness, type Harness } from './harness';
 
 let h: Harness;
@@ -8,11 +9,11 @@ beforeAll(async () => {
 afterAll(async () => {
   await h?.stop();
 });
-
-async function fixture(name: string, forms: [string, string][]) {
+const task = practiceProfile('～かたがた')!.tasks[0];
+async function fixture(name: string, forms: [string, string, string][]) {
   const { user } = await h.login(name);
   const entries = await Promise.all(
-    forms.map(([word, reading], index) =>
+    forms.map(([word, reading, gloss], index) =>
       h.prisma.vocabularyEntry.create({
         data: {
           ownerId: user.id,
@@ -21,7 +22,7 @@ async function fixture(name: string, forms: [string, string][]) {
           reading,
           senseKey: String(index),
           partOfSpeech: [],
-          glosses: [],
+          glosses: [{ language: 'eng', text: gloss }],
           level: 'N2',
           sourceName: 'test',
           sourceVersion: '1',
@@ -31,79 +32,69 @@ async function fixture(name: string, forms: [string, string][]) {
       }),
     ),
   );
-  const select = (sessionId = 'selection-test') =>
+  const select = () =>
     h.app
       .get(ContentSelectionService)
-      .selectForPractice(user.id, 'f-N1-0', 'N1', sessionId);
+      .selectForPractice(user.id, 'f-N1-0', 'N1', 'selection-test', task);
   return { user, entries, select };
 }
 
-test('separate senses occupy one slot and the second slot is another word', async () => {
-  const f = await fixture('selection-senses', [
-    ['地味', 'じみ'],
-    ['地味', 'じみ'],
-    ['予定', 'よてい'],
+test('visit task selects relevant senses with Chinese glosses, not random words or another sense', async () => {
+  const f = await fixture('relevant-senses', [
+    ['報告', 'ほうこく', 'report'],
+    ['挨拶', 'あいさつ', 'greeting'],
+    ['挨拶', 'あいさつ', 'reply'],
+    ['損失', 'そんしつ', 'loss'],
+    ['跳ぶ', 'とぶ', 'to fly'],
   ]);
-  for (let i = 0; i < 8; i++) {
-    const { words } = await f.select(`session-${i}`);
-    expect(words.map((w) => w.word).sort()).toEqual(['予定', '地味'].sort());
-  }
+  const { words } = await f.select();
+  expect(words.map((w) => w.word)).toEqual(['報告', '挨拶']);
+  expect(words.map((w) => w.chineseGloss)).toEqual([
+    '报告；汇报',
+    '问候；打招呼',
+  ]);
+  expect(words[1].id).toBe(f.entries[1].id);
   expect(
     await h.prisma.vocabularyEntry.count({ where: { ownerId: f.user.id } }),
-  ).toBe(3);
+  ).toBe(5);
+  expect(
+    (
+      await h.prisma.vocabularyEntry.findUniqueOrThrow({
+        where: { id: f.entries[1].id },
+      })
+    ).chineseGloss,
+  ).toBeNull();
 });
 
-test('bookmarked senses cannot fill both slots, including recycling recent content', async () => {
-  const f = await fixture('selection-bookmarks', [
-    ['地味', 'じみ'],
-    ['地味', 'じみ'],
-    ['予定', 'よてい'],
+test('unrelated bookmarks never widen task vocabulary and duplicate matching senses occupy one slot', async () => {
+  const f = await fixture('relevant-bookmarks', [
+    ['報告', 'ほうこく', 'report'],
+    ['報告', 'ほうこく', 'reporting'],
+    ['挨拶', 'あいさつ', 'greeting'],
+    ['損失', 'そんしつ', 'loss'],
   ]);
   await h.prisma.vocabularyBookmark.createMany({
-    data: f.entries
-      .slice(0, 2)
-      .map((w) => ({ userId: f.user.id, vocabularyId: w.id })),
-  });
-  const session = await h.prisma.studySession.create({
-    data: {
-      userId: f.user.id,
-      grammarId: 'f-N1-0',
-      mode: 'PRACTICE',
-      timerPhaseEndsAt: new Date(),
-    },
-  });
-  await h.prisma.contentExposure.create({
-    data: {
-      userId: f.user.id,
-      sessionId: session.id,
-      contentType: 'VOCABULARY',
-      contentId: f.entries[2].id,
-      interaction: 'EXPOSED',
-    },
+    data: f.entries.map((w) => ({ userId: f.user.id, vocabularyId: w.id })),
   });
   const { words } = await f.select();
-  expect(words.map((w) => w.word)).toEqual(['地味', '予定']);
+  expect(words.map((w) => w.word)).toEqual(['報告', '挨拶']);
 });
 
-test('same spelling with different readings remains distinct', async () => {
-  const f = await fixture('selection-readings', [
-    ['生物', 'せいぶつ'],
-    ['生物', 'なまもの'],
+test('wrong reading or unrecognized sense is omitted; no cross-account fallback or quota filling', async () => {
+  const f = await fixture('relevant-shortage', [
+    ['報告', 'ほうこく', 'report'],
+    ['挨拶', 'あいさつ', 'reply'],
+    ['挨拶', 'other', 'greeting'],
   ]);
-  expect((await f.select()).words.map((w) => w.reading).sort()).toEqual(
-    ['せいぶつ', 'なまもの'].sort(),
-  );
-});
-
-test('only one distinct word returns one slot without duplication or cross-account fallback', async () => {
-  const f = await fixture('selection-single', [
-    ['地味', 'じみ'],
-    ['地味', 'じみ'],
-  ]);
-  await fixture('selection-other-owner', [['予定', 'よてい']]);
-  const { words } = await f.select();
-  expect(words).toHaveLength(1);
-  expect(words[0].ownerId).toBe(f.user.id);
-  const empty = await fixture('selection-empty', []);
+  await fixture('another-owner', [['挨拶', 'あいさつ', 'greeting']]);
+  expect((await f.select()).words.map((w) => w.word)).toEqual(['報告']);
+  const empty = await fixture('relevant-empty', [['損失', 'そんしつ', 'loss']]);
   expect((await empty.select()).words).toEqual([]);
+  expect(
+    (
+      await h.app
+        .get(ContentSelectionService)
+        .selectForPractice(f.user.id, 'f-N1-0', 'N1')
+    ).words,
+  ).toEqual([]);
 });

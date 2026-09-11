@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma, type JlptLevel } from '@prisma/client';
 import { ContentSelectionService } from '../content/content-selection.service';
+import {
+  practiceProfile,
+  PRACTICE_SELECTION_VERSION,
+} from './grammar-practice-catalog';
 import { suggestionUsesTargetGrammar } from '../ai/target-grammar';
 import {
   chooseScenario,
@@ -20,6 +24,7 @@ export class SceneService {
     sessionId: string,
     grammar: {
       id: string;
+      title?: string;
       level: JlptLevel;
       chineseExplanation: string;
       usageScene?: string | null;
@@ -35,18 +40,38 @@ export class SceneService {
       where: { userId, grammarId: grammar.id, status: 'COMPLETED' },
     });
     const mode = chooseTrainingMode(count);
-    const scenarios = await tx.trainingScenario.findMany({
-      where: {
-        active: true,
-        version: 'scenario-v1',
-        levels: { has: grammar.level },
-      },
-      orderBy: { id: 'asc' },
-    });
+    const profile = practiceProfile(grammar.title ?? '');
+    const scenarios = profile
+      ? await Promise.all(
+          profile.tasks.map((task) => {
+            const data = {
+              id: `${PRACTICE_SELECTION_VERSION}:${grammar.id}:${task.objective}`,
+              domain: profile.domain,
+              objective: task.objective,
+              register: profile.register,
+              promptZh: task.promptZh,
+              levels: [grammar.level],
+              active: true,
+              version: 'scenario-v1',
+            };
+            return tx.trainingScenario.upsert({
+              where: { id: data.id },
+              create: data,
+              update: data,
+            });
+          }),
+        )
+      : [];
     const selected = chooseScenario(scenarios, history, mode, grammar);
+    const task = profile?.tasks.find(
+      (task) => task.objective === selected?.objective,
+    );
     const context: TrainingContext = {
       version: 'training-v1',
-      instructionZh: instructions[mode],
+      selectionVersion: PRACTICE_SELECTION_VERSION,
+      instructionZh: selected
+        ? instructions[mode]
+        : '请用目标语法表达一件真实或熟悉的事情，优先保证意思自然。',
       scenario: selected
         ? {
             version: 'scenario-v1',
@@ -71,6 +96,7 @@ export class SceneService {
         grammar.id,
         grammar.level,
         sessionId,
+        task,
       );
       context.words = material.words.slice(0, 2).map((w) => ({
         id: w.id,
@@ -80,6 +106,7 @@ export class SceneService {
         glosses: w.glosses,
         sourceName: w.sourceName,
         sourceVersion: w.sourceVersion,
+        chineseGlossSource: w.chineseGlossSource,
       }));
       context.expressions = material.expressions.slice(0, 3).map((e) => ({
         id: e.id,

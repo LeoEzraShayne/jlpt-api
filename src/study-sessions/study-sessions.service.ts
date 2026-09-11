@@ -16,6 +16,10 @@ import {
 import { PersistedTimer, presentTimer, resolveTimer } from './study-timer';
 import { recordStudyActivity } from './study-session-activity';
 import { revealStudyHint } from './study-session-hints';
+import {
+  needsTrainingRefresh,
+  refreshTrainingContext,
+} from './refresh-training-context';
 import { createStudySession } from './study-session-create';
 import { lockStudySession, lockStudyUser } from './study-session-ledger';
 import { completeStudySession } from './study-session-completion';
@@ -60,6 +64,23 @@ export class StudySessionsService {
         code: 'SESSION_NOT_FOUND',
         message: 'Study session not found',
       });
+    if (this.scenes && needsTrainingRefresh(session)) {
+      const refreshed = await refreshTrainingContext(
+        this.prisma,
+        this.scenes,
+        userId,
+        id,
+      );
+      if (refreshed) {
+        Object.assign(session, refreshed);
+        await this.scenes.recordShown(
+          userId,
+          id,
+          session.trainingContext,
+          session.mode !== 'REVIEW',
+        );
+      }
+    }
     return presentSession(this.withTimer(session));
   }
   async create(userId: string, timezone: string, dto: CreateStudySessionDto) {

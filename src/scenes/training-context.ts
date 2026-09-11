@@ -16,6 +16,7 @@ const wordSchema = z.object({
   word: z.string(),
   reading: z.string(),
   chineseGloss: z.string().nullable(),
+  chineseGlossSource: z.string().nullable().optional(),
   glosses: z.unknown(),
   sourceName: z.string(),
   sourceVersion: z.string(),
@@ -35,6 +36,7 @@ const phraseSchema = z.object({
 });
 export const trainingContextSchema = z.object({
   version: z.literal('training-v1'),
+  selectionVersion: z.string().optional(),
   instructionZh: z.string(),
   scenario: scenarioSchema.nullable(),
   words: z.array(wordSchema).max(2),
