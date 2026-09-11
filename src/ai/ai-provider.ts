@@ -2,6 +2,7 @@ import type { TrainingContext } from '../scenes/training-context';
 import type { ProviderResponse } from './review-schema';
 
 export interface ReviewProviderInput {
+  stage?: 'CORE';
   grammarLevel?: string;
   grammarTitle: string;
   explanation: string;

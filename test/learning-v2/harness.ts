@@ -19,6 +19,7 @@ import { PrismaService } from '../../src/database/prisma.service';
 import { AuthModule } from '../../src/auth/auth.module';
 import { AdminModule } from '../../src/admin/admin.module';
 import { AuthService } from '../../src/auth/auth.service';
+import { SentenceReviewsModule } from '../../src/sentence-reviews/sentence-reviews.module';
 import { StudyPlansModule } from '../../src/study-plans/study-plans.module';
 import { DashboardModule } from '../../src/dashboard/dashboard.module';
 import { StudySessionsModule } from '../../src/study-sessions/study-sessions.module';
@@ -89,7 +90,7 @@ export async function startHarness(legacySeed?: (db: Client) => Promise<void>) {
       REVIEW_ALGORITHM_MODE: 'adaptive',
       REVIEW_ALGORITHM_ROLLOUT_PERCENT: 100,
     };
-    // No AppModule import: never parse local .env or instantiate an AI worker.
+    // No AppModule import: never parse local .env or enable automatic AI polling.
     const module = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({
@@ -103,6 +104,7 @@ export async function startHarness(legacySeed?: (db: Client) => Promise<void>) {
         AuthModule,
         AdminModule,
         StudyPlansModule,
+        SentenceReviewsModule,
         DashboardModule,
         StudySessionsModule,
         ContentModule,

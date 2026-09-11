@@ -43,14 +43,19 @@ function setup(context: unknown, sceneId: string | null = 'work') {
     },
   };
   const prisma = {
-    $queryRaw: jest.fn().mockResolvedValue([{ id: 'job1' }]),
-    $transaction: jest.fn((ops: Promise<unknown>[]) => Promise.all(ops)),
+    $queryRaw: jest
+      .fn()
+      .mockResolvedValue([{ id: 'job1', lockedAt: new Date() }]),
+    $transaction: jest.fn(),
     aiReviewJob: {
       findUnique: jest.fn().mockResolvedValue(job),
-      update: jest.fn().mockResolvedValue({}),
+      updateMany: jest.fn().mockResolvedValue({ count: 1 }),
     },
     aiReviewResult: { create: jest.fn().mockResolvedValue({}) },
   };
+  prisma.$transaction.mockImplementation(
+    (run: (tx: typeof prisma) => unknown) => run(prisma),
+  );
   const reviews = {
     review: jest.fn().mockResolvedValue({
       provider: 'DEEPSEEK',
@@ -83,7 +88,7 @@ function setup(context: unknown, sceneId: string | null = 'work') {
   return { worker, prisma, reviews, scenes };
 }
 describe('AI worker scenario persistence', () => {
-  it('passes persisted scene to provider, stores four parts and preserves completed result on exposure failure', async () => {
+  it('passes persisted scene to provider, stores core evidence and queues extension while preserving completed result on exposure failure', async () => {
     const { worker, prisma, reviews } = setup(trainingContext);
     await worker.poll();
     expect(reviews.review).toHaveBeenCalledWith(
@@ -96,12 +101,17 @@ describe('AI worker scenario persistence', () => {
     )[0].data;
     expect(data).toMatchObject({
       scenarioTaskCompleted: true,
-      contentResponse: '你提出了帮助请求。',
-      nextPractice: '下次向店员确认信息。',
-      diversityAdvice: '改变表达目的。',
       totalScore: 100,
     });
-    expect(prisma.aiReviewJob.update).toHaveBeenCalledTimes(1);
+    expect(data.alternativeSentence).toBeUndefined();
+    expect(data.nextPractice).toBeUndefined();
+    expect(prisma.aiReviewJob.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: 'COMPLETED',
+        }) as unknown,
+      }),
+    );
   });
   it.each([null, { scenario: { promptZh: '用户声称通过' } }])(
     'does not create proof from missing or malformed server context: %o',

@@ -8,48 +8,58 @@ const errorSpanSchema = z.object({
   replacement: z.string(),
 });
 
-export const providerReviewSchema = z
-  .object({
-    total_score: z.number().int().min(0).max(100),
-    grammar_score: z.number().int().min(0).max(30),
-    connection_score: z.number().int().min(0).max(20),
-    completeness_score: z.number().int().min(0).max(20),
-    naturalness_score: z.number().int().min(0).max(20),
-    vocabulary_score: z.number().int().min(0).max(10),
-    is_correct: z.boolean(),
-    used_target_grammar: z.boolean(),
-    target_grammar_correct: z.boolean(),
-    result_level: z.enum([
-      'CORRECT',
-      'MOSTLY_CORRECT',
-      'NEEDS_REVISION',
-      'INCORRECT',
-    ]),
-    error_spans: z.array(errorSpanSchema),
-    corrected_sentence: z.string(),
-    corrected_sentence_furigana: z.string().min(1),
-    corrected_sentence_translation_zh: z.string().min(1),
-    corrected_sentence_uses_target_grammar: z.literal(true),
-    alternative_sentence: z.string().min(1),
-    alternative_sentence_uses_target_grammar: z.literal(true),
-    alternative_sentence_furigana: z.string().min(1),
-    alternative_sentence_translation_zh: z.string().min(1),
-    explanation_zh: z.string(),
-    encouragement: z.string(),
-    content_response: z
-      .string()
-      .max(300)
-      .refine(
-        (text) =>
-          text.split(/[。！？!?]+/u).filter((part) => part.trim()).length <= 2,
-        'Content response must contain at most two sentences',
-      )
-      .optional(),
-    diversity_advice: z.string().max(400).optional(),
-    next_practice: z.string().max(400).optional(),
-    scenario_task_completed: z.boolean().optional(),
-  })
-  .superRefine((value, context) => {
+const reviewFields = z.object({
+  total_score: z.number().int().min(0).max(100),
+  grammar_score: z.number().int().min(0).max(30),
+  connection_score: z.number().int().min(0).max(20),
+  completeness_score: z.number().int().min(0).max(20),
+  naturalness_score: z.number().int().min(0).max(20),
+  vocabulary_score: z.number().int().min(0).max(10),
+  is_correct: z.boolean(),
+  used_target_grammar: z.boolean(),
+  target_grammar_correct: z.boolean(),
+  result_level: z.enum([
+    'CORRECT',
+    'MOSTLY_CORRECT',
+    'NEEDS_REVISION',
+    'INCORRECT',
+  ]),
+  error_spans: z.array(errorSpanSchema),
+  corrected_sentence: z.string(),
+  corrected_sentence_furigana: z.string().min(1),
+  corrected_sentence_translation_zh: z.string().min(1),
+  corrected_sentence_uses_target_grammar: z.literal(true),
+  alternative_sentence: z.string().min(1),
+  alternative_sentence_uses_target_grammar: z.literal(true),
+  alternative_sentence_furigana: z.string().min(1),
+  alternative_sentence_translation_zh: z.string().min(1),
+  explanation_zh: z.string(),
+  encouragement: z.string(),
+  content_response: z
+    .string()
+    .max(300)
+    .refine(
+      (text) =>
+        text.split(/[。！？!?]+/u).filter((part) => part.trim()).length <= 2,
+      'Content response must contain at most two sentences',
+    )
+    .optional(),
+  diversity_advice: z.string().max(400).optional(),
+  next_practice: z.string().max(400).optional(),
+  scenario_task_completed: z.boolean().optional(),
+});
+
+export const coreReviewFields = reviewFields.omit({
+  alternative_sentence: true,
+  alternative_sentence_furigana: true,
+  alternative_sentence_translation_zh: true,
+  alternative_sentence_uses_target_grammar: true,
+  content_response: true,
+  diversity_advice: true,
+  next_practice: true,
+});
+export const coreReviewSchema = coreReviewFields.superRefine(
+  (value, context) => {
     const componentTotal =
       value.grammar_score +
       value.connection_score +
@@ -80,6 +90,19 @@ export const providerReviewSchema = z
         message:
           'Every corrected sentence kanji group must have a hiragana reading',
       });
+  },
+);
+
+export const providerReviewSchema = reviewFields.superRefine(
+  (value, context) => {
+    const core = coreReviewSchema.safeParse(value);
+    if (!core.success)
+      for (const issue of core.error.issues)
+        context.addIssue({
+          code: 'custom',
+          path: issue.path,
+          message: issue.message,
+        });
     if (
       !validFurigana(
         value.alternative_sentence,
@@ -91,7 +114,8 @@ export const providerReviewSchema = z
         path: ['alternative_sentence_furigana'],
         message: 'Every kanji group must have a hiragana reading',
       });
-  });
+  },
+);
 
 const kanjiPattern = /[\p{Script=Han}々〆ヶ]/u;
 const annotationPattern =
@@ -104,7 +128,19 @@ export function validFurigana(sentence: string, annotated: string) {
   return !kanjiPattern.test(withoutAnnotations);
 }
 
-export type ProviderReview = z.infer<typeof providerReviewSchema>;
+export type ProviderReview = z.infer<typeof coreReviewSchema> &
+  Partial<
+    Pick<
+      z.infer<typeof reviewFields>,
+      | 'alternative_sentence'
+      | 'alternative_sentence_furigana'
+      | 'alternative_sentence_translation_zh'
+      | 'alternative_sentence_uses_target_grammar'
+      | 'content_response'
+      | 'diversity_advice'
+      | 'next_practice'
+    >
+  >;
 export interface ProviderUsage {
   inputTokens?: number;
   outputTokens?: number;

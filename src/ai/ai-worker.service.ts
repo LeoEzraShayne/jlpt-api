@@ -1,18 +1,16 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Interval } from '@nestjs/schedule';
-import { AiJobStatus, Prisma } from '@prisma/client';
+import { AiJobStatus } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 import { SceneService } from '../scenes/scenes.service';
 import { readTrainingContext } from '../scenes/training-context';
 import { ProviderError } from './ai-provider';
 import { AiReviewService } from './ai-review.service';
+import { claimReview, leaseWhere, type ReviewLease } from './review-job-lease';
+import { jobInput, reviewJobInclude } from './review-job-context';
 import { PROMPT_VERSION } from './prompt';
 import { AI_SCORE_POLICY_VERSION } from '../review/adaptive-review';
-
-interface ClaimedJob {
-  id: string;
-}
 
 @Injectable()
 export class AiWorkerService {
@@ -30,11 +28,8 @@ export class AiWorkerService {
     if (this.running || !this.config.get<boolean>('AI_WORKER_ENABLED')) return;
     this.running = true;
     try {
-      const claimed = await this.prisma.$queryRaw<ClaimedJob[]>(Prisma.sql`
-        UPDATE "AiReviewJob" SET status = 'PROCESSING', "lockedAt" = NOW(), "updatedAt" = NOW()
-        WHERE id = (SELECT id FROM "AiReviewJob" WHERE status = 'QUEUED' AND "availableAt" <= NOW() ORDER BY "createdAt" FOR UPDATE SKIP LOCKED LIMIT 1)
-        RETURNING id`);
-      if (claimed[0]) await this.process(claimed[0].id);
+      const claimed = await claimReview(this.prisma);
+      if (claimed) await this.process(claimed);
     } catch (error) {
       this.logger.error(
         `AI worker poll failed: ${error instanceof Error ? error.message : 'unknown'}`,
@@ -44,19 +39,11 @@ export class AiWorkerService {
     }
   }
 
-  private async process(id: string) {
+  private async process(lease: ReviewLease) {
+    const id = lease.id;
     const job = await this.prisma.aiReviewJob.findUnique({
       where: { id },
-      include: {
-        attempt: {
-          include: {
-            studySession: true,
-            grammar: {
-              include: { examples: { take: 1, orderBy: { sortOrder: 'asc' } } },
-            },
-          },
-        },
-      },
+      include: reviewJobInclude,
     });
     if (!job) return;
     try {
@@ -64,15 +51,8 @@ export class AiWorkerService {
         job.attempt.studySession.trainingContext,
       );
       const reviewed = await this.reviews.review({
-        grammarLevel: job.attempt.grammar.level,
-        grammarTitle: job.attempt.grammar.title,
-        explanation: job.attempt.grammar.chineseExplanation,
-        connectionRule: job.attempt.grammar.connectionRule,
-        exampleSentence: job.attempt.grammar.examples[0]?.sentence,
-        sentence: job.attempt.sentence,
-        scene: job.attempt.scene,
-        trainingMode: job.attempt.studySession.trainingMode,
-        trainingContext,
+        ...jobInput(job),
+        stage: 'CORE',
       });
       const result = reviewed.response.result;
       const cappedTotal = !result.used_target_grammar
@@ -80,8 +60,18 @@ export class AiWorkerService {
         : !result.target_grammar_correct
           ? Math.min(result.total_score, 59)
           : result.total_score;
-      await this.prisma.$transaction([
-        this.prisma.aiReviewResult.create({
+      const saved = await this.prisma.$transaction(async (tx) => {
+        const guard = await tx.aiReviewJob.updateMany({
+          where: leaseWhere(lease),
+          data: {
+            status: AiJobStatus.COMPLETED,
+            provider: reviewed.provider,
+            errorCode: null,
+            errorMessage: null,
+          },
+        });
+        if (guard.count !== 1) return false;
+        await tx.aiReviewResult.create({
           data: {
             jobId: id,
             provider: reviewed.provider,
@@ -104,15 +94,8 @@ export class AiWorkerService {
             correctedSentenceFurigana: result.corrected_sentence_furigana,
             correctedSentenceTranslationZh:
               result.corrected_sentence_translation_zh,
-            alternativeSentence: result.alternative_sentence,
-            alternativeSentenceFurigana: result.alternative_sentence_furigana,
-            alternativeSentenceTranslationZh:
-              result.alternative_sentence_translation_zh,
             explanationZh: result.explanation_zh,
             encouragement: result.encouragement,
-            contentResponse: result.content_response ?? null,
-            diversityAdvice: result.diversity_advice ?? null,
-            nextPractice: result.next_practice ?? null,
             scenarioTaskCompleted:
               trainingContext?.scenario &&
               trainingContext.scenario.scenarioId ===
@@ -123,24 +106,17 @@ export class AiWorkerService {
             outputTokens: reviewed.response.usage.outputTokens,
             latencyMs: reviewed.response.latencyMs,
           },
-        }),
-        this.prisma.aiReviewJob.update({
-          where: { id },
-          data: {
-            status: AiJobStatus.COMPLETED,
-            provider: reviewed.provider,
-            errorCode: null,
-            errorMessage: null,
-          },
-        }),
-      ]);
+        });
+        return true;
+      });
+      if (!saved) return;
       await this.scenes
         ?.recordUsed(
           job.attempt.userId,
           job.attempt.studySessionId,
           trainingContext,
           job.attempt.sentence,
-          result.alternative_sentence,
+          '',
         )
         .catch(() =>
           this.logger.warn(
@@ -148,11 +124,11 @@ export class AiWorkerService {
           ),
         );
     } catch (error) {
-      await this.fail(job.id, job.retryCount, error);
+      await this.fail(lease, job.retryCount, error);
     }
   }
 
-  private async fail(id: string, retryCount: number, error: unknown) {
+  private async fail(lease: ReviewLease, retryCount: number, error: unknown) {
     const providerError =
       error instanceof ProviderError
         ? error
@@ -162,8 +138,8 @@ export class AiWorkerService {
             true,
           );
     const retry = providerError.retryable && retryCount < 2;
-    await this.prisma.aiReviewJob.update({
-      where: { id },
+    await this.prisma.aiReviewJob.updateMany({
+      where: leaseWhere(lease),
       data: {
         status: retry ? AiJobStatus.QUEUED : AiJobStatus.FAILED,
         retryCount: { increment: 1 },

@@ -1,7 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { Injectable, Optional } from '@nestjs/common';
 import { AiProvider } from '@prisma/client';
-import type { ReviewProviderInput } from './ai-provider';
+import type {
+  AiGrammarReviewProvider,
+  ReviewProviderInput,
+} from './ai-provider';
 import { ProviderError } from './ai-provider';
 import { DeepSeekReviewProvider } from './deepseek.provider';
 import { GeminiReviewProvider } from './gemini.provider';
@@ -19,19 +22,30 @@ export class AiReviewService {
   async review(
     input: ReviewProviderInput,
   ): Promise<{ provider: AiProvider; response: ProviderResponse }> {
+    return this.withFallback(async (provider) => {
+      const response = await provider.review(input);
+      this.assertSuggestions(input.grammarTitle, response);
+      return response;
+    });
+  }
+
+  private async withFallback<T>(
+    operation: (provider: AiGrammarReviewProvider) => Promise<T>,
+  ) {
     const preferDeepSeek =
       this.config?.get<string>('AI_PRIMARY_PROVIDER') === 'DEEPSEEK';
     const providers = preferDeepSeek
       ? [this.deepseek, this.gemini]
       : [this.gemini, this.deepseek];
-    const names = preferDeepSeek
-      ? [AiProvider.DEEPSEEK, AiProvider.GEMINI]
-      : [AiProvider.GEMINI, AiProvider.DEEPSEEK];
     for (let index = 0; index < providers.length; index++) {
       try {
-        const response = await providers[index].review(input);
-        this.assertSuggestions(input.grammarTitle, response);
-        return { provider: names[index], response };
+        return {
+          provider:
+            providers[index] === this.gemini
+              ? AiProvider.GEMINI
+              : AiProvider.DEEPSEEK,
+          response: await operation(providers[index]),
+        };
       } catch (error) {
         if (
           index === providers.length - 1 ||
@@ -51,7 +65,10 @@ export class AiReviewService {
   private assertSuggestions(title: string, response: ProviderResponse) {
     const result = response.result;
     if (suggestionUsesTargetGrammar(title, result.corrected_sentence)) {
-      if (!suggestionUsesTargetGrammar(title, result.alternative_sentence)) {
+      if (
+        result.alternative_sentence &&
+        !suggestionUsesTargetGrammar(title, result.alternative_sentence)
+      ) {
         result.alternative_sentence = result.corrected_sentence;
         result.alternative_sentence_furigana =
           result.corrected_sentence_furigana;

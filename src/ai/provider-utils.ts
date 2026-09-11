@@ -1,5 +1,9 @@
 import { ProviderError } from './ai-provider';
-import { providerReviewSchema, type ProviderReview } from './review-schema';
+import {
+  providerReviewSchema,
+  coreReviewSchema,
+  type ProviderReview,
+} from './review-schema';
 
 export async function fetchWithTimeout(
   url: string,
@@ -9,9 +13,19 @@ export async function fetchWithTimeout(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { ...init, signal: controller.signal });
+    const response = await fetch(url, { ...init, signal: controller.signal });
+    // Keep the deadline active while reading the body, not only the headers.
+    const body = await response.text();
+    return {
+      ok: response.ok,
+      status: response.status,
+      text: () => Promise.resolve(body),
+    };
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError')
+    if (
+      controller.signal.aborted ||
+      (error instanceof Error && error.name === 'AbortError')
+    )
       throw new ProviderError('AI request timed out', 'AI_TIMEOUT', true);
     throw new ProviderError(
       'AI network request failed',
@@ -23,7 +37,10 @@ export async function fetchWithTimeout(
   }
 }
 
-export function parseReviewJson(text: string): ProviderReview {
+export function parseReviewJson(
+  text: string,
+  coreOnly = false,
+): ProviderReview {
   try {
     const normalized = text
       .trim()
@@ -34,6 +51,7 @@ export function parseReviewJson(text: string): ProviderReview {
       if (typeof parsed[field] === 'string')
         parsed[field] = parsed[field].replace(/\[[^\]]+\]/g, '');
     }
+    if (coreOnly) return coreReviewSchema.parse(parsed);
     const full = providerReviewSchema.safeParse(parsed);
     if (full.success) return full.data;
     // A malformed supplement must not discard a valid original correction.
@@ -65,7 +83,10 @@ export function parseReviewJson(text: string): ProviderReview {
   }
 }
 
-export function assertResponse(response: Response, body: string) {
+export function assertResponse(
+  response: Pick<Response, 'ok' | 'status'>,
+  body: string,
+) {
   if (response.ok) return;
   const providerUnavailable =
     [400, 403].includes(response.status) &&

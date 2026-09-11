@@ -19,6 +19,14 @@ export class DeepSeekReviewProvider implements AiGrammarReviewProvider {
   constructor(private readonly config: ConfigService) {}
 
   async review(input: ReviewProviderInput) {
+    const response = await this.generate(input);
+    return {
+      ...response,
+      result: parseReviewJson(response.text, input.stage === 'CORE'),
+    };
+  }
+
+  private async generate(input: ReviewProviderInput) {
     const apiKey = this.config.get<string>('DEEPSEEK_API_KEY');
     if (!apiKey)
       throw new ProviderError(
@@ -71,7 +79,7 @@ export class DeepSeekReviewProvider implements AiGrammarReviewProvider {
         true,
       );
     return {
-      result: parseReviewJson(text),
+      text,
       model,
       usage: {
         inputTokens: parsed.usage?.prompt_tokens,
