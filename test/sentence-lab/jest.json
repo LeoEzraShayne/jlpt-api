@@ -1,0 +1,11 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "../..",
+  "testEnvironment": "node",
+  "testMatch": ["<rootDir>/test/sentence-lab/*.acceptance-spec.ts"],
+  "transform": {
+    "^.+\\.(t|j)s$": ["ts-jest", { "tsconfig": "tsconfig.json" }]
+  },
+  "testTimeout": 30000,
+  "maxWorkers": 1
+}
