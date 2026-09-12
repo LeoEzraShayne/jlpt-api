@@ -1,0 +1,623 @@
+{
+  "runId": "2026-09-12T16:39:38.356Z",
+  "rows": [
+    {
+      "caseId": "zh:connection-error",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 55,
+            "grammar_score": 10,
+            "connection_score": 0,
+            "completeness_score": 20,
+            "naturalness_score": 15,
+            "vocabulary_score": 10,
+            "is_correct": false,
+            "used_target_grammar": true,
+            "target_grammar_correct": false,
+            "result_level": "NEEDS_REVISION",
+            "error_spans": [
+              {
+                "text": "読むにくい",
+                "start": 13,
+                "end": 18,
+                "reason": "目标语法～にくい应接动词ます形去ます，这里用了动词原形「読む」，应改为「読み」",
+                "replacement": "読みにくい"
+              }
+            ],
+            "corrected_sentence": "この説明書は漢字が多くて、読みにくいです。",
+            "corrected_sentence_furigana": "この説明書[せつめいしょ]は漢字[かんじ]が多[おお]くて、読[よ]みにくいです。",
+            "corrected_sentence_translation_zh": "这本说明书汉字很多，读起来很难。",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "目标语法「～にくい」前面要接动词的ます形去掉ます，所以「読む」应变成「読み」，说成「読みにくい」。",
+            "encouragement": "记住这个接续规则，下次一定能用对！",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 741,
+            "outputTokens": 3827
+          },
+          "latencyMs": 15938
+        }
+      },
+      "requests": 1,
+      "latencyMs": 15967
+    },
+    {
+      "caseId": "zh:natural-control",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "この説明書は漢字が多くて、読みにくいです。",
+            "corrected_sentence_furigana": "この説明書[せつめいしょ]は漢字[かんじ]が多[おお]くて、読[よ]みにくいです。",
+            "corrected_sentence_translation_zh": "这本说明书汉字很多，读起来很难。",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "「読みにくい」由动词「読む」的ます形去ます「読み」加「にくい」构成，表示“难以读”。你的句子连接和用法都正确。",
+            "encouragement": "句子完全正确，继续保持！",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 740,
+            "outputTokens": 1563
+          },
+          "latencyMs": 6467
+        }
+      },
+      "requests": 1,
+      "latencyMs": 6470
+    },
+    {
+      "caseId": "zh:obligation",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "図書館の本なので、来週までに返さなければならない。",
+            "corrected_sentence_furigana": "図書館[としょかん]の本[ほん]なので、来週[らいしゅう]までに返[かえ]さなければならない。",
+            "corrected_sentence_translation_zh": "因为是图书馆的书，所以必须在下周之前归还。",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "「返す」的ない形是「返さない」，去掉「ない」后接「なければならない」，原句的连接和意义都正确。",
+            "encouragement": "原句准确自然，继续加油！",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 740,
+            "outputTokens": 1204
+          },
+          "latencyMs": 5909
+        }
+      },
+      "requests": 1,
+      "latencyMs": 5915
+    },
+    {
+      "caseId": "zh:no-obligation",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "その本はプレゼントなので、返さなくてもいいです。",
+            "corrected_sentence_furigana": "その本[ほん]はプレゼントなので、返[かえ]さなくてもいいです。",
+            "corrected_sentence_translation_zh": "那本书是礼物，所以不还也可以。",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "你正确使用了「～なくてもいい」：把「返す」变成ない形「返さない」，去掉「ない」后加上「なくてもいい」。整个句子意思清晰，表达自然。",
+            "encouragement": "正确使用了「～なくてもいい」，句子自然，继续加油！",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 748,
+            "outputTokens": 1403
+          },
+          "latencyMs": 6199
+        }
+      },
+      "requests": 1,
+      "latencyMs": 6203
+    },
+    {
+      "caseId": "zh:word-target",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "explanationZh": "你正确使用了「謝る」的「为自己的过失向他人道歉」这一含义，搭配「先生に謝りました」自然贴切，表示因迟到而向老师道歉。",
+        "corrections": [],
+        "correctedSentence": "遅刻したので、先生に謝りました。",
+        "correctedFurigana": "遅刻[ちこく]したので、先生[せんせい]に謝[あやま]りました。",
+        "correctedTranslationZh": "因为迟到了，我向老师道歉了。"
+      },
+      "requests": 1,
+      "latencyMs": 1312
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "explanationZh": "这句话表达自然，意思是“因为迟到了，我对老师说了一声‘对不起’”，但没有用到本次练习的词“謝る”，因此还不能判断你是否会使用这个词。",
+        "corrections": [],
+        "correctedSentence": "遅刻したので、先生に「すみません」と言いました。",
+        "correctedFurigana": "遅刻[ちこく]したので、先生[せんせい]に「すみません」と言[い]いました。",
+        "correctedTranslationZh": "因为迟到了，我对老师说了一声“对不起”。"
+      },
+      "requests": 1,
+      "latencyMs": 1342
+    },
+    {
+      "caseId": "en:connection-error",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 59,
+            "grammar_score": 10,
+            "connection_score": 5,
+            "completeness_score": 20,
+            "naturalness_score": 14,
+            "vocabulary_score": 10,
+            "is_correct": false,
+            "used_target_grammar": true,
+            "target_grammar_correct": false,
+            "result_level": "NEEDS_REVISION",
+            "error_spans": [
+              {
+                "text": "覚えるにくい",
+                "start": 10,
+                "end": 16,
+                "reason": "～にくい attaches to the masu-stem (覚え), not the dictionary form 覚える.",
+                "replacement": "覚えにくい"
+              }
+            ],
+            "corrected_sentence": "この住所は長いので、覚えにくいです。",
+            "corrected_sentence_furigana": "この住所[じゅうしょ]は長[なが]いので、覚[おぼ]えにくいです。",
+            "corrected_sentence_translation_zh": "Because this address is long, it is hard to memorize.",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "～にくい must follow the masu-stem of a verb, so 覚える should become 覚え before にくい. The meaning is clear, but 覚えるにくい is an incorrect connection.",
+            "encouragement": "You chose the right pattern for the meaning; just remember to use the masu-stem before ～にくい.",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 1010,
+            "outputTokens": 1415
+          },
+          "latencyMs": 5797
+        }
+      },
+      "requests": 2,
+      "latencyMs": 10459
+    },
+    {
+      "caseId": "en:natural-control",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "この住所は長いので、覚えにくいです。",
+            "corrected_sentence_furigana": "この住所[じゅうしょ]は長[なが]いので、覚[おぼ]えにくいです。",
+            "corrected_sentence_translation_zh": "This address is long, so it is hard to memorize.",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "Your sentence correctly uses 覚えにくい: the ます stem 覚え combines with にくい. The sentence is natural and complete.",
+            "encouragement": "Good work—this sentence is accurate and natural.",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 735,
+            "outputTokens": 816
+          },
+          "latencyMs": 3542
+        }
+      },
+      "requests": 1,
+      "latencyMs": 3547
+    },
+    {
+      "caseId": "en:obligation",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "会社の規則なので、毎月パスワードを変えなければならない。",
+            "corrected_sentence_furigana": "会社[かいしゃ]の規則[きそく]なので、毎月[まいげつ]パスワードを変[か]えなければならない。",
+            "corrected_sentence_translation_zh": "Because it is a company rule, you must change your password every month.",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "Your sentence correctly uses 変えなければならない: it comes from the ない-form 変えない by dropping ない and adding なければならない. The sentence is natural, complete, and matches the required grammar.",
+            "encouragement": "Great job—your grammar and expression are both correct!",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 739,
+            "outputTokens": 2200
+          },
+          "latencyMs": 10132
+        }
+      },
+      "requests": 1,
+      "latencyMs": 10146
+    },
+    {
+      "caseId": "en:no-obligation",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "今日は休みなので、早く起きなくてもいいです。",
+            "corrected_sentence_furigana": "今日[きょう]は休[やす]みなので、早[はや]く起[お]きなくてもいいです。",
+            "corrected_sentence_translation_zh": "Since today is a day off, I don't have to get up early.",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "You correctly used the ない-form stem 起き with なくてもいい to express that getting up early is not necessary.",
+            "encouragement": "Nice work—this is a natural and accurate use of the target grammar.",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 745,
+            "outputTokens": 804
+          },
+          "latencyMs": 3723
+        }
+      },
+      "requests": 1,
+      "latencyMs": 3727
+    },
+    {
+      "caseId": "en:word-target",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "explanationZh": "You used 感謝 in the intended sense of feeling and expressing thanks toward a friend who helped you. The particle に correctly marks the person you are grateful to, and しています makes the feeling natural and current. The sentence is accurate and natural.",
+        "corrections": [],
+        "correctedSentence": "手伝ってくれた友達に感謝しています。",
+        "correctedFurigana": "手伝[てつだ]ってくれた友達[ともだち]に感謝[かんしゃ]しています。",
+        "correctedTranslationZh": "I am grateful to the friend who helped me."
+      },
+      "requests": 1,
+      "latencyMs": 1538
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "explanationZh": "This sentence is natural and clearly expresses thanks to a friend who helped you, but it uses the phrase 「ありがとう」と言いました rather than the target word 感謝. Because the target word itself does not appear, there is not yet evidence that you can use it, so this cannot be judged as correct or incorrect.",
+        "corrections": [],
+        "correctedSentence": "手伝ってくれた友達に「ありがとう」と言いました。",
+        "correctedFurigana": "手伝[てつだ]ってくれた友達[ともだち]に「ありがとう」と言[い]いました。",
+        "correctedTranslationZh": "I said \"thank you\" to the friend who helped me."
+      },
+      "requests": 1,
+      "latencyMs": 1525
+    },
+    {
+      "caseId": "zh:deliver-generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "你是公司前台，快递员刚送来一个寄给同事田中先生的包裹，但田中先生今天请假不在。你想请隔壁工位的同事帮忙，把这个包裹转交到田中先生手上。请用日语说明你的请求。",
+        "meaningHintZh": "表示把某件物品送到收件人那里，让对方收到。",
+        "grammarId": null,
+        "referenceSentence": "この荷物を田中さんに届けてください。",
+        "referenceFurigana": "この荷物[にもつ]を田中[たなか]さんに届[とど]けてください。",
+        "referenceTranslationZh": "请把这个包裹送到田中先生那里。",
+        "chunks": [
+          "この荷物を",
+          "田中さんに",
+          "届けてください。"
+        ]
+      },
+      "requests": 1,
+      "latencyMs": 1439
+    },
+    {
+      "caseId": "zh:deliver-correct",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "explanationZh": "你用了「届ける」的过去式「届けました」，表示把遗忘的东西送到母亲那里，正好符合“把物品送到收件人处”的意思，搭配「母に」「忘れ物を」也很自然。",
+        "corrections": [],
+        "correctedSentence": "母に忘れ物を届けました。",
+        "correctedFurigana": "母[はは]に忘[わす]れ物[もの]を届[とど]けました。",
+        "correctedTranslationZh": "我把遗忘的东西送给母亲了。"
+      },
+      "requests": 1,
+      "latencyMs": 1360
+    },
+    {
+      "caseId": "zh:deliver-wrong",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "explanationZh": "这里你想表达的是用菜刀处理胡萝卜，但“届ける”的意思是“把物品送到收件人处”，不能表示切、切好之类的动作，所以用在这个句子里意思不对。可以改成“切りました”（切了）。",
+        "corrections": [
+          {
+            "text": "届けました",
+            "replacement": "切りました",
+            "reason": "“届ける”是“把物品送到收件人处”的意思，不能表示用菜刀处理胡萝卜；这里想表达的是切胡萝卜，应改为“切りました”。"
+          }
+        ],
+        "correctedSentence": "この包丁でニンジンを切りました。",
+        "correctedFurigana": "この包丁[ほうちょう]でニンジンを切[き]りました。",
+        "correctedTranslationZh": "我用这把菜刀切了胡萝卜。"
+      },
+      "requests": 1,
+      "latencyMs": 1675
+    },
+    {
+      "caseId": "zh:saving-generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "你和朋友聊起毕业后的打算，朋友问你有没有为将来存下一笔钱。你想告诉对方自己每个月都会固定存下一部分工资，以备不时之需。请用日语说出这个意思。",
+        "meaningHintZh": "表示把赚到的钱一点点积攒起来，留作将来使用。",
+        "grammarId": null,
+        "referenceSentence": "私は毎月給料の一部を貯金しています。",
+        "referenceFurigana": "私[わたし]は毎月[まいつき]給料[きゅうりょう]の一部[いちぶ]を貯金[ちょきん]しています。",
+        "referenceTranslationZh": "我每个月都会把一部分工资存起来。",
+        "chunks": [
+          "私は",
+          "毎月",
+          "給料の",
+          "一部を",
+          "貯金しています。"
+        ]
+      },
+      "requests": 2,
+      "latencyMs": 3447
+    },
+    {
+      "caseId": "zh:saving-correct",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "explanationZh": "你正确使用了「貯金」这个词，表示“存钱、储蓄金钱”，并且搭配「毎月一万円ずつ」说明每月存一万日元，意思和用法都很自然。",
+        "corrections": [],
+        "correctedSentence": "旅行のために毎月一万円ずつ貯金しています。",
+        "correctedFurigana": "旅行[りょこう]のために毎月[まいつき]一万円[いちまんえん]ずつ貯金[ちょきん]しています。",
+        "correctedTranslationZh": "为了旅行，我每月存一万日元。"
+      },
+      "requests": 1,
+      "latencyMs": 1290
+    },
+    {
+      "caseId": "zh:saving-wrong",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "explanationZh": "这里想表达因为饿了而吃乌冬面，但“貯金”是“存钱”的意思，不能作为吃的对象，所以用错了。可以改成“うどんを食べました”。",
+        "corrections": [
+          {
+            "text": "貯金しました",
+            "replacement": "食べました",
+            "reason": "“貯金”意为存钱，不能与“うどん”搭配表示吃面；这里应使用表示“吃”的动词。保留原句想表达“因为饿了而吃乌冬面”的意思。"
+          }
+        ],
+        "correctedSentence": "おなかがすいたので、うどんを食べました。",
+        "correctedFurigana": "おなかがすいたので、うどんを食[た]べました。",
+        "correctedTranslationZh": "因为肚子饿了，所以吃了乌冬面。"
+      },
+      "requests": 1,
+      "latencyMs": 1470
+    },
+    {
+      "caseId": "en:entrust-generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "You are at a busy train station in Tokyo and need to leave your heavy suitcase at the station's luggage counter for a few hours while you go sightseeing. The clerk is waiting. Tell the clerk that you want to leave your suitcase in their care until this evening.",
+        "meaningHintZh": "Use the verb that means to hand something over to someone so they will keep it safe for you for a while.",
+        "grammarId": null,
+        "referenceSentence": "このスーツケースを夕方まで預けたいです。",
+        "referenceFurigana": "このスーツケースを夕方[ゆうがた]まで預[あず]けたいです。",
+        "referenceTranslationZh": "I want to leave this suitcase in your care until this evening.",
+        "chunks": [
+          "このスーツケースを",
+          "夕方まで",
+          "預けたいです。"
+        ]
+      },
+      "requests": 1,
+      "latencyMs": 1903
+    },
+    {
+      "caseId": "en:entrust-correct",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "explanationZh": "You used 預ける correctly here. With the pattern 人に物を預ける, it means to entrust something to someone for safekeeping, and 猫を友人に預けました naturally expresses leaving your cat in a friend's care during your trip.",
+        "corrections": [],
+        "correctedSentence": "旅行中、猫を友人に預けました。",
+        "correctedFurigana": "旅行中[りょこうちゅう]、猫[ねこ]を友人[ゆうじん]に預[あず]けました。",
+        "correctedTranslationZh": "I left my cat with a friend during my trip."
+      },
+      "requests": 1,
+      "latencyMs": 1565
+    },
+    {
+      "caseId": "en:entrust-wrong",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "explanationZh": "You used the word 預ける, but here it doesn't fit the meaning of entrusting something to someone for safekeeping. 窓 (a window) is not something you can entrust to another person, and being hot is not a reason to entrust a window. You probably meant that you opened the window because it was hot, so a verb like 開ける would express your idea naturally.",
+        "corrections": [
+          {
+            "text": "預けました",
+            "replacement": "開けました",
+            "reason": "預ける means to entrust something to someone for safekeeping, which does not work with 窓 (a window). Since the reason is that it was hot, the natural verb here is 開ける (to open)."
+          }
+        ],
+        "correctedSentence": "暑かったので、窓を開けました。",
+        "correctedFurigana": "暑[あつ]かったので、窓[まど]を開[あ]けました。",
+        "correctedTranslationZh": "It was hot, so I opened the window."
+      },
+      "requests": 2,
+      "latencyMs": 3831
+    },
+    {
+      "caseId": "en:postpone-generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "You are talking with a coworker about next week's team meeting. The meeting was originally scheduled for Tuesday, but the presenter is unavailable that day, so you need to move the meeting to Friday instead. Tell your coworker that the meeting will be moved to Friday.",
+        "meaningHintZh": "To move an event such as a meeting to a later date than originally planned.",
+        "grammarId": null,
+        "referenceSentence": "会議は金曜日に延期になりました。",
+        "referenceFurigana": "会議[かいぎ]は金曜日[きんようび]に延期[えんき]になりました。",
+        "referenceTranslationZh": "The meeting has been postponed to Friday.",
+        "chunks": [
+          "会議は",
+          "金曜日に",
+          "延期になりました。"
+        ]
+      },
+      "requests": 1,
+      "latencyMs": 1694
+    },
+    {
+      "caseId": "en:postpone-correct",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "explanationZh": "You used 延期 correctly here: it means postponing an event to a later date, and 試合を来週に延期しました expresses exactly that. The particle に marking the new date is also natural.",
+        "corrections": [],
+        "correctedSentence": "台風のため、試合を来週に延期しました。",
+        "correctedFurigana": "台風[たいふう]のため、試合[しあい]を来週[らいしゅう]に延期[えんき]しました。",
+        "correctedTranslationZh": "Because of the typhoon, we postponed the match until next week."
+      },
+      "requests": 1,
+      "latencyMs": 1013
+    },
+    {
+      "caseId": "en:postpone-wrong",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "explanationZh": "You did use the target word 延期, but it is used with the wrong kind of object. 延期 means postponing an event or scheduled thing to a later date, so it cannot take テレビの音量 (the TV volume) as its object. Lowering the volume is not postponing anything. To keep your intended meaning, use a verb like 下げる (to lower) instead.",
+        "corrections": [
+          {
+            "text": "延期しました",
+            "replacement": "下げました",
+            "reason": "延期 cannot mean lowering the volume; 音量を下げる is the natural way to say you turned the volume down."
+          }
+        ],
+        "correctedSentence": "静かにするため、テレビの音量を下げました。",
+        "correctedFurigana": "静[しず]かにするため、テレビの音量[おんりょう]を下[さ]げました。",
+        "correctedTranslationZh": "To keep quiet, I turned down the TV volume."
+      },
+      "requests": 1,
+      "latencyMs": 1744
+    }
+  ]
+}

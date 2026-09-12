@@ -1,0 +1,458 @@
+{
+  "version": "F-extra-vocab-v1",
+  "status": "PREPARED_NOT_RUN",
+  "rows": [
+    {
+      "caseId": "zh:deliver-generate",
+      "kind": "generate",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "届ける",
+          "reading": "とどける",
+          "chineseGloss": "把物品送到收件人处",
+          "senseKey": "F-extra-deliver",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "deliver an item to its recipient"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        }
+      },
+      "expected": {
+        "feedbackLocale": "zh",
+        "concealTargetAndReading": true,
+        "JapaneseAnswerRequired": true,
+        "meaning": "Reference must be natural Japanese using the selected target sense, with matching hiragana reading and accurate translation."
+      }
+    },
+    {
+      "caseId": "zh:deliver-correct",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "届ける",
+          "reading": "とどける",
+          "chineseGloss": "把物品送到收件人处",
+          "senseKey": "F-extra-deliver",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "deliver an item to its recipient"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语说明发生的事情。",
+          "meaningHintZh": "把物品送到收件人处",
+          "grammarId": null,
+          "referenceSentence": "母に忘れ物を届けました。",
+          "referenceFurigana": "母[はは]に忘[わす]れ物[もの]を届[とど]けました。",
+          "referenceTranslationZh": "我把遗忘的东西送给母亲了。",
+          "chunks": [
+            "母に忘",
+            "れ物を届けました。"
+          ]
+        },
+        "sentence": "母に忘れ物を届けました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "semantic": "我把遗忘的东西送给母亲了。",
+        "repairMustGradeOriginal": true
+      }
+    },
+    {
+      "caseId": "zh:deliver-wrong",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "届ける",
+          "reading": "とどける",
+          "chineseGloss": "把物品送到收件人处",
+          "senseKey": "F-extra-deliver",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "deliver an item to its recipient"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语说明发生的事情。",
+          "meaningHintZh": "把物品送到收件人处",
+          "grammarId": null,
+          "referenceSentence": "母に忘れ物を届けました。",
+          "referenceFurigana": "母[はは]に忘[わす]れ物[もの]を届[とど]けました。",
+          "referenceTranslationZh": "我把遗忘的东西送给母亲了。",
+          "chunks": [
+            "母に忘",
+            "れ物を届けました。"
+          ]
+        },
+        "sentence": "この包丁でニンジンを届けました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "unchangedOriginal": false,
+        "semantic": "切る a carrot with the knife, not deliver it",
+        "repairMustGradeOriginal": true
+      }
+    },
+    {
+      "caseId": "zh:saving-generate",
+      "kind": "generate",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "貯金",
+          "reading": "ちょきん",
+          "chineseGloss": "储蓄金钱",
+          "senseKey": "F-extra-saving",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "save money"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        }
+      },
+      "expected": {
+        "feedbackLocale": "zh",
+        "concealTargetAndReading": true,
+        "JapaneseAnswerRequired": true,
+        "meaning": "Reference must be natural Japanese using the selected target sense, with matching hiragana reading and accurate translation."
+      }
+    },
+    {
+      "caseId": "zh:saving-correct",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "貯金",
+          "reading": "ちょきん",
+          "chineseGloss": "储蓄金钱",
+          "senseKey": "F-extra-saving",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "save money"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语说明发生的事情。",
+          "meaningHintZh": "储蓄金钱",
+          "grammarId": null,
+          "referenceSentence": "旅行のために毎月一万円ずつ貯金しています。",
+          "referenceFurigana": "旅行[りょこう]のために毎月[まいつき]一万円[いちまんえん]ずつ貯金[ちょきん]しています。",
+          "referenceTranslationZh": "为了旅行，我每月存一万日元。",
+          "chunks": [
+            "旅行の",
+            "ために毎月一万円ずつ貯金しています。"
+          ]
+        },
+        "sentence": "旅行のために毎月一万円ずつ貯金しています。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "semantic": "为了旅行，我每月存一万日元。",
+        "repairMustGradeOriginal": true
+      }
+    },
+    {
+      "caseId": "zh:saving-wrong",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "貯金",
+          "reading": "ちょきん",
+          "chineseGloss": "储蓄金钱",
+          "senseKey": "F-extra-saving",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "save money"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语说明发生的事情。",
+          "meaningHintZh": "储蓄金钱",
+          "grammarId": null,
+          "referenceSentence": "旅行のために毎月一万円ずつ貯金しています。",
+          "referenceFurigana": "旅行[りょこう]のために毎月[まいつき]一万円[いちまんえん]ずつ貯金[ちょきん]しています。",
+          "referenceTranslationZh": "为了旅行，我每月存一万日元。",
+          "chunks": [
+            "旅行の",
+            "ために毎月一万円ずつ貯金しています。"
+          ]
+        },
+        "sentence": "おなかがすいたので、うどんを貯金しました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "unchangedOriginal": false,
+        "semantic": "eat noodles due to hunger; savings is not an eating verb",
+        "repairMustGradeOriginal": true
+      }
+    },
+    {
+      "caseId": "en:entrust-generate",
+      "kind": "generate",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "預ける",
+          "reading": "あずける",
+          "chineseGloss": "把人或物托付给他人保管照顾",
+          "senseKey": "F-extra-entrust",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "entrust someone or something to another person for safekeeping"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        }
+      },
+      "expected": {
+        "feedbackLocale": "en",
+        "concealTargetAndReading": true,
+        "JapaneseAnswerRequired": true,
+        "meaning": "Reference must be natural Japanese using the selected target sense, with matching hiragana reading and accurate translation."
+      }
+    },
+    {
+      "caseId": "en:entrust-correct",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "預ける",
+          "reading": "あずける",
+          "chineseGloss": "把人或物托付给他人保管照顾",
+          "senseKey": "F-extra-entrust",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "entrust someone or something to another person for safekeeping"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Describe what happened in Japanese.",
+          "meaningHintZh": "entrust someone or something to another person for safekeeping",
+          "grammarId": null,
+          "referenceSentence": "旅行中、猫を友人に預けました。",
+          "referenceFurigana": "旅行中[りょこうちゅう]、猫[ねこ]を友人[ゆうじん]に預[あず]けました。",
+          "referenceTranslationZh": "I left my cat with a friend during my trip.",
+          "chunks": [
+            "旅行中",
+            "、猫を友人に預けました。"
+          ]
+        },
+        "sentence": "旅行中、猫を友人に預けました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "semantic": "I left my cat with a friend during my trip.",
+        "repairMustGradeOriginal": true
+      }
+    },
+    {
+      "caseId": "en:entrust-wrong",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "預ける",
+          "reading": "あずける",
+          "chineseGloss": "把人或物托付给他人保管照顾",
+          "senseKey": "F-extra-entrust",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "entrust someone or something to another person for safekeeping"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Describe what happened in Japanese.",
+          "meaningHintZh": "entrust someone or something to another person for safekeeping",
+          "grammarId": null,
+          "referenceSentence": "旅行中、猫を友人に預けました。",
+          "referenceFurigana": "旅行中[りょこうちゅう]、猫[ねこ]を友人[ゆうじん]に預[あず]けました。",
+          "referenceTranslationZh": "I left my cat with a friend during my trip.",
+          "chunks": [
+            "旅行中",
+            "、猫を友人に預けました。"
+          ]
+        },
+        "sentence": "暑かったので、窓を預けました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "unchangedOriginal": false,
+        "semantic": "open the window because it is hot, not entrust a window",
+        "repairMustGradeOriginal": true
+      }
+    },
+    {
+      "caseId": "en:postpone-generate",
+      "kind": "generate",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "延期",
+          "reading": "えんき",
+          "chineseGloss": "把活动等推迟到之后的日期",
+          "senseKey": "F-extra-postpone",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "postpone an event to a later date"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        }
+      },
+      "expected": {
+        "feedbackLocale": "en",
+        "concealTargetAndReading": true,
+        "JapaneseAnswerRequired": true,
+        "meaning": "Reference must be natural Japanese using the selected target sense, with matching hiragana reading and accurate translation."
+      }
+    },
+    {
+      "caseId": "en:postpone-correct",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "延期",
+          "reading": "えんき",
+          "chineseGloss": "把活动等推迟到之后的日期",
+          "senseKey": "F-extra-postpone",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "postpone an event to a later date"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Describe what happened in Japanese.",
+          "meaningHintZh": "postpone an event to a later date",
+          "grammarId": null,
+          "referenceSentence": "台風のため、試合を来週に延期しました。",
+          "referenceFurigana": "台風[たいふう]のため、試合[しあい]を来週[らいしゅう]に延期[えんき]しました。",
+          "referenceTranslationZh": "Because of the typhoon, we postponed the match until next week.",
+          "chunks": [
+            "台風の",
+            "ため、試合を来週に延期しました。"
+          ]
+        },
+        "sentence": "台風のため、試合を来週に延期しました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "semantic": "Because of the typhoon, we postponed the match until next week.",
+        "repairMustGradeOriginal": true
+      }
+    },
+    {
+      "caseId": "en:postpone-wrong",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "延期",
+          "reading": "えんき",
+          "chineseGloss": "把活动等推迟到之后的日期",
+          "senseKey": "F-extra-postpone",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "postpone an event to a later date"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Describe what happened in Japanese.",
+          "meaningHintZh": "postpone an event to a later date",
+          "grammarId": null,
+          "referenceSentence": "台風のため、試合を来週に延期しました。",
+          "referenceFurigana": "台風[たいふう]のため、試合[しあい]を来週[らいしゅう]に延期[えんき]しました。",
+          "referenceTranslationZh": "Because of the typhoon, we postponed the match until next week.",
+          "chunks": [
+            "台風の",
+            "ため、試合を来週に延期しました。"
+          ]
+        },
+        "sentence": "静かにするため、テレビの音量を延期しました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "unchangedOriginal": false,
+        "semantic": "lower the volume to make it quiet; cannot postpone volume",
+        "repairMustGradeOriginal": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "operationCount": 24,
+  "networkCallLimit": 48,
+  "candidateCommits": [
+    "1acb110",
+    "0bf99ed",
+    "3e71d71",
+    "467741a"
+  ],
+  "files": {
+    "cases.json": "fcc29ed0209f7ec67c29830adb83d22f439ef93d8e2dfabc357d5b47983bf0f4",
+    "extra-cases.json": "d839a8f44bb265e255f4d05cc085f9e58cbab99c2db60268b37a5fad68fe75a1"
+  }
+}

@@ -1,0 +1,1451 @@
+{
+  "runId": "2026-09-12T16:39:38.356Z",
+  "operations": 24,
+  "finalStructuredResponses": 24,
+  "coreSemanticPasses": 24,
+  "diagnosticWordingAdvisories": 1,
+  "networkCalls": 27,
+  "paidRejectedCandidates": 3,
+  "unknownUsageCalls": 0,
+  "actualPaidEstimateUsd": 0.011798346000000001,
+  "thinkingTokens": 11795,
+  "peakColdSumUsd": 0.0290157,
+  "fixedAnnualBaseUsd": 126.66666666666667,
+  "measurements": {
+    "GRAMMAR_REVIEW": {
+      "operations": 8,
+      "networkCalls": 9,
+      "rejectedCandidates": 1,
+      "peakColdKnownUsd": 0.0192315,
+      "unitPeakColdUsd": 0.0024039375,
+      "medianLatencyMs": 6336.5,
+      "p95NearestRankMs": 15967
+    },
+    "VOCABULARY_ASSESS": {
+      "operations": 12,
+      "networkCalls": 13,
+      "rejectedCandidates": 1,
+      "peakColdKnownUsd": 0.007605299999999999,
+      "unitPeakColdUsd": 0.0006337749999999999,
+      "medianLatencyMs": 1497.5,
+      "p95NearestRankMs": 3831
+    },
+    "VOCABULARY_GENERATE": {
+      "operations": 4,
+      "networkCalls": 5,
+      "rejectedCandidates": 1,
+      "peakColdKnownUsd": 0.0021789,
+      "unitPeakColdUsd": 0.000544725,
+      "medianLatencyMs": 1798.5,
+      "p95NearestRankMs": 3447
+    }
+  },
+  "reviews": [
+    {
+      "caseId": "zh:connection-error",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:natural-control",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:obligation",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:no-obligation",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:word-target",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:connection-error",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:natural-control",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:obligation",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:no-obligation",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:word-target",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:deliver-generate",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:deliver-correct",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:deliver-wrong",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:saving-generate",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:saving-correct",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "zh:saving-wrong",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": "Correct target rejection and correction, but explanation incorrectly describes 貯金 as an eating object although it is the original predicate. Keep this diagnostic wording defect visible."
+    },
+    {
+      "caseId": "en:entrust-generate",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:entrust-correct",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:entrust-wrong",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:postpone-generate",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:postpone-correct",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    },
+    {
+      "caseId": "en:postpone-wrong",
+      "coreSemanticJudgment": "PASS",
+      "reviewMethod": "F independent model reading of original/final sentence, readings, translation, meaning/polarity and target evidence; not human expert certification",
+      "advisory": null
+    }
+  ],
+  "operationCosts": [
+    {
+      "caseId": "zh:connection-error",
+      "purpose": "GRAMMAR_REVIEW",
+      "peakColdUsd": 0.0048147
+    },
+    {
+      "caseId": "zh:natural-control",
+      "purpose": "GRAMMAR_REVIEW",
+      "peakColdUsd": 0.0020976
+    },
+    {
+      "caseId": "zh:obligation",
+      "purpose": "GRAMMAR_REVIEW",
+      "peakColdUsd": 0.0016668
+    },
+    {
+      "caseId": "zh:no-obligation",
+      "purpose": "GRAMMAR_REVIEW",
+      "peakColdUsd": 0.001908
+    },
+    {
+      "caseId": "zh:word-target",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005208
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005244
+    },
+    {
+      "caseId": "en:connection-error",
+      "purpose": "GRAMMAR_REVIEW",
+      "peakColdUsd": 0.0034947000000000003
+    },
+    {
+      "caseId": "en:natural-control",
+      "purpose": "GRAMMAR_REVIEW",
+      "peakColdUsd": 0.0011996999999999997
+    },
+    {
+      "caseId": "en:obligation",
+      "purpose": "GRAMMAR_REVIEW",
+      "peakColdUsd": 0.0028617
+    },
+    {
+      "caseId": "en:no-obligation",
+      "purpose": "GRAMMAR_REVIEW",
+      "peakColdUsd": 0.0011883
+    },
+    {
+      "caseId": "en:word-target",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005583
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005897999999999999
+    },
+    {
+      "caseId": "zh:deliver-generate",
+      "purpose": "VOCABULARY_GENERATE",
+      "peakColdUsd": 0.000384
+    },
+    {
+      "caseId": "zh:deliver-correct",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005193
+    },
+    {
+      "caseId": "zh:deliver-wrong",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005795999999999999
+    },
+    {
+      "caseId": "zh:saving-generate",
+      "purpose": "VOCABULARY_GENERATE",
+      "peakColdUsd": 0.0008814000000000001
+    },
+    {
+      "caseId": "zh:saving-correct",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005313
+    },
+    {
+      "caseId": "zh:saving-wrong",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005949
+    },
+    {
+      "caseId": "en:entrust-generate",
+      "purpose": "VOCABULARY_GENERATE",
+      "peakColdUsd": 0.00047219999999999993
+    },
+    {
+      "caseId": "en:entrust-correct",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005750999999999999
+    },
+    {
+      "caseId": "en:entrust-wrong",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0013826999999999997
+    },
+    {
+      "caseId": "en:postpone-generate",
+      "purpose": "VOCABULARY_GENERATE",
+      "peakColdUsd": 0.00044129999999999994
+    },
+    {
+      "caseId": "en:postpone-correct",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0005739
+    },
+    {
+      "caseId": "en:postpone-wrong",
+      "purpose": "VOCABULARY_ASSESS",
+      "peakColdUsd": 0.0006552000000000001
+    }
+  ],
+  "scenarios": [
+    {
+      "product": "USD launch year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 17.54874375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 42.22725625,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 17.54874375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 75.84191625,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 17.54874375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 23.15525625,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 0.048078749999999996,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.8765812500000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 0.048078749999999996,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.5879212500000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 35.0974875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 24.678512500000004,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 35.0974875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 58.2931725,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 35.0974875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 5.606512500000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 0.09615749999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.8285025,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 0.09615749999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.5398425,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 105.29246249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -45.51646249999998,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 105.29246249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -11.901802499999988,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 105.29246249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -64.58846249999999,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 0.28847249999999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.6361875000000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 0.28847249999999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.34752750000000004,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 210.58492499999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": -150.80892499999996,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 210.58492499999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": -117.19426499999997,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 210.58492499999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": -169.88092499999996,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 0.5769449999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.3477150000000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 0.5769449999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.05905500000000008,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 17.54874375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 42.22725625,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 17.54874375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 75.84191625,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 17.54874375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 23.15525625,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 0.048078749999999996,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.8765812500000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 0.048078749999999996,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.5879212500000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 35.0974875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 24.678512500000004,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 35.0974875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 58.2931725,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 35.0974875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 5.606512500000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 0.09615749999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.8285025,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 0.09615749999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.5398425,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 105.29246249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -45.51646249999998,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 105.29246249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -11.901802499999988,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 105.29246249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -64.58846249999999,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 0.28847249999999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.6361875000000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 0.28847249999999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.34752750000000004,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 210.58492499999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": -150.80892499999996,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 210.58492499999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": -117.19426499999997,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 210.58492499999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": -169.88092499999996,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 0.5769449999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.3477150000000001,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 0.5769449999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.05905500000000008,
+      "fullFreeUserAnnualKnownUsd": 13.161557812499998
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 11.750399374999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 48.025600625,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 11.750399374999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 81.640260625,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 11.750399374999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 28.953600625,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 0.032192874999999996,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.892467125,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 0.032192874999999996,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.603807125,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 23.500798749999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": 36.27520125000001,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 23.500798749999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": 69.88986125,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 23.500798749999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": 17.203201250000003,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 0.06438574999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.86027425,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 0.06438574999999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.57161425,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 70.50239624999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": -10.726396249999986,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 70.50239624999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 22.888263750000007,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 70.50239624999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": -29.79839624999999,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 0.19315724999999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.7315027500000001,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 0.19315724999999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.44284275000000006,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 141.00479249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -81.22879249999997,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 141.00479249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -47.61413249999998,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 141.00479249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -100.30079249999997,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 0.38631449999999995,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.5383455000000001,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 0.38631449999999995,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.24968550000000006,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 13.075896875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 46.700103125000005,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 13.075896875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 80.314763125,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 13.075896875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 27.628103125000003,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 0.035824375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.888835625,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 0.035824375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.600175625,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 26.15179375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 33.62420625,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 26.15179375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 67.23886625,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 26.15179375,
+      "cashContributionBeforeFixedFreeUnknownUsd": 14.552206250000001,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 0.07164875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.85301125,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 0.07164875,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.56435125,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 78.45538124999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": -18.679381249999985,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 78.45538124999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": 14.935278750000009,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 78.45538124999999,
+      "cashContributionBeforeFixedFreeUnknownUsd": -37.75138124999999,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 0.21494624999999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.70971375,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 0.21494624999999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.42105375,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 156.91076249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -97.13476249999997,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 156.91076249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -63.52010249999998,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 156.91076249999998,
+      "cashContributionBeforeFixedFreeUnknownUsd": -116.20676249999997,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 0.42989249999999996,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.4947675000000001,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 0.5,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 0.42989249999999996,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.20610750000000005,
+      "fullFreeUserAnnualKnownUsd": 8.812799531249999
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 5.952055,
+      "cashContributionBeforeFixedFreeUnknownUsd": 53.823945,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 5.952055,
+      "cashContributionBeforeFixedFreeUnknownUsd": 87.438605,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 5.952055,
+      "cashContributionBeforeFixedFreeUnknownUsd": 34.751945,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 0.016307,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.9083530000000001,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 20,
+      "aiKnownUsd": 0.016307,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.619693,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 11.90411,
+      "cashContributionBeforeFixedFreeUnknownUsd": 47.87189000000001,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 11.90411,
+      "cashContributionBeforeFixedFreeUnknownUsd": 81.48655,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 11.90411,
+      "cashContributionBeforeFixedFreeUnknownUsd": 28.79989,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 0.032614,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.892046,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 40,
+      "aiKnownUsd": 0.032614,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.603386,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 35.71233,
+      "cashContributionBeforeFixedFreeUnknownUsd": 24.063670000000002,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 35.71233,
+      "cashContributionBeforeFixedFreeUnknownUsd": 57.678329999999995,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 35.71233,
+      "cashContributionBeforeFixedFreeUnknownUsd": 4.991669999999999,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 0.097842,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.826818,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 120,
+      "aiKnownUsd": 0.097842,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.538158,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 71.42466,
+      "cashContributionBeforeFixedFreeUnknownUsd": -11.64866,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 71.42466,
+      "cashContributionBeforeFixedFreeUnknownUsd": 21.965999999999994,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 71.42466,
+      "cashContributionBeforeFixedFreeUnknownUsd": -30.720660000000002,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 0.195684,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.7289760000000001,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 0.3333333333333333,
+      "daily": 240,
+      "aiKnownUsd": 0.195684,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.44031600000000004,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 8.60305,
+      "cashContributionBeforeFixedFreeUnknownUsd": 51.17295,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 8.60305,
+      "cashContributionBeforeFixedFreeUnknownUsd": 84.78761,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 8.60305,
+      "cashContributionBeforeFixedFreeUnknownUsd": 32.10095,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 0.023569999999999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.9010900000000001,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 20,
+      "aiKnownUsd": 0.023569999999999997,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.61243,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 17.2061,
+      "cashContributionBeforeFixedFreeUnknownUsd": 42.569900000000004,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 17.2061,
+      "cashContributionBeforeFixedFreeUnknownUsd": 76.18456,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 17.2061,
+      "cashContributionBeforeFixedFreeUnknownUsd": 23.4979,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 0.047139999999999994,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.8775200000000001,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 40,
+      "aiKnownUsd": 0.047139999999999994,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.58886,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 51.6183,
+      "cashContributionBeforeFixedFreeUnknownUsd": 8.157700000000006,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 51.6183,
+      "cashContributionBeforeFixedFreeUnknownUsd": 41.77236,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 51.6183,
+      "cashContributionBeforeFixedFreeUnknownUsd": -10.914299999999997,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 0.14142,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.78324,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 120,
+      "aiKnownUsd": 0.14142,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.49458,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD launch year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 103.2366,
+      "cashContributionBeforeFixedFreeUnknownUsd": -43.46059999999999,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD standard year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 103.2366,
+      "cashContributionBeforeFixedFreeUnknownUsd": -9.845939999999999,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY year",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 103.2366,
+      "cashContributionBeforeFixedFreeUnknownUsd": -62.532599999999995,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "USD day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 0.28284,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.6418200000000001,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    },
+    {
+      "product": "JPY day",
+      "vocabShare": 1,
+      "generationsPerVocabularyReview": 1,
+      "daily": 240,
+      "aiKnownUsd": 0.28284,
+      "cashContributionBeforeFixedFreeUnknownUsd": 0.35316000000000003,
+      "fullFreeUserAnnualKnownUsd": 4.46404125
+    }
+  ],
+  "limitations": [
+    "Purpose-specific grammar/vocabulary costs from a small synthetic corpus, not a population forecast.",
+    "Peak cold-cache stress differs from observed off-peak cached invoice estimates.",
+    "Unknown taxes, refunds, acquisition, overages and future failed/retry operations are not zero.",
+    "Historical grammar thinking batch costs were higher and must not be discarded.",
+    "The wording advisory remains open; core-semantic pass is not perfect feedback certification."
+  ],
+  "sourceHashes": {
+    "cases.json": "fcc29ed0209f7ec67c29830adb83d22f439ef93d8e2dfabc357d5b47983bf0f4",
+    "extra-cases.json": "d839a8f44bb265e255f4d05cc085f9e58cbab99c2db60268b37a5fad68fe75a1",
+    "mixed-results.json": "96e825edd838be0aae2c9511a86623845f676753db3970b3bb555077f68ba0e8",
+    "mixed-raw.json": "9356cd1275fe9c3970999401132d6dc447607ad94df271632b63437f3e354c4d",
+    "mixed-usage.json": "da9804f2dbc57470262d8ab62ee2904cd3c39f771b8be35ca77c280ee54a0311"
+  },
+  "historicalIndependentRecomputation": [
+    {
+      "purpose": "GRAMMAR_REVIEW",
+      "requests": 14,
+      "operations": 12,
+      "declaredAcceptedDenominator": 11,
+      "denominatorCaveat": "D final expected-output result, not a new F semantic certification",
+      "unknownCostCalls": 0,
+      "peakColdKnownUsd": 0.0360669,
+      "unitPeakColdUsd": 0.0032788090909090907,
+      "sourceHashes": {
+        "usage-thinking-low-v1.json": "af891060f4faf098c9882a9776ccc7e51407897bf9552aee38896872f05ddd4e",
+        "results-thinking-low-v1.json": "7ced267a114a0d37a393426bf28f0adba4c889be00ac71a0aefcbfc984e95f3c"
+      }
+    },
+    {
+      "purpose": "VOCABULARY_ASSESS",
+      "requests": 13,
+      "operations": 12,
+      "declaredAcceptedDenominator": 12,
+      "denominatorCaveat": "D final expected-output result, not a new F semantic certification",
+      "unknownCostCalls": 0,
+      "peakColdKnownUsd": 0.0072891,
+      "unitPeakColdUsd": 0.000607425,
+      "sourceHashes": {
+        "usage-bounded-repair-v6.json": "7592c70ee604691c279d582162b4f6328d5da48f0c393ee448d75caefe7e168b",
+        "results-bounded-repair-v6.json": "cd8fbb6d2586b11d0c0980a5287eada29c5e3718a9c20c5a4ecda4512a6e4412"
+      }
+    },
+    {
+      "purpose": "VOCABULARY_GENERATE",
+      "requests": 6,
+      "operations": 4,
+      "declaredAcceptedDenominator": 4,
+      "denominatorCaveat": "D final expected-output result, not a new F semantic certification",
+      "unknownCostCalls": 0,
+      "peakColdKnownUsd": 0.0028079999999999997,
+      "unitPeakColdUsd": 0.0007019999999999999,
+      "sourceHashes": {
+        "usage-bounded-repair-v6.json": "7592c70ee604691c279d582162b4f6328d5da48f0c393ee448d75caefe7e168b",
+        "results-bounded-repair-v6.json": "cd8fbb6d2586b11d0c0980a5287eada29c5e3718a9c20c5a4ecda4512a6e4412"
+      }
+    }
+  ]
+}
