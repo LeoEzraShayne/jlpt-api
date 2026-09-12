@@ -9,7 +9,9 @@ import { ApiExceptionFilter } from './common/api-exception.filter';
 import { requestIdMiddleware } from './common/request-id.middleware';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+  });
   const config = app.get(ConfigService);
   app.setGlobalPrefix('api/v1');
   // Bounded JSON imports include up to 1,000 candidate rows.

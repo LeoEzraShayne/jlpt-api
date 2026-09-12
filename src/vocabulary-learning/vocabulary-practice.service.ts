@@ -1,7 +1,11 @@
+import { QuotaService, submissionHash } from '../billing/quota.service';
+import { billingError } from '../billing/billing.policy';
+import { lockBillingUser } from '../billing/entitlement.service';
 import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Optional,
   NotFoundException,
 } from '@nestjs/common';
 import { localDayBounds } from './vocabulary-learning.service';
@@ -26,7 +30,10 @@ import type {
 
 @Injectable()
 export class VocabularyPracticeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() private readonly quota?: QuotaService,
+  ) {}
 
   async start(userId: string, input: StartVocabularyPracticeDto) {
     let vocabularyId = input.vocabularyId;
@@ -51,6 +58,7 @@ export class VocabularyPracticeService {
     }
     const id = vocabularyId;
     return this.prisma.$transaction(async (tx) => {
+      await lockBillingUser(tx, userId);
       await requireVocabulary(tx, userId, id);
       const learning = await lockLearning(tx, userId, id);
       if (!isEnabled(learning))
@@ -82,7 +90,10 @@ export class VocabularyPracticeService {
         where: { learningId: learning.id, status: { in: OPEN_STATUSES } },
         include: practiceInclude,
       });
-      if (existing) return presentPractice(existing);
+      if (existing) {
+        await this.quota?.authorizeTask(tx, userId, 'VOCABULARY', existing.id);
+        return presentPractice(existing);
+      }
       const now = new Date();
       if (
         automaticDay &&
@@ -91,9 +102,14 @@ export class VocabularyPracticeService {
         }))
       )
         throw new ConflictException('复习清单已更新，请重新选择下一个词。');
+      const user = await tx.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { explanationLocale: true },
+      });
       const practice = await tx.vocabularyPractice.create({
         data: {
           userId,
+          explanationLocale: user.explanationLocale || 'zh',
           vocabularyId: id,
           learningId: learning.id,
           grammarId,
@@ -104,6 +120,7 @@ export class VocabularyPracticeService {
         },
         include: practiceInclude,
       });
+      await this.quota?.authorizeTask(tx, userId, 'VOCABULARY', practice.id);
       return presentPractice(practice);
     });
   }
@@ -118,7 +135,38 @@ export class VocabularyPracticeService {
   }
 
   async get(userId: string, id: string) {
-    return presentPractice(await this.owned(userId, id));
+    const row = await this.owned(userId, id);
+    const attempts = await this.prisma.vocabularyPracticeAttempt.findMany({
+      where: { practiceId: id, userId },
+      orderBy: { ordinal: 'asc' },
+    });
+    const latest = attempts.at(-1);
+    return {
+      ...presentPractice(
+        latest
+          ? {
+              ...row,
+              answer: latest.answer,
+              assessment: latest.assessment,
+              status: latest.status === 'QUEUED' ? 'ASSESSING' : latest.status,
+              errorCode: latest.errorCode,
+              completedAt: latest.completedAt,
+            }
+          : row,
+      ),
+      explanationLocale: row.explanationLocale,
+      firstAssessment: row.assessment,
+      reviewAttempts: attempts.map((a) => ({
+        id: a.id,
+        ordinal: a.ordinal,
+        requestKey: a.requestKey,
+        status: a.status,
+        answer: a.answer,
+        result: a.assessment,
+        errorCode: a.errorCode,
+        completedAt: a.completedAt,
+      })),
+    };
   }
 
   async hint(userId: string, id: string) {
@@ -148,41 +196,73 @@ export class VocabularyPracticeService {
       throw new BadRequestException(
         'A sentence of up to 300 characters and a UUID requestKey are required',
       );
-    const row = await this.owned(userId, id);
-    if (row.answer !== null) {
-      if (row.requestKey !== input.requestKey || row.answer !== input.sentence)
-        throw new ConflictException('The first answer is immutable');
-      return presentPractice(row);
-    }
-    if (row.status !== 'READY')
-      throw new ConflictException('Practice is not ready');
-    const saved = await this.prisma.vocabularyPractice.updateMany({
-      where: { id, userId, status: 'READY', answer: null },
-      data: {
-        answer: input.sentence,
-        requestKey: input.requestKey,
-        status: 'ASSESSING',
-        attempts: 0,
-        lockedAt: null,
-        availableAt: new Date(),
-        errorCode: null,
-      },
-    });
-    if (!saved.count) {
-      const winner = await this.owned(userId, id);
+    await this.owned(userId, id);
+    await this.prisma.$transaction(async (tx) => {
+      await lockBillingUser(tx, userId);
+      const row = await tx.vocabularyPractice.findUniqueOrThrow({
+        where: { id },
+      });
+      const existing = await tx.vocabularyPracticeAttempt.findUnique({
+        where: {
+          practiceId_requestKey: {
+            practiceId: id,
+            requestKey: input.requestKey,
+          },
+        },
+      });
+      if (existing) {
+        if (existing.answer !== input.sentence)
+          billingError('IDEMPOTENCY_CONFLICT');
+        return;
+      }
       if (
-        winner.answer !== input.sentence ||
-        winner.requestKey !== input.requestKey
+        !['READY', 'COMPLETED', 'FAILED'].includes(row.status) ||
+        !row.challenge
       )
-        throw new ConflictException('The first answer is immutable');
-      return presentPractice(winner);
-    }
+        billingError('REQUEST_IN_PROGRESS');
+      const submission = await this.quota?.authorizeSubmission(
+        tx,
+        userId,
+        'VOCABULARY',
+        id,
+        input.requestKey,
+        submissionHash(input.sentence),
+      );
+      const last = await tx.vocabularyPracticeAttempt.findFirst({
+        where: { practiceId: id },
+        orderBy: { ordinal: 'desc' },
+      });
+      await tx.vocabularyPracticeAttempt.create({
+        data: {
+          practiceId: id,
+          userId,
+          ordinal: (last?.ordinal ?? 0) + 1,
+          requestKey: input.requestKey,
+          answer: input.sentence,
+          submissionId: submission?.id,
+        },
+      });
+      await tx.vocabularyPractice.update({
+        where: { id },
+        data: {
+          ...(row.assessment === null
+            ? { answer: input.sentence, requestKey: input.requestKey }
+            : {}),
+          status: 'ASSESSING',
+          attempts: 0,
+          lockedAt: null,
+          availableAt: new Date(),
+          errorCode: null,
+        },
+      });
+    });
     return this.get(userId, id);
   }
 
   async retry(userId: string, id: string) {
     const owned = await this.owned(userId, id);
     return this.prisma.$transaction(async (tx) => {
+      await lockBillingUser(tx, userId);
       const learning = await lockLearning(tx, userId, owned.vocabularyId);
       const row = await tx.vocabularyPractice.findUniqueOrThrow({
         where: { id },
@@ -201,6 +281,24 @@ export class VocabularyPracticeService {
         where: { learningId: learning.id, status: { in: OPEN_STATUSES } },
       });
       if (active) throw new ConflictException('Another practice is active');
+      const attempt = await tx.vocabularyPracticeAttempt.findFirst({
+        where: { practiceId: id },
+        orderBy: { ordinal: 'desc' },
+      });
+      if (attempt && this.quota) {
+        await this.quota.authorizeSubmission(
+          tx,
+          userId,
+          'VOCABULARY',
+          id,
+          attempt.requestKey,
+          submissionHash(attempt.answer),
+        );
+        await tx.vocabularyPracticeAttempt.update({
+          where: { id: attempt.id },
+          data: { status: 'QUEUED', errorCode: null },
+        });
+      } else await this.quota?.authorizeTask(tx, userId, 'VOCABULARY', id);
       return presentPractice(
         await tx.vocabularyPractice.update({
           where: { id },

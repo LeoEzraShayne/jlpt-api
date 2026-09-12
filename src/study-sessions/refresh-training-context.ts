@@ -34,7 +34,13 @@ export async function refreshTrainingContext(
     // Another device may have refreshed or submitted while this request waited.
     // Return the locked current row instead of the caller's stale initial snapshot.
     if (!needsTrainingRefresh({ ...current, attempts })) return current;
-    const training = await scenes.assign(tx, userId, id, grammar);
+    const training = await scenes.assign(
+      tx,
+      userId,
+      id,
+      grammar,
+      session.explanationLocale === 'en' ? 'en' : 'zh',
+    );
     const updated = await tx.studySession.update({
       where: { id },
       data: training,

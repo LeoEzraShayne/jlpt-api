@@ -1,3 +1,5 @@
+import { QuotaService } from '../billing/quota.service';
+import { lockBillingUser } from '../billing/entitlement.service';
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Interval } from '@nestjs/schedule';
@@ -21,6 +23,7 @@ export class AiWorkerService {
     private readonly reviews: AiReviewService,
     private readonly config: ConfigService,
     @Optional() private readonly scenes?: SceneService,
+    @Optional() private readonly quota?: QuotaService,
   ) {}
 
   @Interval(500)
@@ -61,6 +64,7 @@ export class AiWorkerService {
           ? Math.min(result.total_score, 59)
           : result.total_score;
       const saved = await this.prisma.$transaction(async (tx) => {
+        if (this.quota) await lockBillingUser(tx, job.attempt.userId);
         const guard = await tx.aiReviewJob.updateMany({
           where: leaseWhere(lease),
           data: {
@@ -107,6 +111,17 @@ export class AiWorkerService {
             latencyMs: reviewed.response.latencyMs,
           },
         });
+        if (this.quota) {
+          const submission = await tx.taskSubmission.findFirst({
+            where: {
+              resultId: id,
+              userId: job.attempt.userId,
+              status: 'PENDING',
+            },
+          });
+          if (submission)
+            await this.quota.completeSubmission(tx, submission.id, id);
+        }
         return true;
       });
       if (!saved) return;
@@ -138,18 +153,39 @@ export class AiWorkerService {
             true,
           );
     const retry = providerError.retryable && retryCount < 2;
-    await this.prisma.aiReviewJob.updateMany({
-      where: leaseWhere(lease),
-      data: {
-        status: retry ? AiJobStatus.QUEUED : AiJobStatus.FAILED,
-        retryCount: { increment: 1 },
-        errorCode: providerError.code,
-        errorMessage: providerError.message.slice(0, 500),
-        availableAt: retry
-          ? new Date(Date.now() + (retryCount + 1) * 30_000)
-          : new Date(),
-        lockedAt: null,
-      },
+    const update = async (
+      tx: import('@prisma/client').Prisma.TransactionClient | PrismaService,
+    ) =>
+      tx.aiReviewJob.updateMany({
+        where: leaseWhere(lease),
+        data: {
+          status: retry ? AiJobStatus.QUEUED : AiJobStatus.FAILED,
+          retryCount: { increment: 1 },
+          errorCode: providerError.code,
+          errorMessage: providerError.message.slice(0, 500),
+          availableAt: retry
+            ? new Date(Date.now() + (retryCount + 1) * 30_000)
+            : new Date(),
+          lockedAt: null,
+        },
+      });
+    if (!this.quota) {
+      await update(this.prisma);
+      return;
+    }
+    await this.prisma.$transaction(async (tx) => {
+      const job = await tx.aiReviewJob.findUniqueOrThrow({
+        where: { id: lease.id },
+        include: { attempt: true },
+      });
+      await lockBillingUser(tx, job.attempt.userId);
+      const saved = await update(tx);
+      if (saved.count && !retry) {
+        const submission = await tx.taskSubmission.findFirst({
+          where: { resultId: lease.id, status: 'PENDING' },
+        });
+        if (submission) await this.quota!.failSubmission(tx, submission.id);
+      }
     });
   }
 }

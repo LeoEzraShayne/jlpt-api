@@ -1,4 +1,9 @@
 import {
+  ContentLocalizationService,
+  contentLocale,
+} from '../content-localization/content-localization.service';
+import { QuotaService } from '../billing/quota.service';
+import {
   BadRequestException,
   Injectable,
   NotFoundException,
@@ -30,6 +35,8 @@ export class StudySessionsService {
     private readonly prisma: PrismaService,
     private readonly config?: ConfigService,
     @Optional() private readonly scenes?: SceneService,
+    @Optional() private readonly quota?: QuotaService,
+    @Optional() private readonly localization?: ContentLocalizationService,
   ) {}
   async get(userId: string, id: string) {
     const session = await this.prisma.studySession.findFirst({
@@ -81,7 +88,15 @@ export class StudySessionsService {
         );
       }
     }
-    return presentSession(this.withTimer(session));
+    const grammar = this.localization
+      ? (
+          await this.localization.grammar(
+            [session.grammar],
+            contentLocale(session.explanationLocale),
+          )
+        )[0]
+      : session.grammar;
+    return presentSession(this.withTimer({ ...session, grammar }));
   }
   async create(userId: string, timezone: string, dto: CreateStudySessionDto) {
     const created = await createStudySession(
@@ -90,6 +105,7 @@ export class StudySessionsService {
       timezone,
       dto,
       this.scenes,
+      this.quota,
     );
     await this.scenes?.recordShown(
       userId,
@@ -97,24 +113,36 @@ export class StudySessionsService {
       created.session.trainingContext,
       created.session.mode !== 'REVIEW',
     );
+    const grammar = this.localization
+      ? (
+          await this.localization.grammar(
+            [created.grammar],
+            contentLocale(created.session.explanationLocale),
+          )
+        )[0]
+      : created.grammar;
     return {
       ...created,
       session: presentSession(created.session),
-      grammar: presentGrammar(
-        created.grammar,
-        created.session.mode === 'REVIEW',
-      ),
+      grammar: presentGrammar(grammar, created.session.mode === 'REVIEW'),
     };
   }
   async reveal(userId: string, id: string) {
     // Commit the hint before accessing or returning reference content.
     const session = await revealStudyHint(this.prisma, userId, id);
-    const grammar = this.scenes
+    let grammar = this.scenes
       ? await this.prisma.grammarPoint.findUnique({
           where: { id: session.grammarId },
           include: { examples: { orderBy: { sortOrder: 'asc' } } },
         })
       : undefined;
+    if (grammar && this.localization)
+      grammar = (
+        await this.localization.grammar(
+          [grammar],
+          contentLocale(session.explanationLocale),
+        )
+      )[0];
     await this.scenes?.recordShown(userId, id, session.trainingContext, true);
     return presentSession(
       this.withTimer({ ...session, ...(grammar ? { grammar } : {}) }),

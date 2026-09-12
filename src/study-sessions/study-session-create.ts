@@ -1,3 +1,4 @@
+import type { QuotaService } from '../billing/quota.service';
 import {
   BadRequestException,
   ConflictException,
@@ -17,12 +18,13 @@ export async function createStudySession(
   timezone: string,
   dto: CreateStudySessionDto,
   scenes?: SceneService,
+  quota?: QuotaService,
 ) {
   return prisma.$transaction(async (tx) => {
     await lockStudyUser(tx, userId);
     const user = await tx.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { targetLevel: true },
+      select: { targetLevel: true, explanationLocale: true },
     });
     const { value: today } = localDate(timezone);
     const grammar = await tx.grammarPoint.findUnique({
@@ -74,11 +76,13 @@ export async function createStudySession(
       const existing = await tx.studySession.findUnique({
         where: { taskId },
       });
-      if (existing)
+      if (existing) {
+        await quota?.authorizeTask(tx, userId, 'GRAMMAR', existing.id);
         return {
           session: { ...existing, timer: presentTimer(resolveTimer(existing)) },
           grammar,
         };
+      }
       if (task.type === TaskType.LEARN) {
         const remainingReviews = await tx.studyTask.count({
           where: {
@@ -106,13 +110,20 @@ export async function createStudySession(
     const timer = initialTimer();
     const sessionId = randomUUID();
     const training = scenes
-      ? await scenes.assign(tx, userId, sessionId, grammar)
+      ? await scenes.assign(
+          tx,
+          userId,
+          sessionId,
+          grammar,
+          user.explanationLocale === 'en' ? 'en' : 'zh',
+        )
       : {};
     const session = await tx.studySession.create({
       data: {
         ...(scenes ? { id: sessionId } : {}),
         ...training,
         userId,
+        explanationLocale: user.explanationLocale,
         grammarId: dto.grammarId,
         taskId,
         mode: dto.mode,
@@ -124,6 +135,7 @@ export async function createStudySession(
         ...timer,
       },
     });
+    await quota?.authorizeTask(tx, userId, 'GRAMMAR', session.id);
     if (taskId)
       await tx.studyTask.update({
         where: { id: taskId },

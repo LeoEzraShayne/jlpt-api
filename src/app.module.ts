@@ -1,3 +1,4 @@
+import { BillingModule } from './billing/billing.module';
 import { VocabularyLearningModule } from './vocabulary-learning/vocabulary-learning.module';
 import { ContentModule } from './content/content.module';
 import { Module } from '@nestjs/common';
@@ -27,6 +28,7 @@ import { HistoryModule } from './history/history.module';
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]),
     ScheduleModule.forRoot(),
     DatabaseModule,
+    BillingModule,
     HealthModule,
     AuthModule,
     AdminModule,

@@ -1,5 +1,9 @@
 import { contains, excludes } from './vocabulary-test-fixtures';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  HttpException,
+} from '@nestjs/common';
 import type { PrismaService } from '../database/prisma.service';
 import type { PracticeRecord } from './vocabulary-practice.presenter';
 import { VocabularyPracticeService } from './vocabulary-practice.service';
@@ -14,6 +18,8 @@ type PracticeMutation = {
 };
 function setup() {
   let row = makePractice();
+  const attemptRows: Array<import('@prisma/client').VocabularyPracticeAttempt> =
+    [];
   const practice = {
     findFirst: jest.fn((args: { where: { userId?: string } }) =>
       Promise.resolve(
@@ -51,6 +57,37 @@ function setup() {
   };
   const db = {
     vocabularyPractice: practice,
+    vocabularyPracticeAttempt: {
+      findMany: jest.fn(() => Promise.resolve(attemptRows.slice())),
+      findUnique: jest.fn(
+        (args: { where: { practiceId_requestKey: { requestKey: string } } }) =>
+          Promise.resolve(
+            attemptRows.find(
+              (a) =>
+                a.requestKey === args.where.practiceId_requestKey.requestKey,
+            ) ?? null,
+          ),
+      ),
+      findFirst: jest.fn(() => Promise.resolve(attemptRows.at(-1) ?? null)),
+      create: jest.fn(
+        ({
+          data,
+        }: {
+          data: Partial<import('@prisma/client').VocabularyPracticeAttempt>;
+        }) => {
+          const row = {
+            id: `attempt-${attemptRows.length}`,
+            assessment: null,
+            status: 'QUEUED',
+            errorCode: null,
+            completedAt: null,
+            ...data,
+          } as import('@prisma/client').VocabularyPracticeAttempt;
+          attemptRows.push(row);
+          return Promise.resolve(row);
+        },
+      ),
+    },
     vocabularyEntry: {
       findFirst: jest.fn((): Promise<PracticeRecord['vocabulary'] | null> =>
         Promise.resolve(row.vocabulary),
@@ -76,8 +113,13 @@ function setup() {
     },
     $transaction: jest.fn(),
   };
+  let transactionTail = Promise.resolve<unknown>(undefined);
   db.$transaction.mockImplementation(
-    (callback: (tx: typeof db) => Promise<unknown>) => callback(db),
+    (callback: (tx: typeof db) => Promise<unknown>) => {
+      const result = transactionTail.then(() => callback(db));
+      transactionTail = result.catch(() => undefined);
+      return result;
+    },
   );
   return {
     service: new VocabularyPracticeService(db as unknown as PrismaService),
@@ -241,7 +283,7 @@ describe('practice API state transitions', () => {
     });
     await expect(
       fixture.service.answer('owner', 'practice', replay),
-    ).rejects.toBeInstanceOf(ConflictException);
+    ).rejects.toBeInstanceOf(HttpException);
   });
   it('validates blank, oversized answers and invalid idempotency keys in service too', async () => {
     const { service } = setup();

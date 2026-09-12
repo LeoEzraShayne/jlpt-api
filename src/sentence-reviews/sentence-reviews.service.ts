@@ -1,6 +1,9 @@
+import { QuotaService, submissionHash } from '../billing/quota.service';
+import { billingError } from '../billing/billing.policy';
 import {
   BadRequestException,
   Injectable,
+  Optional,
   NotFoundException,
 } from '@nestjs/common';
 import { readTrainingContext } from '../scenes/training-context';
@@ -15,7 +18,10 @@ import { CreateSentenceReviewDto } from './dto/create-review.dto';
 
 @Injectable()
 export class SentenceReviewsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() private readonly quota?: QuotaService,
+  ) {}
 
   async create(userId: string, dto: CreateSentenceReviewDto) {
     return this.prisma.$transaction(async (tx) => {
@@ -34,6 +40,53 @@ export class SentenceReviewsService {
           code: 'SESSION_ALREADY_COMPLETED',
           message: 'Study session is not active',
         });
+      const payloadHash = submissionHash([
+        dto.sessionId,
+        dto.sentence,
+        dto.scene ?? null,
+      ]);
+      if (this.quota) {
+        const auth = await tx.taskAuthorization.findUnique({
+          where: { kind_taskKey: { kind: 'GRAMMAR', taskKey: session.id } },
+        });
+        const previous = auth
+          ? await tx.taskSubmission.findUnique({
+              where: {
+                authorizationId_requestKey: {
+                  authorizationId: auth.id,
+                  requestKey: dto.requestKey ?? payloadHash,
+                },
+              },
+            })
+          : null;
+        if (previous) {
+          if (
+            previous.userId !== userId ||
+            previous.payloadHash !== payloadHash
+          )
+            billingError('IDEMPOTENCY_CONFLICT');
+          if (previous.resultId) {
+            const original = await tx.aiReviewJob.findUniqueOrThrow({
+              where: { id: previous.resultId },
+            });
+            return { reviewId: original.id, status: original.status };
+          }
+        }
+      }
+      const submission = await this.quota?.authorizeSubmission(
+        tx,
+        userId,
+        'GRAMMAR',
+        session.id,
+        dto.requestKey ?? payloadHash,
+        payloadHash,
+      );
+      if (submission?.resultId) {
+        const original = await tx.aiReviewJob.findUniqueOrThrow({
+          where: { id: submission.resultId },
+        });
+        return { reviewId: original.id, status: original.status };
+      }
       const attempt = await tx.sentenceAttempt.create({
         data: {
           userId,
@@ -53,6 +106,11 @@ export class SentenceReviewsService {
         },
         include: { aiJob: true },
       });
+      if (submission)
+        await tx.taskSubmission.update({
+          where: { id: submission.id },
+          data: { resultId: attempt.aiJob!.id },
+        });
       return { reviewId: attempt.aiJob!.id, status: attempt.aiJob!.status };
     });
   }
@@ -98,14 +156,31 @@ export class SentenceReviewsService {
         code: 'RETRY_LIMIT_REACHED',
         message: 'Review retry limit reached',
       });
-    return this.prisma.aiReviewJob.update({
-      where: { id },
-      data: {
-        status: 'QUEUED',
-        availableAt: new Date(),
-        errorCode: null,
-        errorMessage: null,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      await lockStudyUser(tx, userId);
+      const fresh = await tx.aiReviewJob.findUniqueOrThrow({ where: { id } });
+      if (fresh.status !== 'FAILED') billingError('REQUEST_IN_PROGRESS');
+      const submission = await tx.taskSubmission.findFirst({
+        where: { resultId: id, userId },
+      });
+      if (submission && this.quota)
+        await this.quota.authorizeSubmission(
+          tx,
+          userId,
+          'GRAMMAR',
+          job.attempt.studySessionId,
+          submission.requestKey,
+          submission.payloadHash ?? undefined,
+        );
+      return tx.aiReviewJob.update({
+        where: { id },
+        data: {
+          status: 'QUEUED',
+          availableAt: new Date(),
+          errorCode: null,
+          errorMessage: null,
+        },
+      });
     });
   }
 }

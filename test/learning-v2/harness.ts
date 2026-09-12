@@ -1,3 +1,4 @@
+import { BillingModule } from '../../src/billing/billing.module';
 import 'reflect-metadata';
 import { VocabularyLearningModule } from '../../src/vocabulary-learning/vocabulary-learning.module';
 import { randomBytes } from 'node:crypto';
@@ -102,6 +103,7 @@ export async function startHarness(legacySeed?: (db: Client) => Promise<void>) {
           load: [() => config],
         }),
         DatabaseModule,
+        BillingModule,
         AuthModule,
         AdminModule,
         StudyPlansModule,

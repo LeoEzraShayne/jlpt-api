@@ -323,3 +323,53 @@ test('automatic next and due summary skip a consumed word without changing its o
     .expect(200);
   expect((await f.learning()).nextReviewAt).toEqual(before.nextReviewAt);
 });
+
+test('same-task corrections preserve first evidence and consume one shared task with three successful slots', async () => {
+  await h.prisma.billingConfig.upsert({
+    where: { id: 'default' },
+    create: { enforcementEnabled: true, enforcementAt: new Date(0) },
+    update: { enforcementEnabled: true, enforcementAt: new Date(0) },
+  });
+  const f = await fixture();
+  const id = await f.start();
+  await f.answer(id);
+  await worker.processOne();
+  const firstMemory = await f.learning();
+  const first = await h.prisma.vocabularyPractice.findUniqueOrThrow({
+    where: { id },
+  });
+  for (let i = 0; i < 2; i++) {
+    const requestKey = randomUUID();
+    const body = { sentence: `結果を詳しく報告します。${i}`, requestKey };
+    await f.http.post(`/vocabulary-practices/${id}/answer`, body).expect(201);
+    await f.http.post(`/vocabulary-practices/${id}/answer`, body).expect(201);
+    await worker.processOne();
+  }
+  await f.http
+    .post(`/vocabulary-practices/${id}/answer`, {
+      sentence: 'もう一度報告します。',
+      requestKey: randomUUID(),
+    })
+    .expect(402);
+  const current = await h.prisma.vocabularyPractice.findUniqueOrThrow({
+    where: { id },
+  });
+  expect(current.answer).toBe(first.answer);
+  expect(current.assessment).toEqual(first.assessment);
+  expect((await f.learning()).memoryCard).toEqual(firstMemory.memoryCard);
+  expect((await f.learning()).nextReviewAt).toEqual(firstMemory.nextReviewAt);
+  expect(
+    await h.prisma.vocabularyPracticeAttempt.count({
+      where: { practiceId: id, status: 'COMPLETED' },
+    }),
+  ).toBe(3);
+  expect(
+    await h.prisma.taskAuthorization.findUnique({
+      where: { kind_taskKey: { kind: 'VOCABULARY', taskKey: id } },
+    }),
+  ).toMatchObject({
+    successfulReviews: 3,
+    reservedReviews: 0,
+    status: 'CONSUMED',
+  });
+});

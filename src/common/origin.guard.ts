@@ -15,6 +15,11 @@ export class OriginGuard implements CanActivate {
     if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method))
       return true;
     if (this.config.get('NODE_ENV') !== 'production') return true;
+    if (
+      request.method === 'POST' &&
+      request.path === '/api/v1/billing/webhooks/stripe'
+    )
+      return true;
     const origin = request.header('origin');
     if (origin !== this.config.get('FRONTEND_URL'))
       throw new ForbiddenException({

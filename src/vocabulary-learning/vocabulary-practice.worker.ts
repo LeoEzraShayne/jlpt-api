@@ -1,4 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { QuotaService } from '../billing/quota.service';
+import { lockBillingUser } from '../billing/entitlement.service';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Interval } from '@nestjs/schedule';
 import { PrismaService } from '../database/prisma.service';
@@ -31,6 +33,7 @@ export class VocabularyPracticeWorker {
     private readonly prisma: PrismaService,
     private readonly ai: VocabularyAiService,
     private readonly config: ConfigService,
+    @Optional() private readonly quota?: QuotaService,
   ) {}
 
   @Interval(1000)
@@ -97,8 +100,18 @@ export class VocabularyPracticeWorker {
         const challenge = readChallenge(job.challenge);
         const input = storedVocabularyInput(job);
         if (!challenge || !input) throw new Error('Missing challenge context');
-        const assessment = await this.ai.assess(input, challenge, job.answer);
-        await this.complete(lease, job, assessment);
+        const attempt = this.quota
+          ? await this.prisma.vocabularyPracticeAttempt.findFirst({
+              where: { practiceId: job.id, status: 'QUEUED' },
+              orderBy: { ordinal: 'desc' },
+            })
+          : null;
+        const assessment = await this.ai.assess(
+          input,
+          challenge,
+          attempt?.answer ?? job.answer,
+        );
+        await this.complete(lease, job, assessment, attempt?.id);
       }
     } catch {
       await this.fail(lease, 'AI_FAILED');
@@ -109,6 +122,7 @@ export class VocabularyPracticeWorker {
     lease: VocabularyLease,
     job: PracticeRecord,
     assessment: WordAssessment,
+    attemptId?: string,
   ) {
     const user = await this.prisma.user.findUniqueOrThrow({
       where: { id: job.userId },
@@ -116,6 +130,7 @@ export class VocabularyPracticeWorker {
     });
     const now = new Date();
     await this.prisma.$transaction(async (tx) => {
+      if (this.quota) await lockBillingUser(tx, job.userId);
       const learning = await lockLearning(tx, job.userId, job.vocabularyId);
       const visible = await tx.vocabularyEntry.findFirst({
         where: { id: job.vocabularyId, ...visibleVocabulary(job.userId) },
@@ -134,7 +149,24 @@ export class VocabularyPracticeWorker {
             errorCode: 'LEARNING_CHANGED',
           },
         });
+        if (this.quota && attemptId) {
+          const attempt = await tx.vocabularyPracticeAttempt.update({
+            where: { id: attemptId },
+            data: { status: 'FAILED', errorCode: 'LEARNING_CHANGED' },
+          });
+          if (attempt.submissionId)
+            await this.quota.failSubmission(tx, attempt.submissionId);
+        }
         return;
+      }
+      if (job.assessment !== null) {
+        const saved = await tx.vocabularyPractice.updateMany({
+          where: vocabularyLeaseWhere(lease),
+          data: { status: 'COMPLETED', lockedAt: null, errorCode: null },
+        });
+        if (saved.count && attemptId)
+          await this.completeAttempt(tx, attemptId, assessment, now);
+        return; // Corrections never update the original evidence or FSRS memory.
       }
       const earlier = await tx.vocabularyPractice.findFirst({
         where: {
@@ -183,6 +215,7 @@ export class VocabularyPracticeWorker {
         },
       });
       if (!saved.count) return; // A recovered worker owns the lease now.
+      if (attemptId) await this.completeAttempt(tx, attemptId, assessment, now);
       if (result.data)
         await tx.vocabularyLearning.update({
           where: { id: learning.id },
@@ -191,10 +224,59 @@ export class VocabularyPracticeWorker {
     });
   }
 
+  private async completeAttempt(
+    tx: import('@prisma/client').Prisma.TransactionClient,
+    id: string,
+    assessment: WordAssessment,
+    now: Date,
+  ) {
+    const attempt = await tx.vocabularyPracticeAttempt.update({
+      where: { id },
+      data: {
+        status: 'COMPLETED',
+        assessment,
+        completedAt: now,
+        errorCode: null,
+      },
+    });
+    if (attempt.submissionId)
+      await this.quota?.completeSubmission(
+        tx,
+        attempt.submissionId,
+        attempt.id,
+      );
+  }
+
   private async fail(lease: VocabularyLease, errorCode: string) {
-    await this.prisma.vocabularyPractice.updateMany({
-      where: vocabularyLeaseWhere(lease),
-      data: { status: 'FAILED', lockedAt: null, errorCode },
+    if (!this.quota) {
+      await this.prisma.vocabularyPractice.updateMany({
+        where: vocabularyLeaseWhere(lease),
+        data: { status: 'FAILED', lockedAt: null, errorCode },
+      });
+      return;
+    }
+    await this.prisma.$transaction(async (tx) => {
+      const job = await tx.vocabularyPractice.findUniqueOrThrow({
+        where: { id: lease.id },
+      });
+      await lockBillingUser(tx, job.userId);
+      const saved = await tx.vocabularyPractice.updateMany({
+        where: vocabularyLeaseWhere(lease),
+        data: { status: 'FAILED', lockedAt: null, errorCode },
+      });
+      if (!saved.count) return;
+      const attempts = await tx.vocabularyPracticeAttempt.findMany({
+        where: { practiceId: job.id, status: 'QUEUED' },
+      });
+      for (const attempt of attempts) {
+        await tx.vocabularyPracticeAttempt.update({
+          where: { id: attempt.id },
+          data: { status: 'FAILED', errorCode },
+        });
+        if (attempt.submissionId)
+          await this.quota!.failSubmission(tx, attempt.submissionId);
+      }
+      await this.quota!.releaseTask(tx, job.userId, 'VOCABULARY', job.id);
     });
   }
 }
