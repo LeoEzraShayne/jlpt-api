@@ -1,0 +1,393 @@
+{
+  "version": "F-held-out-route-v2",
+  "status": "PREPARED_NOT_RUN",
+  "localeCounts": {
+    "zh": 6,
+    "en": 6
+  },
+  "candidateCommit": null,
+  "rows": [
+    {
+      "caseId": "zh:connection-error",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "zh",
+        "grammarTitle": "～にくい",
+        "explanation": "做某事困难",
+        "connectionRule": "动词ます形去ます＋にくい",
+        "sentence": "この説明書は漢字が多くて、読むにくいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": false,
+        "isCorrect": false,
+        "scoreMin": 0,
+        "scoreMax": 59,
+        "unchangedOriginal": false,
+        "errorMustReferToOriginal": true,
+        "scenarioAward": null,
+        "semantic": {
+          "expectedCorrection": "この説明書は漢字が多くて、読みにくいです。",
+          "errorText": "読むにくい",
+          "replacement": "読みにくい",
+          "meaning": "这份说明书含很多汉字，难以阅读。"
+        }
+      }
+    },
+    {
+      "caseId": "zh:natural-control",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "zh",
+        "grammarTitle": "～にくい",
+        "explanation": "做某事困难",
+        "connectionRule": "动词ます形去ます＋にくい",
+        "sentence": "この説明書は漢字が多くて、読みにくいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "scenarioAward": null,
+        "semantic": {
+          "meaning": "这份说明书含很多汉字，难以阅读。"
+        }
+      }
+    },
+    {
+      "caseId": "zh:obligation",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "zh",
+        "grammarTitle": "～なければならない",
+        "explanation": "必须做某事",
+        "connectionRule": "动词ない形去ない＋なければならない",
+        "sentence": "図書館の本なので、来週までに返さなければならない。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "scenarioAward": null,
+        "semantic": {
+          "meaning": "Must return the library book by next week.",
+          "forbiddenMeaning": "No need to do it / must not do it."
+        }
+      }
+    },
+    {
+      "caseId": "zh:no-obligation",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "zh",
+        "grammarTitle": "～なくてもいい",
+        "explanation": "不做也可以，无需做，并非禁止做",
+        "connectionRule": "动词ない形去ない＋なくてもいい",
+        "sentence": "その本はプレゼントなので、返さなくてもいいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "scenarioAward": null,
+        "semantic": {
+          "meaning": "The book is a gift, so there is no need to return it.",
+          "forbiddenMeaning": "Must do it / must not do it / cannot do it."
+        }
+      }
+    },
+    {
+      "caseId": "zh:word-target",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "謝る",
+          "reading": "あやまる",
+          "chineseGloss": "为过失向他人道歉",
+          "senseKey": "F-route-zh",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "to apologize for a mistake"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语说明你迟到后如何向老师道歉。",
+          "meaningHintZh": "为自己的过失向对方道歉。",
+          "grammarId": null,
+          "referenceSentence": "遅刻したので、先生に謝りました。",
+          "referenceFurigana": "遅刻[ちこく]したので、先生[せんせい]に謝[あやま]りました。",
+          "referenceTranslationZh": "因为迟到了，我向老师道歉了。",
+          "chunks": [
+            "遅刻したので、",
+            "先生に謝りました。"
+          ]
+        },
+        "sentence": "遅刻したので、先生に謝りました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "corrections": [],
+        "semantic": "Natural sentence remains acceptable even when the tested lexical item is absent. Never infer target knowledge from corrected/reference text, synonymous meaning, or the exercise prompt."
+      }
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "謝る",
+          "reading": "あやまる",
+          "chineseGloss": "为过失向他人道歉",
+          "senseKey": "F-route-zh",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "to apologize for a mistake"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语说明你迟到后如何向老师道歉。",
+          "meaningHintZh": "为自己的过失向对方道歉。",
+          "grammarId": null,
+          "referenceSentence": "遅刻したので、先生に謝りました。",
+          "referenceFurigana": "遅刻[ちこく]したので、先生[せんせい]に謝[あやま]りました。",
+          "referenceTranslationZh": "因为迟到了，我向老师道歉了。",
+          "chunks": [
+            "遅刻したので、",
+            "先生に謝りました。"
+          ]
+        },
+        "sentence": "遅刻したので、先生に「すみません」と言いました。"
+      },
+      "expected": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "corrections": [],
+        "semantic": "Natural sentence remains acceptable even when the tested lexical item is absent. Never infer target knowledge from corrected/reference text, synonymous meaning, or the exercise prompt."
+      }
+    },
+    {
+      "caseId": "en:connection-error",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "en",
+        "grammarTitle": "～にくい",
+        "explanation": "做某事困难",
+        "connectionRule": "动词ます形去ます＋にくい",
+        "sentence": "この住所は長いので、覚えるにくいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": false,
+        "isCorrect": false,
+        "scoreMin": 0,
+        "scoreMax": 59,
+        "unchangedOriginal": false,
+        "errorMustReferToOriginal": true,
+        "scenarioAward": null,
+        "semantic": {
+          "expectedCorrection": "この住所は長いので、覚えにくいです。",
+          "errorText": "覚えるにくい",
+          "replacement": "覚えにくい",
+          "meaning": "The address is long and hard to remember."
+        }
+      }
+    },
+    {
+      "caseId": "en:natural-control",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "en",
+        "grammarTitle": "～にくい",
+        "explanation": "做某事困难",
+        "connectionRule": "动词ます形去ます＋にくい",
+        "sentence": "この住所は長いので、覚えにくいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "scenarioAward": null,
+        "semantic": {
+          "meaning": "The address is long and hard to remember."
+        }
+      }
+    },
+    {
+      "caseId": "en:obligation",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "en",
+        "grammarTitle": "～なければならない",
+        "explanation": "必须做某事",
+        "connectionRule": "动词ない形去ない＋なければならない",
+        "sentence": "会社の規則なので、毎月パスワードを変えなければならない。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "scenarioAward": null,
+        "semantic": {
+          "meaning": "Company rules require changing the password every month.",
+          "forbiddenMeaning": "No need to do it / must not do it."
+        }
+      }
+    },
+    {
+      "caseId": "en:no-obligation",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "en",
+        "grammarTitle": "～なくてもいい",
+        "explanation": "不做也可以，无需做，并非禁止做",
+        "connectionRule": "动词ない形去ない＋なくてもいい",
+        "sentence": "今日は休みなので、早く起きなくてもいいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "scenarioAward": null,
+        "semantic": {
+          "meaning": "Today is a day off, so there is no need to get up early.",
+          "forbiddenMeaning": "Must do it / must not do it / cannot do it."
+        }
+      }
+    },
+    {
+      "caseId": "en:word-target",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "感謝",
+          "reading": "かんしゃ",
+          "chineseGloss": "对帮助自己的人表示感谢",
+          "senseKey": "F-route-en",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "gratitude; thanks for help received"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Express gratitude toward a friend who helped you, in Japanese.",
+          "meaningHintZh": "A feeling of thanks toward someone who helped you.",
+          "grammarId": null,
+          "referenceSentence": "手伝ってくれた友達に感謝しています。",
+          "referenceFurigana": "手伝[てつだ]ってくれた友達[ともだち]に感謝[かんしゃ]しています。",
+          "referenceTranslationZh": "I am grateful to the friend who helped me.",
+          "chunks": [
+            "手伝ってくれた友達に",
+            "感謝しています。"
+          ]
+        },
+        "sentence": "手伝ってくれた友達に感謝しています。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": true,
+        "meaningCorrect": true,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "corrections": [],
+        "semantic": "Natural sentence remains acceptable even when the tested lexical item is absent. Never infer target knowledge from corrected/reference text, synonymous meaning, or the exercise prompt."
+      }
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "感謝",
+          "reading": "かんしゃ",
+          "chineseGloss": "对帮助自己的人表示感谢",
+          "senseKey": "F-route-en",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "gratitude; thanks for help received"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Express gratitude toward a friend who helped you, in Japanese.",
+          "meaningHintZh": "A feeling of thanks toward someone who helped you.",
+          "grammarId": null,
+          "referenceSentence": "手伝ってくれた友達に感謝しています。",
+          "referenceFurigana": "手伝[てつだ]ってくれた友達[ともだち]に感謝[かんしゃ]しています。",
+          "referenceTranslationZh": "I am grateful to the friend who helped me.",
+          "chunks": [
+            "手伝ってくれた友達に",
+            "感謝しています。"
+          ]
+        },
+        "sentence": "手伝ってくれた友達に「ありがとう」と言いました。"
+      },
+      "expected": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "corrections": [],
+        "semantic": "Natural sentence remains acceptable even when the tested lexical item is absent. Never infer target knowledge from corrected/reference text, synonymous meaning, or the exercise prompt."
+      }
+    }
+  ]
+}
