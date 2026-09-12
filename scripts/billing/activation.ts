@@ -12,7 +12,7 @@ export async function activateWebBilling(
   now = new Date(),
 ) {
   return db.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT pg_advisory_xact_lock(192837465, 1)`;
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(192837465, 1)::text`;
     await tx.billingConfig.upsert({
       where: { id: 'default' },
       create: { id: 'default' },
