@@ -1,0 +1,16 @@
+{
+  "verifiedAt": "2026-09-12T15:56:07.467Z",
+  "artifactHash": "6bf3eb665f5be3c214417bdaadfff0ff0326e82a3bc2e26822cb26491ec8ecce",
+  "sourceRecordsChanged": 5,
+  "activeCorpusEntities": 546,
+  "translationVersionsBefore": 546,
+  "translationVersionsAfter": 550,
+  "previewReadOnly": true,
+  "unknownSourceDriftRejectedAtomically": true,
+  "unknownTranslationProvenanceRejectedAtomically": true,
+  "repeatIsNoOpIncludingTimestamps": true,
+  "unrelatedSourcesUnchanged": true,
+  "previousTranslationHashesRetained": true,
+  "previousRelationEnglishInImportBatchAudit": true,
+  "independentLinguisticAcceptance": "F_RECHECK_PENDING"
+}

@@ -1,0 +1,417 @@
+{
+  "version": "source-correction-v1",
+  "batch": "F-language-20260913",
+  "references": {
+    "mai": "https://kotobank.jp/word/%E3%81%BE%E3%81%84-632809",
+    "nhk": "https://www.jstage.jst.go.jp/article/bunken/68/12/68_46/_pdf/-char/en",
+    "nishitemo": "https://jn1et.com/nisiro-nisiro/",
+    "wake": "https://mainichi-nonbiri.com/grammar/n3-wakenihaikanai/"
+  },
+  "sourcePatches": [
+    {
+      "table": "GrammarPoint",
+      "issue": "F-L01",
+      "before": {
+        "id": "cmsldfdu70047y1vb3tqhdqss",
+        "level": "N2",
+        "title": "～ようか～まいか",
+        "chineseExplanation": "是要……还是不要……；在两种选择之间犹豫。",
+        "connectionRule": "动词意志形＋か＋动词辞书形＋まいか；Ⅰ类动词（五段动词）词尾「あ段」＋まい；Ⅱ类动词（一段动词）去掉「る」＋まい；する→すまい／するまい；くる→こまい／くるまい",
+        "usageScene": null,
+        "commonErrors": null,
+        "sortOrder": 36,
+        "status": "PUBLISHED",
+        "sourceDataset": "N1-N5语法总结-v1",
+        "sourceOrdinal": 36,
+        "sourceHash": "76e33189dda8d3284f91dc52db8e5a0905329945a536b6206b810768b8e94f42"
+      },
+      "after": {
+        "id": "cmsldfdu70047y1vb3tqhdqss",
+        "level": "N2",
+        "title": "～ようか～まいか",
+        "chineseExplanation": "是要……还是不要……；在两种选择之间犹豫。",
+        "connectionRule": "同一动词的意志形＋か＋辞书形＋まいか，如行こうか行くまいか。五段动词用辞书形＋まい，不用あ段。一段动词也可去掉「る」＋まい，如食べようか食べまいか／食べようか食べるまいか。する可用しまい／すまい／するまい；来る可用こまい／くるまい。",
+        "usageScene": null,
+        "commonErrors": null,
+        "sortOrder": 36,
+        "status": "PUBLISHED",
+        "sourceDataset": "N1-N5语法总结-v1",
+        "sourceOrdinal": 36,
+        "sourceHash": "4bc04af658683a3b947deff0ca9c06e4f4ae131954cb445c1d5ef22bc29fc457"
+      },
+      "references": [
+        "https://kotobank.jp/word/%E3%81%BE%E3%81%84-632809",
+        "https://www.jstage.jst.go.jp/article/bunken/68/12/68_46/_pdf/-char/en"
+      ],
+      "beforeRecordHash": "87470bab438e83f7d17bc8cd513efc5f917006a6e22e7b2032340e541de32cc3",
+      "afterRecordHash": "8432db86fa48654daec20115f570da2a502797cb748595383660bda15c42f0c8"
+    },
+    {
+      "table": "GrammarPoint",
+      "issue": "F-L02",
+      "before": {
+        "id": "cmsldfe3x007ly1vb0jpatf6r",
+        "level": "N3",
+        "title": "～にしても～にしても",
+        "chineseExplanation": "无论……还是……；列举两种情况，结论相同。",
+        "connectionRule": "动词た形＋にしても；イ形容词＋にしても；ナ形容词＋にしても；名词＋にしても",
+        "usageScene": null,
+        "commonErrors": null,
+        "sortOrder": 57,
+        "status": "PUBLISHED",
+        "sourceDataset": "N1-N5语法总结-v1",
+        "sourceOrdinal": 57,
+        "sourceHash": "b5cb209e9ffd180a1879850c2313e224138cb92d27c420524c532cad77ac958e"
+      },
+      "after": {
+        "id": "cmsldfe3x007ly1vb0jpatf6r",
+        "level": "N3",
+        "title": "～にしても～にしても",
+        "chineseExplanation": "无论……还是……；列举两种情况，结论相同。",
+        "connectionRule": "动词、イ形容词用普通形＋にしても，肯定、否定及过去形均可，如行くにしても行かないにしても。ナ形容词词干、名词可直接接にしても，也可接である＋にしても；其否定形、过去形用ではない／だった等，不接非过去肯定的「だ」。将两个选项分别接にしても并列。",
+        "usageScene": null,
+        "commonErrors": null,
+        "sortOrder": 57,
+        "status": "PUBLISHED",
+        "sourceDataset": "N1-N5语法总结-v1",
+        "sourceOrdinal": 57,
+        "sourceHash": "ee060f7d41fd33c5d78951a3fa2767dcf1c5b0c39068c5fd4654046a802f2648"
+      },
+      "references": [
+        "https://jn1et.com/nisiro-nisiro/"
+      ],
+      "beforeRecordHash": "b35854f606e4fbffecf4af576c2f5bf966ff68ec7a7ca84b51ba32aabcf30558",
+      "afterRecordHash": "9f7b94a4aa6917b3317819b17d2ebdaf2d2378f6bc9eb14aa46f94e2d442ff52"
+    },
+    {
+      "table": "GrammarPoint",
+      "issue": "F-L04",
+      "before": {
+        "id": "cmsldfe5g008ny1vb9x5ctek9",
+        "level": "N3",
+        "title": "～わけにはいかない",
+        "chineseExplanation": "不能……；由于社会常识、责任或心理原因无法做。",
+        "connectionRule": "动词辞书形＋わけにはいかない；动词ない形＋わけにはいかない",
+        "usageScene": null,
+        "commonErrors": null,
+        "sortOrder": 76,
+        "status": "PUBLISHED",
+        "sourceDataset": "N1-N5语法总结-v1",
+        "sourceOrdinal": 76,
+        "sourceHash": "7e5c44896fce6fb6f2c800de3405e5ff7f71a5ef40cfcf87c58a98723ccf9698"
+      },
+      "after": {
+        "id": "cmsldfe5g008ny1vb9x5ctek9",
+        "level": "N3",
+        "title": "～わけにはいかない",
+        "chineseExplanation": "不能……；由于社会常识、责任或心理原因，不能做某事。本条说明肯定形式接续的用法。否定形式「Vない＋わけにはいかない」则表示不能不做、必须做，见「～ないわけにはいかない」。",
+        "connectionRule": "动词肯定非过去普通形＋わけにはいかない，如行くわけにはいかない；也可接「Vている」，如遊んでいるわけにはいかない。本条不将「Vない＋わけにはいかない」列为同义接续，后者表示必须做。",
+        "usageScene": null,
+        "commonErrors": null,
+        "sortOrder": 76,
+        "status": "PUBLISHED",
+        "sourceDataset": "N1-N5语法总结-v1",
+        "sourceOrdinal": 76,
+        "sourceHash": "e90379a4e91eac04cdcd02d8e8e718593b07b1e92a21ccf486068d66bcfb1fa6"
+      },
+      "references": [
+        "https://mainichi-nonbiri.com/grammar/n3-wakenihaikanai/"
+      ],
+      "beforeRecordHash": "426a6097b7d0ba4bd6458cf45f52fc1477623aa585630df524690c977d410989",
+      "afterRecordHash": "8294854e42e688013254f1f168ccdd0e80f08e6aba987c4c566a8a9def2bc85c"
+    },
+    {
+      "table": "GrammarExample",
+      "issue": "F-L03",
+      "before": {
+        "id": "cmsldfe5j008qy1vbndypnc0i",
+        "grammarId": "cmsldfe5i008py1vbbm1gv6pq",
+        "sentence": "上司に頼まれたので、断らないわけにはいかない。",
+        "translation": "上司拜托了，所以不能拒绝。",
+        "sortOrder": 1
+      },
+      "after": {
+        "id": "cmsldfe5j008qy1vbndypnc0i",
+        "grammarId": "cmsldfe5i008py1vbbm1gv6pq",
+        "sentence": "上司に頼まれたので、引き受けないわけにはいかない。",
+        "translation": "上司拜托了，所以不能不接受。",
+        "sortOrder": 1
+      },
+      "references": [
+        "https://mainichi-nonbiri.com/grammar/n3-wakenihaikanai/"
+      ],
+      "beforeRecordHash": "262d45a8fbeb1e6243fdf46ba17e726009eafe67fde4bd0884d8304cd6fbf367",
+      "afterRecordHash": "0f3fecd2e1f80e6f9b5c116e6468f22e15b19ea04127809999ec07e21432facc"
+    },
+    {
+      "table": "GrammarPoint",
+      "issue": "F-L03-parent-import-hash",
+      "before": {
+        "id": "cmsldfe5i008py1vbbm1gv6pq",
+        "level": "N3",
+        "title": "～ないわけにはいかない",
+        "chineseExplanation": "不能不……；由于责任或情况必须做。",
+        "connectionRule": "动词ない形＋わけにはいかない",
+        "usageScene": null,
+        "commonErrors": null,
+        "sortOrder": 77,
+        "status": "PUBLISHED",
+        "sourceDataset": "N1-N5语法总结-v1",
+        "sourceOrdinal": 77,
+        "sourceHash": "4aea756ac9eb287d198924c86d1f43a35ad2ff90f8e0924baae7848fefa5ba12"
+      },
+      "after": {
+        "id": "cmsldfe5i008py1vbbm1gv6pq",
+        "level": "N3",
+        "title": "～ないわけにはいかない",
+        "chineseExplanation": "不能不……；由于责任或情况必须做。",
+        "connectionRule": "动词ない形＋わけにはいかない",
+        "usageScene": null,
+        "commonErrors": null,
+        "sortOrder": 77,
+        "status": "PUBLISHED",
+        "sourceDataset": "N1-N5语法总结-v1",
+        "sourceOrdinal": 77,
+        "sourceHash": "a0a96018123c54d55d7ecaaa5335f971ac9da092b4f1e352fdd0193f7a96d182"
+      },
+      "references": [
+        "https://mainichi-nonbiri.com/grammar/n3-wakenihaikanai/"
+      ],
+      "beforeRecordHash": "9e361b16340cba849e6b35193ce647e8cd1dca0ebd5f845ea279d28f86de0192",
+      "afterRecordHash": "8f5fe6749501e05ffec62d950e2dd2c1b784a84546d17ed31578e043fd7cb26c"
+    }
+  ],
+  "translationEdits": [
+    {
+      "issue": "F-L01",
+      "before": {
+        "entityType": "GRAMMAR",
+        "entityId": "cmsldfdu70047y1vb3tqhdqss",
+        "locale": "en",
+        "sourceHash": "5b8097bda7dbcf70e3ade459654f1ee28711644b3512da90ac0666f5d3da18b5",
+        "fields": {
+          "explanation": "Whether to... or not...; hesitating between two choices.",
+          "connectionRule": "Verb volitional form + か + verb dictionary form + まいか; Group I verbs (godan verbs) stem ending in the \"a\" row + まい; Group II verbs (ichidan verbs) drop る + まい; する→すまい／するまい; くる→こまい／くるまい",
+          "usageScene": null,
+          "commonErrors": null
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "DEEPSEEK",
+          "model": "deepseek-flash",
+          "sourceHash": "5b8097bda7dbcf70e3ade459654f1ee28711644b3512da90ac0666f5d3da18b5",
+          "method": "model-translation-plus-independent-model-review-and-structural-checks",
+          "requestId": "40095661-9f7d-443e-8cf2-f3b7ed6b231c",
+          "reviewedBy": "deepseek-flash:ad6fbb10-e661-488b-a2ad-e257e074a7a6",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:13:49.684Z"
+      },
+      "after": {
+        "entityType": "GRAMMAR",
+        "entityId": "cmsldfdu70047y1vb3tqhdqss",
+        "locale": "en",
+        "sourceHash": "a474cd7ee7bf8567879a549bfd35c9ca68400769152fed39a1305388f473720c",
+        "fields": {
+          "explanation": "Whether to... or not...; hesitating between two choices.",
+          "connectionRule": "Use the same verb: volitional form + か + dictionary form + まいか, e.g. 行こうか行くまいか. Godan verbs take the dictionary form before まい, not the a-row form. Ichidan verbs may also drop る: 食べようか食べまいか / 食べようか食べるまいか. For する, use しまい / すまい / するまい; for 来る, use こまい / くるまい.",
+          "usageScene": null,
+          "commonErrors": null
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "CODEX",
+          "model": "coding-agent-editor",
+          "sourceHash": "a474cd7ee7bf8567879a549bfd35c9ca68400769152fed39a1305388f473720c",
+          "method": "source-backed-editorial-correction-after-F-review",
+          "reviewedBy": "C-source-reference-review; F-independent-recheck-pending",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:52:21.246Z"
+      }
+    },
+    {
+      "issue": "F-L02",
+      "before": {
+        "entityType": "GRAMMAR",
+        "entityId": "cmsldfe3x007ly1vb0jpatf6r",
+        "locale": "en",
+        "sourceHash": "38cc39e28b52daf567e18456a4fcfcc96d0fd223d29a4ff9488c57b7276d5fe0",
+        "fields": {
+          "explanation": "Whether... or...; listing two cases with the same conclusion.",
+          "connectionRule": "ta-form of verb + にしても; i-adjective + にしても; na-adjective + にしても; noun + にしても",
+          "usageScene": null,
+          "commonErrors": null
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "DEEPSEEK",
+          "model": "deepseek-flash",
+          "sourceHash": "38cc39e28b52daf567e18456a4fcfcc96d0fd223d29a4ff9488c57b7276d5fe0",
+          "method": "model-translation-plus-independent-model-review-and-structural-checks",
+          "requestId": "8ac1255a-0123-45d2-a043-2f4cffc1c392",
+          "reviewedBy": "deepseek-flash:516ef362-7c02-425b-b7ab-d4cbd2197b65",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:14:25.041Z"
+      },
+      "after": {
+        "entityType": "GRAMMAR",
+        "entityId": "cmsldfe3x007ly1vb0jpatf6r",
+        "locale": "en",
+        "sourceHash": "971e535a6313138d0f8e86a94aeeb4d5c3e55a42d1ba26e881eb7a99528b7c39",
+        "fields": {
+          "explanation": "Whether... or...; listing two cases with the same conclusion.",
+          "connectionRule": "Verbs and i-adjectives take the plain form + にしても, including affirmative, negative and past forms, e.g. 行くにしても行かないにしても. Na-adjective stems and nouns may take にしても directly or use である + にしても; their negative and past forms use ではない / だった, etc., without nonpast affirmative だ. Attach にしても to each of the two alternatives.",
+          "usageScene": null,
+          "commonErrors": null
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "CODEX",
+          "model": "coding-agent-editor",
+          "sourceHash": "971e535a6313138d0f8e86a94aeeb4d5c3e55a42d1ba26e881eb7a99528b7c39",
+          "method": "source-backed-editorial-correction-after-F-review",
+          "reviewedBy": "C-source-reference-review; F-independent-recheck-pending",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:52:21.247Z"
+      }
+    },
+    {
+      "issue": "F-L04",
+      "before": {
+        "entityType": "GRAMMAR",
+        "entityId": "cmsldfe5g008ny1vb9x5ctek9",
+        "locale": "en",
+        "sourceHash": "3c740504c4309612864540ed6ae7a004d19f806477b6817e687004621c838d6f",
+        "fields": {
+          "explanation": "Cannot...; unable to do due to social norms, responsibility, or psychological reasons.",
+          "connectionRule": "Verb dictionary form + わけにはいかない; verb nai-form + わけにはいかない",
+          "usageScene": null,
+          "commonErrors": null
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "DEEPSEEK",
+          "model": "deepseek-flash",
+          "sourceHash": "3c740504c4309612864540ed6ae7a004d19f806477b6817e687004621c838d6f",
+          "method": "model-translation-plus-independent-model-review-and-structural-checks",
+          "requestId": "ff0f16dc-e835-4f69-97f9-d223cb9d9067",
+          "reviewedBy": "deepseek-flash:181004a1-0bb5-49be-90e4-3b1832f61964",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:14:32.394Z"
+      },
+      "after": {
+        "entityType": "GRAMMAR",
+        "entityId": "cmsldfe5g008ny1vb9x5ctek9",
+        "locale": "en",
+        "sourceHash": "43d4cfa12c0567de563fece8aa755bd0af09169413ccaeaf1d8cb3dd25cf2693",
+        "fields": {
+          "explanation": "Cannot do something because of social expectations, responsibility, or personal considerations. This entry covers affirmative forms before わけにはいかない. In contrast, Vない + わけにはいかない means cannot leave something undone / must do it; see the separate ～ないわけにはいかない entry.",
+          "connectionRule": "Affirmative nonpast plain form of a verb + わけにはいかない, e.g. 行くわけにはいかない. Vている can also precede it, e.g. 遊んでいるわけにはいかない. Vない + わけにはいかない has the opposite polarity, expressing an obligation to act, and is not an equivalent connection for this entry.",
+          "usageScene": null,
+          "commonErrors": null
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "CODEX",
+          "model": "coding-agent-editor",
+          "sourceHash": "43d4cfa12c0567de563fece8aa755bd0af09169413ccaeaf1d8cb3dd25cf2693",
+          "method": "source-backed-editorial-correction-after-F-review",
+          "reviewedBy": "C-source-reference-review; F-independent-recheck-pending",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:52:21.247Z"
+      }
+    },
+    {
+      "issue": "F-L03",
+      "before": {
+        "entityType": "EXAMPLE",
+        "entityId": "cmsldfe5j008qy1vbndypnc0i",
+        "locale": "en",
+        "sourceHash": "09086d98fefe61030122c53b59c7ba0b5868d9781c30803ff9403834f72e7fe9",
+        "fields": {
+          "translation": "My boss asked me, so I can't refuse."
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "DEEPSEEK",
+          "model": "deepseek-flash",
+          "sourceHash": "09086d98fefe61030122c53b59c7ba0b5868d9781c30803ff9403834f72e7fe9",
+          "method": "model-translation-plus-independent-model-review-and-structural-checks",
+          "requestId": "c6a907da-f831-4a9e-9c37-59cffdeb9ab9",
+          "reviewedBy": "deepseek-flash:2739552a-e939-4a1a-93b4-78c39e5a7b6d",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:16:06.099Z"
+      },
+      "after": {
+        "entityType": "EXAMPLE",
+        "entityId": "cmsldfe5j008qy1vbndypnc0i",
+        "locale": "en",
+        "sourceHash": "ef5eec5c769b704bd2f52a04b9e21747c96a2125e9e126c706261aced02cba8f",
+        "fields": {
+          "translation": "My boss asked me, so I have to accept."
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "CODEX",
+          "model": "coding-agent-editor",
+          "sourceHash": "ef5eec5c769b704bd2f52a04b9e21747c96a2125e9e126c706261aced02cba8f",
+          "method": "source-backed-editorial-correction-after-F-review",
+          "reviewedBy": "C-source-reference-review; F-independent-recheck-pending",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:52:21.247Z"
+      }
+    },
+    {
+      "issue": "F-advisory-gatera",
+      "before": {
+        "entityType": "RELATION",
+        "entityId": "cmsldfebb00chy1vbj2a7u66m",
+        "locale": "en",
+        "sourceHash": "c05534abc480289750179ae440415944e9b8c691382045309d0ae3880e87b890",
+        "fields": {
+          "title": "～がてら／～かたわら／～かたがた",
+          "notes": "～がてら: do B while doing A.\n～かたわら: engage in two activities at the same time over the long term.\n～かたがた: \"also serving as, while also\" in formal situations, often used for visits and greetings."
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "DEEPSEEK",
+          "model": "deepseek-flash",
+          "sourceHash": "c05534abc480289750179ae440415944e9b8c691382045309d0ae3880e87b890",
+          "method": "model-translation-plus-independent-model-review-and-structural-checks",
+          "requestId": "ab34f09d-2260-4084-838b-2fd08f68db42",
+          "reviewedBy": "deepseek-flash:b09e8598-2edb-495d-8aa1-8c51fa8b8150",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:16:32.483Z"
+      },
+      "after": {
+        "entityType": "RELATION",
+        "entityId": "cmsldfebb00chy1vbj2a7u66m",
+        "locale": "en",
+        "sourceHash": "c05534abc480289750179ae440415944e9b8c691382045309d0ae3880e87b890",
+        "fields": {
+          "title": "～がてら／～かたわら／～かたがた",
+          "notes": "～がてら: Take the opportunity to do B while doing A.\n～かたわら: Engage in two activities in parallel over a sustained period.\n～かたがた: A formal way to combine purposes, often used for visits and greetings."
+        },
+        "status": "VALIDATED",
+        "provenance": {
+          "provider": "CODEX",
+          "model": "coding-agent-editor",
+          "sourceHash": "c05534abc480289750179ae440415944e9b8c691382045309d0ae3880e87b890",
+          "method": "source-backed-editorial-correction-after-F-review",
+          "reviewedBy": "C-source-reference-review; F-independent-recheck-pending",
+          "qualityVersion": "static-en-v1"
+        },
+        "validatedAt": "2026-09-12T15:52:21.247Z"
+      }
+    }
+  ],
+  "notes": "Source-backed coding-agent editorial correction. Independent F recheck remains pending. Previous source and English versions are preserved here and in the ImportBatch audit."
+}

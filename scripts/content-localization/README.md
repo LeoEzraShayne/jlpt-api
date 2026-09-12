@@ -1,5 +1,7 @@
 # Static English corpus — W1 C
 
+**Source correction update:** F identified four inherited teaching defects and one English nuance issue. The current artifact includes the source-backed correction batch documented in [corrections/REVIEW.md](corrections/REVIEW.md). Apply its guarded source corrections before importing current English. Independent F recheck remains pending; the original structural pass was not linguistic certification.
+
 ## Delivered corpus and quality
 
 `translations.en.jsonl` contains 546 source-bound translations: 223 grammar explanations/connection rules, 223 example translations, 6 relation titles/notes and 94 scenarios. The production snapshot had 62 scenarios; the existing runtime practice catalog could create another 32. `prepare-scenarios.ts` materializes all 82 catalog scenarios, retaining 12 existing legacy scenarios. No Chinese fallback is counted as English. Null optional source fields stay null; original Japanese, Chinese explanations and vocabulary original English/chineseGloss provenance remain intact.
