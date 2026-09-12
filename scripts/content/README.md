@@ -32,3 +32,11 @@ An explicit existing user ID is required for staging; originals/preview payloads
 ## Session integration
 
 Import ContentModule and inject ContentSelectionService. `selectForPractice(userId,grammarId,level,sessionId?)` prioritizes grammar-linked expressions and bookmarks, rotates vocabulary deterministically by session (daily fallback), and avoids the user's recent vocabulary exposures. Pass a session ID for varied successive sessions. Persist returned content IDs/provenance in the session. Personal expression text must remain server-side during REVIEW until the existing hint mechanism records a reveal. ContentExposure tracks EXPOSED/USED only, never formal recall ratings, and cannot change mastery.
+
+### Chinese gloss enrichment
+
+`npx tsx scripts/content/translate-glosses.ts --commit --concurrency 3` translates missing public, validated senses in bounded batches using the configured DeepSeek model. Without `--commit`, it only reports the candidate count. Private entries and existing Chinese glosses are never overwritten. Each translation retains the original word, reading, sense, dictionary glosses and license; the Chinese source explicitly identifies AI assistance. Translation validation checks complete index coverage, unique mapping and Chinese output, not expert linguistic review.
+
+A replayable JSONL audit is written to `/tmp/jlpt-vocabulary-zh.jsonl` before database updates. Apply to a paired database with `--apply /path/to/audit.jsonl --commit`; matching requires fingerprint, spelling, reading, sense and dictionary version, with Chinese still absent. Reapplying is idempotent. Back up production first. No schema migration or runtime translation worker is required; Chinese search uses the existing Chinese-gloss field. Future imports can be enriched with the same resumable script.
+
+Rollback only the generated Chinese fields whose source exactly matches this run's source, after comparison with the audit; retain dictionary originals, bookmarks and all learning records. Do not reset the database.
