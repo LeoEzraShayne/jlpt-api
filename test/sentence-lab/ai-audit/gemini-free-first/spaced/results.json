@@ -1,0 +1,182 @@
+{
+  "runId": "2026-09-12T23:25:24.633Z",
+  "candidateCommit": "55f1763+runner-c3d941d",
+  "fixtureSha256": "efac0faa37ac3309dc5fa0c1f5d169f49d0c38a784570f0140f4088bdc8872b9",
+  "geminiModel": "gemini-3.8-flash",
+  "selectedCaseIds": [
+    "en:connection-error",
+    "zh:generate",
+    "en:generate",
+    "zh:natural-synonym",
+    "en:natural-synonym",
+    "zh:wrong-meaning",
+    "en:wrong-meaning",
+    "en:no-obligation"
+  ],
+  "callSpacingMs": 65000,
+  "rows": [
+    {
+      "caseId": "en:connection-error",
+      "kind": "grammar",
+      "error": "AI_LOCALE_MISMATCH",
+      "requests": 2,
+      "latencyMs": 6233
+    },
+    {
+      "caseId": "zh:generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "你在一家很受欢迎的餐厅门口，店员问你们几位、有没有提前订位。你想告诉对方你们已经提前订好了今晚七点的位子，请对方帮忙确认。",
+        "meaningHintZh": "事先订好座位或服务，而不是临时到店再安排。",
+        "grammarId": null,
+        "referenceSentence": "今夜七時に予約しています。",
+        "referenceFurigana": "今夜[こんや]七時[しちじ]に予約[よやく]しています。",
+        "referenceTranslationZh": "我们已经预订了今晚七点的位子。",
+        "chunks": [
+          "今夜",
+          "七時に",
+          "予約しています。"
+        ]
+      },
+      "requests": 2,
+      "latencyMs": 2247
+    },
+    {
+      "caseId": "en:generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "You are at a popular restaurant with a friend on a busy Friday evening. The host tells you that all tables are full, but you can secure a table for 7 p.m. if you call ahead. You want to tell your friend that you will arrange a table in advance for the two of you. What do you say in Japanese?",
+        "meaningHintZh": "To arrange in advance to have a seat or service held for you at a later time.",
+        "grammarId": null,
+        "referenceSentence": "人気のレストランなので、七時に席を予約しておきます。",
+        "referenceFurigana": "人気[にんき]のレストランなので、七時[しちじ]に席[せき]を予約[よやく]しておきます。",
+        "referenceTranslationZh": "Since it's a popular restaurant, I'll reserve a seat for seven o'clock in advance.",
+        "chunks": [
+          "人気のレストランなので、",
+          "七時に",
+          "席を",
+          "予約しておきます。"
+        ]
+      },
+      "requests": 2,
+      "latencyMs": 6181
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "explanationZh": "这句话表达自然，意思是“我订了明天餐厅的座位”，但没有用到本次练习的词“予約”，因此还不能判断你是否会使用这个词。",
+        "corrections": [],
+        "correctedSentence": "明日のレストランの席を取りました。",
+        "correctedFurigana": "明日[あした]のレストランの席[せき]を取[と]りました。",
+        "correctedTranslationZh": "我订了明天餐厅的座位。"
+      },
+      "requests": 2,
+      "latencyMs": 4831
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "explanationZh": "This sentence is natural, but it does not use the target word for this exercise, so whether you know how to use the target word cannot be determined.",
+        "corrections": [],
+        "correctedSentence": "明日のレストランの席を取りました。",
+        "correctedFurigana": "明日[あした]のレストランの席[せき]を取[と]りました。",
+        "correctedTranslationZh": "I reserved seats at the restaurant for tomorrow."
+      },
+      "requests": 1,
+      "latencyMs": 2138
+    },
+    {
+      "caseId": "zh:wrong-meaning",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "explanationZh": "这里想表达因为口渴而一口气喝光了杯子里的水，“预约”不能与“喝水”搭配，语义完全不通。",
+        "corrections": [
+          {
+            "text": "予約しました",
+            "replacement": "飲み干しました",
+            "reason": "口渴时喝水应该用“喝”（如「飲みました」或「飲み干しました」），不能使用表示预订的“予約”。"
+          }
+        ],
+        "correctedSentence": "のどが渇いたので、コップの水を一気に飲み干しました。",
+        "correctedFurigana": "のどが渇[かわ]いたので、コップの水[みず]を一気[いっき]に飲[の]み干[ほ]しました。",
+        "correctedTranslationZh": "因为口渴，我一口气把杯子里的水喝光了。"
+      },
+      "requests": 1,
+      "latencyMs": 2198
+    },
+    {
+      "caseId": "en:wrong-meaning",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "explanationZh": "The word '予約' means making an advance reservation or booking for a seat or service. It cannot be used for drinking water when thirsty. A verb like '飲みました' (drank) should be used instead.",
+        "corrections": [
+          {
+            "text": "予約しました",
+            "replacement": "飲みました",
+            "reason": "You cannot 'book' or 'reserve' a glass of water to quench thirst; use '飲みました' (drank) instead."
+          }
+        ],
+        "correctedSentence": "のどが渇いたので、コップの水を一気に飲みました。",
+        "correctedFurigana": "のどが渇[かわ]いたので、コップの水[みず]を一気[いっき]に飲[の]みました。",
+        "correctedTranslationZh": "Because I was thirsty, I drank a glass of water all in one gulp."
+      },
+      "requests": 1,
+      "latencyMs": 1939
+    },
+    {
+      "caseId": "en:no-obligation",
+      "kind": "grammar",
+      "result": {
+        "provider": "GEMINI",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "資料はメールで送ったので、印刷しなくてもいいです。",
+            "corrected_sentence_furigana": "資料[しりょう]はメールで送[おく]ったので、印刷[いんさつ]しなくてもいいです。",
+            "corrected_sentence_translation_zh": "Since I sent the documents by email, you do not need to print them.",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "The sentence correctly uses the target grammar ～なくてもいい connected to the verb 印刷する in its negative stem form 印刷しなくてもいい.",
+            "encouragement": "Excellent work, your sentence is grammatically correct and very natural!",
+            "scenario_task_completed": false
+          },
+          "model": "gemini-3.8-flash",
+          "usage": {
+            "inputTokens": 711,
+            "outputTokens": 294
+          },
+          "latencyMs": 2476
+        }
+      },
+      "requests": 1,
+      "latencyMs": 2488
+    }
+  ]
+}

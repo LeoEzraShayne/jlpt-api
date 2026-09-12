@@ -1,0 +1,538 @@
+{
+  "runId": "2026-09-12T23:25:24.633Z",
+  "raw": [
+    {
+      "caseId": "en:connection-error",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "responseJsonSchema": {
+          "type": "object",
+          "properties": {
+            "total_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "grammar_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 30
+            },
+            "connection_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "completeness_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "naturalness_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "vocabulary_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "is_correct": {
+              "type": "boolean"
+            },
+            "used_target_grammar": {
+              "type": "boolean"
+            },
+            "target_grammar_correct": {
+              "type": "boolean"
+            },
+            "result_level": {
+              "type": "string",
+              "enum": [
+                "CORRECT",
+                "MOSTLY_CORRECT",
+                "NEEDS_REVISION",
+                "INCORRECT"
+              ]
+            },
+            "error_spans": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "start": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "end": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "replacement": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "text",
+                  "start",
+                  "end",
+                  "reason",
+                  "replacement"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "corrected_sentence": {
+              "type": "string"
+            },
+            "corrected_sentence_furigana": {
+              "type": "string"
+            },
+            "corrected_sentence_translation_zh": {
+              "type": "string"
+            },
+            "corrected_sentence_uses_target_grammar": {
+              "type": "boolean"
+            },
+            "explanation_zh": {
+              "type": "string"
+            },
+            "encouragement": {
+              "type": "string"
+            },
+            "scenario_task_completed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "total_score",
+            "grammar_score",
+            "connection_score",
+            "completeness_score",
+            "naturalness_score",
+            "vocabulary_score",
+            "is_correct",
+            "used_target_grammar",
+            "target_grammar_correct",
+            "result_level",
+            "error_spans",
+            "corrected_sentence",
+            "corrected_sentence_furigana",
+            "corrected_sentence_translation_zh",
+            "corrected_sentence_uses_target_grammar",
+            "explanation_zh",
+            "encouragement",
+            "scenario_task_completed"
+          ],
+          "additionalProperties": false
+        },
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 503
+    },
+    {
+      "caseId": "en:connection-error",
+      "ordinal": 2,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "enabled"
+      },
+      "reasoningEffort": "low",
+      "maxTokens": 4096,
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"grammar_score\": 20, \"connection_score\": 0, \"completeness_score\": 20, \"naturalness_score\": 10, \"vocabulary_score\": 9, \"total_score\": 59, \"is_correct\": false, \"used_target_grammar\": true, \"target_grammar_correct\": false, \"result_level\": \"NEEDS_REVISION\", \"error_spans\": [{\"text\": \"書く\", \"start\": 9, \"end\": 11, \"reason\": \"The verb that comes before ～やすい must be in the ます-stem form, so the dictionary form 書く cannot be used here.\", \"replacement\": \"書き\"}], \"corrected_sentence\": \"このペンは軽くて、書きやすいです。\", \"corrected_sentence_furigana\": \"このペンは軽[かる]くて、書[か]きやすいです。\", \"corrected_sentence_translation_zh\": \"这支笔很轻，写起来很容易。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"Before ～やすい you need the ます-stem of the verb, so 書く must become 書き, giving 書きやすい. Everything else in your sentence is natural and correctly formed.\", \"encouragement\": \"You are very close — just attach ～やすい to the ます-stem and the sentence will be perfect.\", \"scenario_task_completed\": false}",
+      "usage": {
+        "prompt_tokens": 733,
+        "completion_tokens": 1023,
+        "total_tokens": 1756,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 700
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 221
+      }
+    },
+    {
+      "caseId": "zh:generate",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": null,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 503
+    },
+    {
+      "caseId": "zh:generate",
+      "ordinal": 2,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": null,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"promptZh\":\"你在一家很受欢迎的餐厅门口，店员问你们几位、有没有提前订位。你想告诉对方你们已经提前订好了今晚七点的位子，请对方帮忙确认。\",\"meaningHintZh\":\"事先订好座位或服务，而不是临时到店再安排。\",\"grammarId\":null,\"referenceSentence\":\"今夜七時に予約しています。\",\"referenceFurigana\":\"今夜[こんや]七時[しちじ]に予約[よやく]しています。\",\"referenceTranslationZh\":\"我们已经预订了今晚七点的位子。\",\"chunks\":[\"今夜\",\"七時に\",\"予約しています。\"]}",
+      "usage": {
+        "prompt_tokens": 657,
+        "completion_tokens": 138,
+        "total_tokens": 795,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 145
+      }
+    },
+    {
+      "caseId": "en:generate",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": null,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 503
+    },
+    {
+      "caseId": "en:generate",
+      "ordinal": 2,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": null,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"promptZh\":\"You are at a popular restaurant with a friend on a busy Friday evening. The host tells you that all tables are full, but you can secure a table for 7 p.m. if you call ahead. You want to tell your friend that you will arrange a table in advance for the two of you. What do you say in Japanese?\",\"meaningHintZh\":\"To arrange in advance to have a seat or service held for you at a later time.\",\"grammarId\":null,\"referenceSentence\":\"人気のレストランなので、七時に席を予約しておきます。\",\"referenceFurigana\":\"人気[にんき]のレストランなので、七時[しちじ]に席[せき]を予約[よやく]しておきます。\",\"referenceTranslationZh\":\"Since it's a popular restaurant, I'll reserve a seat for seven o'clock in advance.\",\"chunks\":[\"人気のレストランなので、\",\"七時に\",\"席を\",\"予約しておきます。\"]}",
+      "usage": {
+        "prompt_tokens": 740,
+        "completion_tokens": 219,
+        "total_tokens": 959,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 228
+      }
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 503
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "ordinal": 2,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"这句话表达自然，意思是“我订了明天餐厅的座位”，但没有用到本次练习的词“予約”，因此还不能判断你是否会使用这个词。\",\"corrections\":[],\"correctedSentence\":\"明日のレストランの席を取りました。\",\"correctedFurigana\":\"明日[あした]のレストランの席[せき]を取[と]りました。\",\"correctedTranslationZh\":\"我订了明天餐厅的座位。\"}",
+      "usage": {
+        "prompt_tokens": 1165,
+        "completion_tokens": 123,
+        "total_tokens": 1288,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024
+        },
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 141
+      }
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 200,
+      "finishReason": "STOP",
+      "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"This sentence is natural, but it does not use the target word for this exercise, so whether you know how to use the target word cannot be determined.\",\"corrections\":[],\"correctedSentence\":\"明日のレストランの席を取りました。\",\"correctedFurigana\":\"明日[あした]のレストランの席[せき]を取[と]りました。\",\"correctedTranslationZh\":\"I reserved seats at the restaurant for tomorrow.\"}",
+      "usage": {
+        "promptTokenCount": 1208,
+        "candidatesTokenCount": 111,
+        "totalTokenCount": 1319,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1208
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "caseId": "zh:wrong-meaning",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 200,
+      "finishReason": "STOP",
+      "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"这里想表达因为口渴而一口气喝光了杯子里的水，“预约”不能与“喝水”搭配，语义完全不通。\",\"corrections\":[{\"text\":\"予約しました\",\"replacement\":\"飲み干しました\",\"reason\":\"口渴时喝水应该用“喝”（如「飲みました」或「飲み干しました」），不能使用表示预订的“予約”。\"}],\"correctedSentence\":\"のどが渇いたので、コップの水を一気に飲み干しました。\",\"correctedFurigana\":\"のどが渇[かわ]いたので、コップの水[みず]を一気[いっき]に飲[の]み干[ほ]しました。\",\"correctedTranslationZh\":\"因为口渴，我一口气把杯子里的水喝光了。\"}",
+      "usage": {
+        "promptTokenCount": 1132,
+        "candidatesTokenCount": 189,
+        "totalTokenCount": 1321,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1132
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "caseId": "en:wrong-meaning",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 200,
+      "finishReason": "STOP",
+      "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"The word '予約' means making an advance reservation or booking for a seat or service. It cannot be used for drinking water when thirsty. A verb like '飲みました' (drank) should be used instead.\",\"corrections\":[{\"text\":\"予約しました\",\"replacement\":\"飲みました\",\"reason\":\"You cannot 'book' or 'reserve' a glass of water to quench thirst; use '飲みました' (drank) instead.\"}],\"correctedSentence\":\"のどが渇いたので、コップの水を一気に飲みました。\",\"correctedFurigana\":\"のどが 渇[かわ]いたので、コップの 水[みず]を 一気[いっき]に 飲[の]みました。\",\"correctedTranslationZh\":\"Because I was thirsty, I drank a glass of water all in one gulp.\"}",
+      "usage": {
+        "promptTokenCount": 1216,
+        "candidatesTokenCount": 195,
+        "totalTokenCount": 1411,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 1216
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "caseId": "en:no-obligation",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "responseJsonSchema": {
+          "type": "object",
+          "properties": {
+            "total_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "grammar_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 30
+            },
+            "connection_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "completeness_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "naturalness_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "vocabulary_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "is_correct": {
+              "type": "boolean"
+            },
+            "used_target_grammar": {
+              "type": "boolean"
+            },
+            "target_grammar_correct": {
+              "type": "boolean"
+            },
+            "result_level": {
+              "type": "string",
+              "enum": [
+                "CORRECT",
+                "MOSTLY_CORRECT",
+                "NEEDS_REVISION",
+                "INCORRECT"
+              ]
+            },
+            "error_spans": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "start": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "end": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "replacement": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "text",
+                  "start",
+                  "end",
+                  "reason",
+                  "replacement"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "corrected_sentence": {
+              "type": "string"
+            },
+            "corrected_sentence_furigana": {
+              "type": "string"
+            },
+            "corrected_sentence_translation_zh": {
+              "type": "string"
+            },
+            "corrected_sentence_uses_target_grammar": {
+              "type": "boolean"
+            },
+            "explanation_zh": {
+              "type": "string"
+            },
+            "encouragement": {
+              "type": "string"
+            },
+            "scenario_task_completed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "total_score",
+            "grammar_score",
+            "connection_score",
+            "completeness_score",
+            "naturalness_score",
+            "vocabulary_score",
+            "is_correct",
+            "used_target_grammar",
+            "target_grammar_correct",
+            "result_level",
+            "error_spans",
+            "corrected_sentence",
+            "corrected_sentence_furigana",
+            "corrected_sentence_translation_zh",
+            "corrected_sentence_uses_target_grammar",
+            "explanation_zh",
+            "encouragement",
+            "scenario_task_completed"
+          ],
+          "additionalProperties": false
+        },
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 200,
+      "finishReason": "STOP",
+      "content": "{\n  \"total_score\": 100,\n  \"grammar_score\": 30,\n  \"connection_score\": 20,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"is_correct\": true,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": true,\n  \"result_level\": \"CORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"資料はメールで送ったので、印刷しなくてもいいです。\",\n  \"corrected_sentence_furigana\": \"資料[しりょう]はメールで送[おく]ったので、印刷[いんさつ]しなくてもいいです。\",\n  \"corrected_sentence_translation_zh\": \"Since I sent the documents by email, you do not need to print them.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"The sentence correctly uses the target grammar ～なくてもいい connected to the verb 印刷する in its negative stem form 印刷しなくてもいい.\",\n  \"encouragement\": \"Excellent work, your sentence is grammatically correct and very natural!\",\n  \"scenario_task_completed\": false\n}",
+      "usage": {
+        "promptTokenCount": 711,
+        "candidatesTokenCount": 294,
+        "totalTokenCount": 1005,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 711
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    }
+  ]
+}

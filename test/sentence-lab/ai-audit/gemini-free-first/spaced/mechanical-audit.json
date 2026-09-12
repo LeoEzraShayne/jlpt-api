@@ -1,0 +1,84 @@
+{
+  "candidateCommit": "55f1763+runner-c3d941d",
+  "runId": "2026-09-12T23:25:24.633Z",
+  "operations": 8,
+  "requests": 12,
+  "receipts": 12,
+  "knownTokensAtDeepSeekPeakColdUsd": 0.005019,
+  "unknownUsageCalls": 4,
+  "checks": [
+    {
+      "caseId": "en:connection-error",
+      "finalProvider": null,
+      "geminiRequests": 1,
+      "requests": 2,
+      "mechanicalProblems": [
+        "no_final_result"
+      ],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "zh:generate",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 1,
+      "requests": 2,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:generate",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 1,
+      "requests": 2,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 1,
+      "requests": 2,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "finalProvider": "GEMINI",
+      "geminiRequests": 1,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "zh:wrong-meaning",
+      "finalProvider": "GEMINI",
+      "geminiRequests": 1,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:wrong-meaning",
+      "finalProvider": "GEMINI",
+      "geminiRequests": 1,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:no-obligation",
+      "finalProvider": "GEMINI",
+      "geminiRequests": 1,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    }
+  ],
+  "failures": [
+    {
+      "caseId": "en:connection-error",
+      "problem": "no_final_result"
+    }
+  ],
+  "qualityVerdict": "PENDING_INDEPENDENT_READING"
+}
