@@ -226,3 +226,37 @@ test.each([undefined, 'CARD_ONLY_V1'])(
     ).toEqual(snapshot);
   },
 );
+
+test.each(['EXPIRED', 'PAID', 'REFUNDED', 'PENDING'])(
+  'a cached URL cannot bypass a closed or expired quote: %s',
+  async (status) => {
+    const f = await fixture();
+    const input = {
+      productCode: 'DAY_PASS' as const,
+      market: 'GLOBAL' as const,
+      requestKey: randomUUID(),
+      locale: 'en' as const,
+    };
+    await h.prisma.paymentOrder.create({
+      data: {
+        userId: f.user.id,
+        provider: 'STRIPE',
+        environment: 'test',
+        productCode: input.productCode,
+        market: input.market,
+        currency: 'USD',
+        amount: 99,
+        durationSeconds: 86400,
+        requestKey: input.requestKey,
+        status,
+        checkoutUrl: 'https://checkout.stripe.com/c/pay/stale',
+        expiresAt: new Date(Date.now() + (status === 'PENDING' ? -1 : 60000)),
+        snapshot: {},
+      },
+    });
+    await expect(f.service.checkout(f.user.id, input)).rejects.toMatchObject({
+      response: { code: 'CHECKOUT_EXPIRED' },
+    });
+    expect(f.create).not.toHaveBeenCalled();
+  },
+);

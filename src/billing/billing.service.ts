@@ -142,14 +142,14 @@ export class BillingService {
         },
       });
     });
-    if (order.checkoutUrl)
-      return { orderId: order.id, checkoutUrl: order.checkoutUrl };
     if (
       order.status !== 'PENDING' ||
       !order.expiresAt ||
       order.expiresAt.getTime() <= Date.now()
     )
       billingError('CHECKOUT_EXPIRED');
+    if (order.checkoutUrl)
+      return { orderId: order.id, checkoutUrl: order.checkoutUrl };
     const frontend = new URL(this.config.getOrThrow<string>('FRONTEND_URL'))
       .origin;
     try {
