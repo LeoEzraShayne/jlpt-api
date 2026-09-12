@@ -88,7 +88,7 @@ describe('progressive review boundary', () => {
         explanation: '一边',
         sentence: core.corrected_sentence,
       }),
-    ).toContain('不生成拓展示例');
+    ).toContain('no expansion, alternative sentence');
   });
   it('times out while reading a response body, even after headers arrived', async () => {
     const original = global.fetch;

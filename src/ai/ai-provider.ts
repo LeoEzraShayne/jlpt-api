@@ -3,6 +3,7 @@ import type { ProviderResponse } from './review-schema';
 
 export interface ReviewProviderInput {
   stage?: 'CORE';
+  validationFeedback?: string;
   explanationLocale?: 'zh' | 'en';
   usageContext?: import('./metered-ai-client').UsageContext;
   grammarLevel?: string;
@@ -27,6 +28,7 @@ export class ProviderError extends Error {
     readonly code: string,
     readonly retryable: boolean,
     readonly status?: number,
+    readonly validationFeedback?: string,
   ) {
     super(message);
   }

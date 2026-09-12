@@ -14,11 +14,18 @@ type Usage = FullUsage & {
   errorCode: string | null;
   createdAt: string;
 };
-const files = [
-  'usage-initial.json',
-  'usage-gemini-server-initial.json',
-  'usage-gemini31-v2.json',
-];
+const selectedTag = process.argv
+  .find((v) => v.startsWith('--run-tag='))
+  ?.slice(10);
+if (selectedTag && !/^[a-z0-9-]+$/.test(selectedTag))
+  throw Error('Invalid run tag');
+const files = selectedTag
+  ? [`usage-${selectedTag}.json`]
+  : [
+      'usage-initial.json',
+      'usage-gemini-server-initial.json',
+      'usage-gemini31-v2.json',
+    ];
 const all = files.flatMap(
   (f) => JSON.parse(readFileSync(`scripts/ai-cost/${f}`, 'utf8')) as Usage[],
 );
@@ -48,10 +55,36 @@ const products = [
 ];
 // First DeepSeek corpus: 2 grammar false positives and English-answer task are
 // rejected even though JSON schema passed. This is still not expert certification.
-const humanAccepted: Record<string, number> = {
-  'deepseek-flash:GRAMMAR_REVIEW': 10,
-  'deepseek-flash:VOCABULARY_GENERATE': 2,
-};
+const humanAccepted: Record<string, number> = selectedTag
+  ? {}
+  : {
+      'deepseek-flash:GRAMMAR_REVIEW': 10,
+      'deepseek-flash:VOCABULARY_GENERATE': 2,
+    };
+if (selectedTag) {
+  const result = JSON.parse(
+    readFileSync(`scripts/ai-cost/results-${selectedTag}.json`, 'utf8'),
+  ) as {
+    rows: Array<{
+      model: string;
+      id: string;
+      locale: string;
+      result?: { passed?: boolean };
+    }>;
+  };
+  for (const row of all) humanAccepted[`${row.model}:${row.purpose}`] = 0;
+  for (const row of result.rows) {
+    if (row.result?.passed !== true) continue;
+    const purpose = all.find(
+      (u) =>
+        u.model === row.model &&
+        (u as Usage & { taskKey: string }).taskKey.endsWith(
+          `:${row.locale}:${row.id}`,
+        ),
+    )?.purpose;
+    if (purpose) humanAccepted[`${row.model}:${purpose}`]++;
+  }
+}
 function stats(
   model: string,
   purpose: string,
@@ -177,6 +210,10 @@ for (const model of [
 const output = {
   inputs: {
     files,
+    selectedTag,
+    successBasis: selectedTag
+      ? 'Final operation expected assertions, all failed/repair attempt costs retained; independent semantic review pending'
+      : 'Initial run plus documented human rejections',
     currencies,
     fees,
     serverMonthlyCny,
@@ -203,7 +240,7 @@ const output = {
   scenarios,
 };
 writeFileSync(
-  'scripts/ai-cost/economics.json',
+  `scripts/ai-cost/economics${selectedTag ? '-' + selectedTag : ''}.json`,
   JSON.stringify(output, null, 2),
 );
 console.log(

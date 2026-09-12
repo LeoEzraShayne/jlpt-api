@@ -1,0 +1,76 @@
+{
+  "tag": "bounded-repair-v3",
+  "runId": "2026-09-12T16:09:57.908Z",
+  "operations": 28,
+  "networkCalls": 32,
+  "firstCandidateFailures": 4,
+  "firstCandidateFailureRate": 0.14285714285714285,
+  "repairOperations": 4,
+  "structurallyRecovered": 1,
+  "finalStructuralSuccesses": 25,
+  "finalExpectedAssertionsPassed": 25,
+  "finalOperationErrors": [
+    {
+      "id": "n4-connection",
+      "locale": "zh",
+      "error": "AI_INVALID_RESPONSE"
+    },
+    {
+      "id": "refuse-generate",
+      "locale": "zh",
+      "error": "AI_INVALID_RESPONSE"
+    },
+    {
+      "id": "n5-connection",
+      "locale": "en",
+      "error": "AI_LOCALE_MISMATCH"
+    }
+  ],
+  "semanticAssertionFailures": [],
+  "unknownCostCalls": 0,
+  "allAttemptsPaidEstimateUsd": 0.005744405999999999,
+  "allAttemptsPeakColdEstimateUsd": 0.016531499999999998,
+  "perPurpose": [
+    {
+      "purpose": "GRAMMAR_REVIEW",
+      "operations": 12,
+      "firstCandidateFailures": 3,
+      "finalExpectedAssertionsPassed": 10,
+      "networkCalls": 15,
+      "failedCalls": 5,
+      "paidCostAllAttemptsUsd": 0.003404502,
+      "paidCostPerSuccessfulOperationUsd": 0.00034045019999999997,
+      "peakColdCostPerSuccessfulOperationUsd": 0.00078627
+    },
+    {
+      "purpose": "VOCABULARY_ASSESS",
+      "operations": 12,
+      "firstCandidateFailures": 0,
+      "finalExpectedAssertionsPassed": 12,
+      "networkCalls": 12,
+      "failedCalls": 0,
+      "paidCostAllAttemptsUsd": 0.001563978,
+      "paidCostPerSuccessfulOperationUsd": 0.0001303315,
+      "peakColdCostPerSuccessfulOperationUsd": 0.0005491749999999999
+    },
+    {
+      "purpose": "VOCABULARY_GENERATE",
+      "operations": 4,
+      "firstCandidateFailures": 1,
+      "finalExpectedAssertionsPassed": 3,
+      "networkCalls": 5,
+      "failedCalls": 2,
+      "paidCostAllAttemptsUsd": 0.000775926,
+      "paidCostPerSuccessfulOperationUsd": 0.000258642,
+      "peakColdCostPerSuccessfulOperationUsd": 0.0006928999999999999
+    }
+  ],
+  "limits": {
+    "callsPerRound": 2,
+    "repairCallsPerRound": 1,
+    "grammarWorkerRounds": 3,
+    "grammarCallsAcrossWorkerRounds": 6,
+    "vocabularyCallsPerGenerationOrAssessment": 2
+  },
+  "qualification": "Automatic expected assertions and schema success are not independent semantic acceptance. Cold-cache and peak scenarios are synthetic stress estimates. Unknown cost is not zero."
+}

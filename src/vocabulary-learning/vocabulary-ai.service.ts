@@ -1,3 +1,8 @@
+import {
+  boundedAiAttempts,
+  withValidationFeedback,
+} from '../ai/bounded-ai-attempts';
+import { validationFeedback } from '../ai/validation-feedback';
 import { Injectable, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { z } from 'zod';
@@ -45,8 +50,9 @@ Neither promptZh nor meaningHintZh may contain the Japanese target word, its rea
 If the word is also a Chinese expression, paraphrase that expression rather than exposing it. Hint 1 describes the current meaning in Chinese.
 Choose at most one supplied grammar only if natural in this scenario and reference; otherwise grammarId MUST be null, even if a candidate was provided.
 Never invent a grammar ID or force a grammar construction. The reference MUST naturally use the target in its current sense, with appropriate conjugation/spelling.
+A natural synonym or generic refusal is NOT sufficient for the reference: the original target lexical item must be used. If the current situation favors a synonym, change the scenario so the target is natural, instead of dropping the target. This generation rule does not assess a learner answer.
 The reference translation must faithfully express it. Split the reference into usable ordered phrase chunks, not individual punctuation.
-Chunks must join to the reference ignoring only punctuation/whitespace. Repeated chunks are allowed; the caller assigns unique IDs and shuffles them.
+Chunks contain plain Japanese characters, never ruby brackets or readings. Chunks must join to the reference ignoring only punctuation/whitespace. Repeated chunks are allowed; the caller assigns unique IDs and shuffles them.
 Required JSON: {"promptZh":string,"meaningHintZh":string,"grammarId":string|null,"referenceSentence":string,"referenceFurigana":string,"referenceTranslationZh":string,"chunks":string[]}
 ${annotationInstructions}
 ${dataInstructions}
@@ -56,6 +62,7 @@ INPUT_JSON=${JSON.stringify(validated)}`;
       challengeSchemaFor(validated),
       'VOCABULARY_GENERATE',
       usageContext,
+      validated.explanationLocale,
     );
   }
 
@@ -110,6 +117,7 @@ INPUT_JSON=${JSON.stringify({ vocabulary: validated, challenge: checkedChallenge
       ),
       'VOCABULARY_ASSESS',
       usageContext,
+      validated.explanationLocale,
     );
   }
 
@@ -118,6 +126,7 @@ INPUT_JSON=${JSON.stringify({ vocabulary: validated, challenge: checkedChallenge
     schema: z.ZodType<T>,
     purpose: string,
     context: UsageContext,
+    locale: 'zh' | 'en' = 'zh',
   ): Promise<T> {
     const providers: Provider[] =
       this.config.get<string>('AI_PRIMARY_PROVIDER') === 'DEEPSEEK'
@@ -126,14 +135,15 @@ INPUT_JSON=${JSON.stringify({ vocabulary: validated, challenge: checkedChallenge
     const configured = providers.filter((provider) =>
       this.config.get<string>(`${provider}_API_KEY`),
     );
-    for (const [index, provider] of configured.entries()) {
-      try {
+    const reviewed = await boundedAiAttempts(
+      configured,
+      async (provider, index, feedback) => {
         const response = await new MeteredAiClient(
           this.config,
           this.prisma,
         ).request(
           provider,
-          prompt,
+          withValidationFeedback(prompt, feedback, locale, true),
           purpose,
           { ...context, attempt: (context.attempt ?? 1) + index },
           (text) => {
@@ -146,26 +156,15 @@ INPUT_JSON=${JSON.stringify({ vocabulary: validated, challenge: checkedChallenge
                     .replace(/\s*```$/, ''),
                 ) as unknown,
               );
-            } catch {
-              throw this.invalidResponse();
+            } catch (error) {
+              throw this.invalidResponse(validationFeedback(error));
             }
           },
         );
         return response.result;
-      } catch (error) {
-        if (
-          index === configured.length - 1 ||
-          !(error instanceof ProviderError) ||
-          !error.retryable
-        )
-          throw error;
-      }
-    }
-    throw new ProviderError(
-      'No AI provider available',
-      'AI_NOT_CONFIGURED',
-      true,
+      },
     );
+    return reviewed.response;
   }
 
   private localizePrompt(prompt: string, locale: 'zh' | 'en' = 'zh') {
@@ -181,11 +180,13 @@ INPUT_JSON=${JSON.stringify({ vocabulary: validated, challenge: checkedChallenge
     return `${instructions}Language contract: ALL learner-facing explanations, scenarios, hints, translations and correction reasons must be English, including legacy JSON keys ending Zh. Japanese sentences and readings stay Japanese. This is Japanese sentence production: the learner must ALWAYS answer in Japanese; never ask for an English answer. The quoted examples above describe semantics; explain those cases in natural English. Never leak the target spelling or reading in the scenario or first hint.\n${prompt.slice(boundary)}`;
   }
 
-  private invalidResponse() {
+  private invalidResponse(feedback?: string) {
     return new ProviderError(
       'AI returned invalid vocabulary output',
       'AI_INVALID_RESPONSE',
       true,
+      undefined,
+      feedback,
     );
   }
 }

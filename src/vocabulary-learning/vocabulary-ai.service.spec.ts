@@ -213,12 +213,15 @@ describe('VocabularyAiService (mocked HTTP only)', () => {
       referenceFurigana: 'すみませんが、できません。',
       chunks: ['すみませんが', 'できません'],
     },
-  ])('rejects invalid challenge fields and falls back: %j', async (invalid) => {
-    gemini({ ...challenge, ...invalid });
-    deepseek(challenge);
-    await expect(service().generate(input)).resolves.toEqual(challenge);
-    expect(request).toHaveBeenCalledTimes(2);
-  });
+  ])(
+    'repairs invalid challenge fields once on the same provider: %j',
+    async (invalid) => {
+      gemini({ ...challenge, ...invalid });
+      gemini(challenge);
+      await expect(service().generate(input)).resolves.toEqual(challenge);
+      expect(request).toHaveBeenCalledTimes(2);
+    },
+  );
 
   it.each(['not json', '{}', '{"candidates":[]}'])(
     'treats malformed envelopes as retryable: %s',
@@ -232,9 +235,9 @@ describe('VocabularyAiService (mocked HTTP only)', () => {
     },
   );
 
-  it('does not return a challenge if both providers leak the answer', async () => {
+  it('does not return a challenge if both bounded attempts leak the answer', async () => {
     gemini({ ...challenge, meaningHintZh: 'ことわる表示拒绝。' });
-    deepseek({ ...challenge, promptZh: '请用断る回答。' });
+    gemini({ ...challenge, promptZh: '请用断る回答。' });
     await expect(service().generate(input)).rejects.toMatchObject({
       code: 'AI_INVALID_RESPONSE',
       retryable: true,

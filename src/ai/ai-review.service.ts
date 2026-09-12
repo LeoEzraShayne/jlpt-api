@@ -1,10 +1,8 @@
+import { boundedAiAttempts } from './bounded-ai-attempts';
 import { ConfigService } from '@nestjs/config';
 import { Injectable, Optional } from '@nestjs/common';
 import { AiProvider } from '@prisma/client';
-import type {
-  AiGrammarReviewProvider,
-  ReviewProviderInput,
-} from './ai-provider';
+import type { ReviewProviderInput } from './ai-provider';
 import { ProviderError } from './ai-provider';
 import { DeepSeekReviewProvider } from './deepseek.provider';
 import { GeminiReviewProvider } from './gemini.provider';
@@ -22,50 +20,35 @@ export class AiReviewService {
   async review(
     input: ReviewProviderInput,
   ): Promise<{ provider: AiProvider; response: ProviderResponse }> {
-    return this.withFallback(async (provider, index) => {
-      const response = await provider.review({
-        ...input,
-        usageContext: {
-          ...input.usageContext,
-          attempt: (input.usageContext?.attempt ?? 1) + index,
-        },
-      });
-      this.assertSuggestions(input.grammarTitle, response);
-      return response;
-    });
-  }
-
-  private async withFallback<T>(
-    operation: (provider: AiGrammarReviewProvider, index: number) => Promise<T>,
-  ) {
-    const preferDeepSeek =
-      this.config?.get<string>('AI_PRIMARY_PROVIDER') === 'DEEPSEEK';
-    const providers = preferDeepSeek
-      ? [this.deepseek, this.gemini]
-      : [this.gemini, this.deepseek];
-    for (let index = 0; index < providers.length; index++) {
-      try {
-        return {
-          provider:
-            providers[index] === this.gemini
-              ? AiProvider.GEMINI
-              : AiProvider.DEEPSEEK,
-          response: await operation(providers[index], index),
-        };
-      } catch (error) {
-        if (
-          index === providers.length - 1 ||
-          !(error instanceof ProviderError) ||
-          !error.retryable
-        )
-          throw error;
-      }
-    }
-    throw new ProviderError(
-      'No AI provider available',
-      'AI_NOT_CONFIGURED',
-      true,
+    const ordered =
+      this.config?.get<string>('AI_PRIMARY_PROVIDER') === 'DEEPSEEK'
+        ? [
+            { name: AiProvider.DEEPSEEK, client: this.deepseek },
+            { name: AiProvider.GEMINI, client: this.gemini },
+          ]
+        : [
+            { name: AiProvider.GEMINI, client: this.gemini },
+            { name: AiProvider.DEEPSEEK, client: this.deepseek },
+          ];
+    const configured = this.config
+      ? ordered.filter((p) => this.config!.get<string>(`${p.name}_API_KEY`))
+      : ordered;
+    const reviewed = await boundedAiAttempts(
+      configured,
+      async (provider, index, feedback) => {
+        const response = await provider.client.review({
+          ...input,
+          validationFeedback: feedback,
+          usageContext: {
+            ...input.usageContext,
+            attempt: (input.usageContext?.attempt ?? 1) + index,
+          },
+        });
+        this.assertSuggestions(input.grammarTitle, response);
+        return response;
+      },
     );
+    return { provider: reviewed.provider.name, response: reviewed.response };
   }
 
   private assertSuggestions(title: string, response: ProviderResponse) {

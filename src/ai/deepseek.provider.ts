@@ -1,3 +1,4 @@
+import { withValidationFeedback } from './bounded-ai-attempts';
 import { Injectable, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../database/prisma.service';
@@ -20,7 +21,11 @@ export class DeepSeekReviewProvider implements AiGrammarReviewProvider {
   async review(input: ReviewProviderInput) {
     return new MeteredAiClient(this.config, this.prisma).request(
       this.name,
-      buildReviewPrompt(input),
+      withValidationFeedback(
+        buildReviewPrompt(input),
+        input.validationFeedback,
+        input.explanationLocale,
+      ),
       'GRAMMAR_REVIEW',
       input.usageContext ?? {},
       (text) => {

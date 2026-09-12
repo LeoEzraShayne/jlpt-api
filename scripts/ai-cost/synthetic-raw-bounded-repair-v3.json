@@ -1,0 +1,674 @@
+[
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\":100,\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"日本で働きたいです。\",\"corrected_sentence_furigana\":\"日本[にほん]で働[はたら]きたいです。\",\"corrected_sentence_translation_zh\":\"我想在日本工作。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"「働きます」的ます形去ます后为「働き」，接「たい」构成「働きたいです」，接续和用法均正确。\",\"encouragement\":\"句子准确自然，继续加油！\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 624,
+      "completion_tokens": 193,
+      "total_tokens": 817,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 240
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\": 39, \"grammar_score\": 10, \"connection_score\": 0, \"completeness_score\": 15, \"naturalness_score\": 10, \"vocabulary_score\": 4, \"is_correct\": false, \"used_target_grammar\": true, \"target_grammar_correct\": false, \"result_level\": \"INCORRECT\", \"error_spans\": [{\"text\": \"働くたい\", \"replacement\": \"働きたい\", \"reason\": \"「～たい」必须接在动词ます形去ます后的词干上，「働く」的ます形是「働きます」，去ます后应为「働き」，不能直接接辞书形「働く」。\", \"start\": 3, \"end\": 7}], \"corrected_sentence\": \"日本で働きたいです。\", \"corrected_sentence_furigana\": \"日本[にほん]で働[はたら]きたいです。\", \"corrected_sentence_translation_zh\": \"我想在日本工作。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"「～たい」的接续是动词ます形去ます＋たい，所以「働く」应变为「働き」，正确形式是「働きたいです」。\", \"encouragement\": \"接续规则再记牢一点，这个句型你很快就能用对！\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 625,
+      "completion_tokens": 314,
+      "total_tokens": 939,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 625
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\": 100, \"grammar_score\": 30, \"connection_score\": 20, \"completeness_score\": 20, \"naturalness_score\": 20, \"vocabulary_score\": 10, \"is_correct\": true, \"used_target_grammar\": true, \"target_grammar_correct\": true, \"result_level\": \"CORRECT\", \"error_spans\": [], \"corrected_sentence\": \"音楽[おんがく]を聞[き]きながら料理[りょうり]をします。\", \"corrected_sentence_furigana\": \"音楽[おんがく]を聞[き]きながら料理[りょうり]をします。\", \"corrected_sentence_translation_zh\": \"一边听音乐一边做饭。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"「聞く」的ます形是「聞きます」，去掉ます后接「ながら」，构成「聞きながら」，接续正确，整句自然。\", \"encouragement\": \"接续和用法都完全正确，继续保持！\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 630,
+      "completion_tokens": 252,
+      "total_tokens": 882,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 630
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\":100,\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"音楽[おんがく]を聞[き]きながら料理[りょうり]をします。\",\"corrected_sentence_furigana\":\"音楽[おんがく]を聞[き]きながら料理[りょうり]をします。\",\"corrected_sentence_translation_zh\":\"一边听音乐一边做饭。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"「聞く」的ます形去ます为「聞き」，接「ながら」正确，表示同一主体同时进行两个动作。\",\"encouragement\":\"接续和用法都完全正确，继续保持！\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 631,
+      "completion_tokens": 219,
+      "total_tokens": 850,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 247
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\": 59, \"grammar_score\": 30, \"connection_score\": 10, \"completeness_score\": 20, \"naturalness_score\": 20, \"vocabulary_score\": 10, \"is_correct\": false, \"used_target_grammar\": true, \"target_grammar_correct\": false, \"result_level\": \"NEEDS_REVISION\", \"error_spans\": [{\"text\": \"聞くながら\", \"replacement\": \"聞きながら\", \"reason\": \"「～ながら」接续规则为动词ます形去掉ます后接ながら，五段动词「聞く」的ます形是「聞きます」，去ます后应为「聞き」，不能直接接辞书形「聞く」。\", \"start\": 3, \"end\": 8}], \"corrected_sentence\": \"音楽を聞きながら料理をします。\", \"corrected_sentence_furigana\": \"音楽[おんがく]を聞[き]きながら料理[りょうり]をします。\", \"corrected_sentence_translation_zh\": \"一边听音乐一边做饭。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"「～ながら」必须接动词ます形去ます后的形式，所以「聞く」应变为「聞き」，写成「聞きながら」。\", \"encouragement\": \"意思表达很清楚，只要把接续改成「聞きながら」就完全正确了。\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 745,
+      "completion_tokens": 334,
+      "total_tokens": 1079,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 745
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\":100,\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"彼は料理の材料から盛り付けに至るまで気を配っている。\",\"corrected_sentence_furigana\":\"彼[かれ]は料理[りょうり]の材料[ざいりょう]から盛[も]り付[つ]けに至[いた]るまで気[き]を配[くば]っている。\",\"corrected_sentence_translation_zh\":\"他从烹饪的材料到摆盘都悉心留意。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"「名词＋に至るまで」接续正确，表示范围涉及细节、甚至到某一步，整句自然通顺。\",\"encouragement\":\"接续和用法都掌握得很好，继续保持！\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 641,
+      "completion_tokens": 244,
+      "total_tokens": 885,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 641
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\": 30, \"grammar_score\": 18, \"connection_score\": 0, \"completeness_score\": 6, \"naturalness_score\": 6, \"vocabulary_score\": 0, \"is_correct\": false, \"used_target_grammar\": false, \"target_grammar_correct\": false, \"result_level\": \"INCORRECT\", \"error_spans\": [{\"text\": \"毎日、日本語を勉強しています。\", \"replacement\": \"毎日、日本語を勉強しながら、音楽を聞いています。\", \"reason\": \"原句完全没有使用目标语法「～ながら」，只是普通的「～ています」句，未表达同一主体同时进行两个动作。\", \"start\": 0, \"end\": 14}], \"corrected_sentence\": \"毎日、日本語を勉強しながら、音楽を聞いています。\", \"corrected_sentence_furigana\": \"毎日[まいにち]、日本語[にほんご]を勉強[べんきょう]しながら、音楽[おんがく]を聞[き]いています。\", \"corrected_sentence_translation_zh\": \"每天一边学习日语，一边听音乐。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"原句没有使用「～ながら」，无法体现同一主体同时进行两个动作；应改为「勉強しながら、音楽を聞いています」这样的结构。\", \"encouragement\": \"先掌握「ます形去ます＋ながら」的接续，再试着造一个同时做两件事的句子吧。\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 629,
+      "completion_tokens": 356,
+      "total_tokens": 985,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 629
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"promptZh\":\"你是公司项目组的成员，刚完成一项市场调研。部门主管在例会上问你调研结果如何，你需要当众把情况向他说明。请用日语说出这句话。\",\"meaningHintZh\":\"向上级或众人说明、陈述某件事的经过或结果。\",\"grammarId\":null,\"referenceSentence\":\"部長に市場調査の結果を報告します。\",\"referenceFurigana\":\"部長[ぶちょう]に市場[しじょう]調査[ちょうさ]の結果[けっか]を報告[ほうこく]します。\",\"referenceTranslationZh\":\"我向部长汇报市场调查的结果。\",\"chunks\":[\"部長に\",\"市場調査の\",\"結果を\",\"報告します。\"]}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 575,
+      "completion_tokens": 158,
+      "total_tokens": 733,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 191
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":true,\"meaningCorrect\":true,\"readingCorrect\":null,\"explanationZh\":\"你在这句话里用了“報告”，表示“汇报（调查结果）”，与本次练习要求的名词/サ変动词“汇报、报告”含义一致，搭配“調査の結果を報告しました”也很自然。\",\"corrections\":[],\"correctedSentence\":\"会議で調査の結果を報告しました。\",\"correctedFurigana\":\"会議[かいぎ]で調査[ちょうさ]の結果[けっか]を報告[ほうこく]しました。\",\"correctedTranslationZh\":\"我在会议上汇报了调查结果。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1159,
+      "completion_tokens": 143,
+      "total_tokens": 1302,
+      "prompt_tokens_details": {
+        "cached_tokens": 768
+      },
+      "prompt_cache_hit_tokens": 768,
+      "prompt_cache_miss_tokens": 391
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"这里想表达因为饿了而吃饭，但“報告”是“汇报、报告”的意思，不能作为“吃”的对象，用在这个句子里意思不通。可以改成“ご飯”等表示食物的词。\",\"corrections\":[{\"text\":\"報告\",\"replacement\":\"ご飯\",\"reason\":\"“報告”不能吃，这里需要表示食物的词，如“ご飯”。\"}],\"correctedSentence\":\"おなかがすいたので、ご飯を食べました。\",\"correctedFurigana\":\"おなかがすいたので、ご飯[ごはん]を食[た]べました。\",\"correctedTranslationZh\":\"因为肚子饿了，所以吃了饭。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1162,
+      "completion_tokens": 171,
+      "total_tokens": 1333,
+      "prompt_tokens_details": {
+        "cached_tokens": 896
+      },
+      "prompt_cache_hit_tokens": 896,
+      "prompt_cache_miss_tokens": 266
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"这句话表达自然，但没有用到本次练习的词“報告”，因此还不能判断你是否会使用这个词。\",\"corrections\":[],\"correctedSentence\":\"おなかがすいたので、ご飯を食べました。\",\"correctedFurigana\":\"おなかがすいたので、ご飯[はん]を食[た]べました。\",\"correctedTranslationZh\":\"因为肚子饿了，所以吃了饭。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1163,
+      "completion_tokens": 115,
+      "total_tokens": 1278,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 139
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"promptZh\":\"你在日本留学，室友想借你的自行车骑去很远的地方。你担心车子出问题，想礼貌地告诉对方这件事你做不到。请用日语说出你的回应。\",\"meaningHintZh\":\"表示对别人的请求或要求不予答应。\",\"grammarId\":null,\"referenceSentence\":\"ごめん、そのお願いは断らせてください。\",\"referenceFurigana\":\"ごめん、そのお願[ねが]いは断[ことわ]らせてください。\",\"referenceTranslationZh\":\"抱歉，请允许我拒绝这个请求。\",\"chunks\":[\"ごめん、\",\"その\",\"お願[ねが]いは\",\"断[ことわ]らせて\",\"ください。\"]}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 576,
+      "completion_tokens": 155,
+      "total_tokens": 731,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 192
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"promptZh\":\"同事想请你周末帮忙搬家，但你已经答应了家人要一起出门，于是你委婉地告诉对方自己没办法去帮忙。请用日语说出这句话。\",\"meaningHintZh\":\"表示对别人的请求或邀请说“不”，即不接受、不答应。\",\"grammarId\":null,\"referenceSentence\":\"申し訳ありませんが、その日は家族と出かける約束があるので、お手伝いできません。\",\"referenceFurigana\":\"申[もう]し訳[わけ]ありませんが、その日[ひ]は家族[かぞく]と出[で]かける約束[やくそく]があるので、お手伝[てつだ]いできません。\",\"referenceTranslationZh\":\"很抱歉，那天我和家人有约要出门，所以没办法帮您。\",\"chunks\":[\"申し訳ありませんが、\",\"その日は\",\"家族と\",\"出かける\",\"約束が\",\"あるので、\",\"お手伝い\",\"できません。\"]}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 653,
+      "completion_tokens": 217,
+      "total_tokens": 870,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 653
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":true,\"meaningCorrect\":true,\"readingCorrect\":null,\"explanationZh\":\"你在这句话里用了「断る」的过去式「断りました」，表示拒绝了朋友的邀请，正好是“拒绝请求”的意思，用法自然、搭配正确。\",\"corrections\":[],\"correctedSentence\":\"予定があるので、友達の誘いを断りました。\",\"correctedFurigana\":\"予定[よてい]があるので、友達[ともだち]の誘[さそ]いを断[ことわ]りました。\",\"correctedTranslationZh\":\"因为已有安排，我拒绝了朋友的邀请。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1181,
+      "completion_tokens": 143,
+      "total_tokens": 1324,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 157
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"这里想表达因为饿了而吃面包，但“断る”是“拒绝（请求、邀请等）”的意思，不能用来表示“吃”面包，所以这个词用错了。可以改成“おなかがすいたので、パンを食べました。”\",\"corrections\":[{\"text\":\"断って\",\"replacement\":\"\",\"reason\":\"“断る”表示拒绝请求或邀请，不能与“食べる”搭配表示吃面包，这里应去掉。\"}],\"correctedSentence\":\"おなかがすいたので、パンを食べました。\",\"correctedFurigana\":\"おなかがすいたので、パンを食[た]べました。\",\"correctedTranslationZh\":\"因为肚子饿了，所以吃了面包。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1181,
+      "completion_tokens": 180,
+      "total_tokens": 1361,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 157
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"这句话表达自然，意思是“因为已有安排，所以去不了”，但没有用到本次练习的词“断る”，因此还不能判断你是否会使用这个词。\",\"corrections\":[],\"correctedSentence\":\"予定があるので、行けません。\",\"correctedFurigana\":\"予定[よてい]があるので、行[い]けません。\",\"correctedTranslationZh\":\"因为已有安排，所以去不了。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1175,
+      "completion_tokens": 115,
+      "total_tokens": 1290,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 151
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\":100,\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"日本で働きたいです。\",\"corrected_sentence_furigana\":\"日本[にほん]で働[はたら]きたいです。\",\"corrected_sentence_translation_zh\":\"I want to work in Japan.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"You correctly formed the desire form by dropping ます from 働きます and adding たい, giving 働きたいです. The particle で correctly marks the place of work.\",\"encouragement\":\"Great job—your sentence is accurate and natural!\",\"scenario_task_completed\":true}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 621,
+      "completion_tokens": 203,
+      "total_tokens": 824,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 237
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\": 30, \"grammar_score\": 10, \"connection_score\": 0, \"completeness_score\": 15, \"naturalness_score\": 5, \"vocabulary_score\": 10, \"is_correct\": false, \"used_target_grammar\": true, \"target_grammar_correct\": false, \"result_level\": \"INCORRECT\", \"error_spans\": [{\"text\": \"働く\", \"start\": 3, \"end\": 5, \"reason\": \"The target grammar ～たい attaches to the verb stem (ます形 without ます), not the dictionary form. 働く should become 働き before adding たい.\", \"replacement\": \"働き\"}], \"corrected_sentence\": \"日本で働きたいです。\", \"corrected_sentence_furigana\": \"日本[にほん]で働[はたら]きたいです。\", \"corrected_sentence_translation_zh\": \"I want to work in Japan.\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"The verb 働く is in dictionary form, but ～たい must follow the verb stem, so it should be 働きたいです.\", \"encouragement\": \"You used the right idea; just remember to change the verb to its stem before adding たい.\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 622,
+      "completion_tokens": 300,
+      "total_tokens": 922,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 238
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\": 39, \"grammar_score\": 10, \"connection_score\": 5, \"completeness_score\": 14, \"naturalness_score\": 5, \"vocabulary_score\": 5, \"is_correct\": false, \"used_target_grammar\": true, \"target_grammar_correct\": false, \"result_level\": \"INCORRECT\", \"error_spans\": [{\"text\": \"働くたい\", \"start\": 3, \"end\": 7, \"reason\": \"The target grammar ～たい must attach to the verb stem (ます形 without ます), not the dictionary form. The verb 働く has the stem 働き, so the correct form is 働きたい.\", \"replacement\": \"働きたい\"}], \"corrected_sentence\": \"日本で働きたいです。\", \"corrected_sentence_furigana\": \"日本[にほん]で働[はたら]きたいです。\", \"corrected_sentence_translation_zh\": \"我想在日本工作。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"The form 働くたい is wrong because ～たい follows the verb stem, so 働く must become 働き, giving 働きたいです.\", \"encouragement\": \"You have the right idea with ～たい; just remember to attach it to the verb stem, not the dictionary form.\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 733,
+      "completion_tokens": 317,
+      "total_tokens": 1050,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 733
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\n  \"total_score\": 100,\n  \"grammar_score\": 30,\n  \"connection_score\": 20,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"is_correct\": true,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": true,\n  \"result_level\": \"CORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"音楽を聞きながら料理をします。\",\n  \"corrected_sentence_furigana\": \"音楽[おんがく]を聞[き]きながら料理[りょうり]をします。\",\n  \"corrected_sentence_translation_zh\": \"I listen to music while cooking.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"You correctly used the masu-stem of 聞く with ながら to show two actions done at the same time by the same person.\",\n  \"encouragement\": \"Great job! Your sentence is natural and grammatically perfect.\",\n  \"scenario_task_completed\": false\n}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 627,
+      "completion_tokens": 254,
+      "total_tokens": 881,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 243
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\":30,\"grammar_score\":10,\"connection_score\":0,\"completeness_score\":10,\"naturalness_score\":5,\"vocabulary_score\":5,\"is_correct\":false,\"used_target_grammar\":true,\"target_grammar_correct\":false,\"result_level\":\"INCORRECT\",\"error_spans\":[{\"text\":\"聞くながら\",\"start\":3,\"end\":8,\"reason\":\"The target grammar ～ながら must attach to the ます-stem of a verb, not the dictionary form. 聞く must become 聞き.\",\"replacement\":\"聞きながら\"}],\"corrected_sentence\":\"音楽を聞きながら料理をします。\",\"corrected_sentence_furigana\":\"音楽[おんがく]を聞[き]きながら料理[りょうり]をします。\",\"corrected_sentence_translation_zh\":\"I listen to music while cooking.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"You used ～ながら with the dictionary form 聞く, but this grammar point requires the ます-stem, so it should be 聞きながら.\",\"encouragement\":\"You have the right idea—just remember to use the ます-stem before ながら.\",\"scenario_task_completed\":true}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 628,
+      "completion_tokens": 278,
+      "total_tokens": 906,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 244
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\n  \"total_score\": 100,\n  \"grammar_score\": 30,\n  \"connection_score\": 20,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"is_correct\": true,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": true,\n  \"result_level\": \"CORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"彼は料理の材料から盛り付けに至るまで気を配っている。\",\n  \"corrected_sentence_furigana\": \"彼[かれ]は料理[りょうり]の材料[ざいりょう]から盛[も]り付[つ]けに至[いた]るまで気[き]を配[くば]っている。\",\n  \"corrected_sentence_translation_zh\": \"He pays attention to everything from the ingredients to the presentation.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"You used ～に至るまで correctly after the noun 盛り付け, showing the range extends from ingredients to presentation. The sentence is natural and accurate.\",\n  \"encouragement\": \"Great job! Your sentence is perfect.\",\n  \"scenario_task_completed\": false\n}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 638,
+      "completion_tokens": 294,
+      "total_tokens": 932,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 254
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\n  \"total_score\": 30,\n  \"grammar_score\": 0,\n  \"connection_score\": 0,\n  \"completeness_score\": 10,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"is_correct\": false,\n  \"used_target_grammar\": false,\n  \"target_grammar_correct\": false,\n  \"result_level\": \"INCORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"毎日、日本語を勉強しながら、音楽を聞いています。\",\n  \"corrected_sentence_furigana\": \"毎日[まいにち]、日本語[にほんご]を勉強[べんきょう]しながら、音楽[おんがく]を聞[き]いています。\",\n  \"corrected_sentence_translation_zh\": \"Every day, I study Japanese while listening to music.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"The target grammar ～ながら is missing; you need to use the ます-stem of a verb plus ながら to show two simultaneous actions.\",\n  \"encouragement\": \"Try adding ～ながら to express doing two things at once!\",\n  \"scenario_task_completed\": false\n}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 626,
+      "completion_tokens": 283,
+      "total_tokens": 909,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 242
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"total_score\":30,\"grammar_score\":10,\"connection_score\":5,\"completeness_score\":5,\"naturalness_score\":8,\"vocabulary_score\":2,\"is_correct\":false,\"used_target_grammar\":false,\"target_grammar_correct\":false,\"result_level\":\"INCORRECT\",\"error_spans\":[],\"corrected_sentence\":\"毎日、日本語を勉強しながら、音楽を聞いています。\",\"corrected_sentence_furigana\":\"毎日[まいにち]、日本語[にほんご]を勉強[べんきょう]しながら、音楽[おんがく]を聞[き]いています。\",\"corrected_sentence_translation_zh\":\"Every day, I listen to music while studying Japanese.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"The target grammar ～ながら is completely missing; the sentence only says 'I am studying Japanese every day' and does not express two simultaneous actions by the same subject. To use ～ながら, take the ます-stem of 勉強します (勉強し) and add ながら.\",\"encouragement\":\"Try building the sentence around ～ながら next time, and you will express simultaneous actions naturally.\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 737,
+      "completion_tokens": 272,
+      "total_tokens": 1009,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 225
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"promptZh\":\"You are a team leader at a small software company. Your manager asked you to give an update on the progress of a project at the weekly meeting. You stand up and tell everyone the current status and the problems your team has found. What do you say to give this update?\",\"meaningHintZh\":\"To give an account of the current situation or findings to others, especially in a formal or work setting.\",\"grammarId\":null,\"referenceSentence\":\"プロジェクトの進捗について報告します。\",\"referenceFurigana\":\"プロジェクトの進捗[しんちょく]について報告[ほうこく]します。\",\"referenceTranslationZh\":\"I will give a report on the project's progress.\",\"chunks\":[\"プロジェクトの\",\"進捗について\",\"報告します。\"]}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 658,
+      "completion_tokens": 170,
+      "total_tokens": 828,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 146
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":true,\"meaningCorrect\":true,\"readingCorrect\":null,\"explanationZh\":\"You used 報告 in its intended sense of reporting results, and it fits naturally with 調査の結果を…報告しました. The particle use and verb form are also correct.\",\"corrections\":[],\"correctedSentence\":\"会議で調査の結果を報告しました。\",\"correctedFurigana\":\"会議[かいぎ]で調査[ちょうさ]の結果[けっか]を報告[ほうこく]しました。\",\"correctedTranslationZh\":\"I reported the investigation results at the meeting.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1246,
+      "completion_tokens": 135,
+      "total_tokens": 1381,
+      "prompt_tokens_details": {
+        "cached_tokens": 896
+      },
+      "prompt_cache_hit_tokens": 896,
+      "prompt_cache_miss_tokens": 350
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"You wanted to say that you ate because you were hungry, but “報告” means a report or the act of reporting, so it cannot be the object of “食べました.” Use a food word instead, for example “ご飯.”\",\"corrections\":[{\"text\":\"報告\",\"replacement\":\"ご飯\",\"reason\":\"“報告” means a report, which cannot be eaten; the hunger clause calls for a food word such as “ご飯.”\"}],\"correctedSentence\":\"おなかがすいたので、ご飯を食べました。\",\"correctedFurigana\":\"おなかがすいたので、ご飯[ごはん]を食[た]べました。\",\"correctedTranslationZh\":\"I was hungry, so I ate a meal.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1249,
+      "completion_tokens": 185,
+      "total_tokens": 1434,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 225
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"This sentence is natural, but it does not use the practice word 報告, so I cannot tell whether you can use that word yet.\",\"corrections\":[],\"correctedSentence\":\"おなかがすいたので、ご飯を食べました。\",\"correctedFurigana\":\"おなかがすいたので、ご飯[はん]を食[た]べました。\",\"correctedTranslationZh\":\"I was hungry, so I ate a meal.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1250,
+      "completion_tokens": 125,
+      "total_tokens": 1375,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 226
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\n  \"promptZh\": \"You are talking with a coworker at your office. Your coworker asks if you can stay late tonight to help finish a report. You have an important family commitment and cannot stay. Politely turn down the request, making it clear that you are saying no to what they asked.\",\n  \"meaningHintZh\": \"Use the verb that means to say no to a request or invitation, not the one for physically cutting something.\",\n  \"grammarId\": null,\n  \"referenceSentence\": \"すみません、今夜は家族の用事があるので、残業は断ります。\",\n  \"referenceFurigana\": \"すみません、今夜[こんや]は家族[かぞく]の用事[ようじ]があるので、残業[ざんぎょう]は断[ことわ]ります。\",\n  \"referenceTranslationZh\": \"Sorry, I have a family matter tonight, so I will refuse the overtime work.\",\n  \"chunks\": [\n    \"すみません、\",\n    \"今夜は\",\n    \"家族の用事が\",\n    \"あるので、\",\n    \"残業は\",\n    \"断ります。\"\n  ]\n}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 659,
+      "completion_tokens": 252,
+      "total_tokens": 911,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 147
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":true,\"meaningCorrect\":true,\"readingCorrect\":null,\"explanationZh\":\"You used 断る in its intended sense of refusing/declining a request or invitation. Here 断りました correctly means you turned down your friend's invitation, and the reason (having plans) fits naturally. The sentence is accurate and natural.\",\"corrections\":[],\"correctedSentence\":\"予定があるので、友達の誘いを断りました。\",\"correctedFurigana\":\"予定[よてい]があるので、友達[ともだち]の誘[さそ]いを断[ことわ]りました。\",\"correctedTranslationZh\":\"I declined my friend's invitation because I had plans.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1269,
+      "completion_tokens": 160,
+      "total_tokens": 1429,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 245
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\": true, \"targetCorrect\": false, \"meaningCorrect\": false, \"readingCorrect\": null, \"explanationZh\": \"You used 断る, but here it means 'refuse/decline,' and bread is not something you refuse in order to eat it. The sentence sounds like 'I refused the bread and ate it,' which doesn't make sense. If you wanted to say you were hungry and ate bread, use 食べました directly with パン, or say something like パンを食べました. The target word 断る is not appropriate for this meaning.\", \"corrections\": [{\"text\": \"パンを断って食べました\", \"replacement\": \"パンを食べました\", \"reason\": \"断る means 'refuse/decline' and cannot describe eating bread; remove it so the sentence naturally says you ate bread because you were hungry.\"}], \"correctedSentence\": \"おなかがすいたので、パンを食べました。\", \"correctedFurigana\": \"おなかがすいたので、パンを食[た]べました。\", \"correctedTranslationZh\": \"I was hungry, so I ate bread.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1269,
+      "completion_tokens": 252,
+      "total_tokens": 1521,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 245
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"This sentence is natural and correctly says you can't go because you have plans, but it does not use the practice word 断る, so I can't tell whether you can use it yet.\",\"corrections\":[],\"correctedSentence\":\"予定があるので、行けません。\",\"correctedFurigana\":\"予定[よてい]があるので、行[い]けません。\",\"correctedTranslationZh\":\"I have plans, so I can't go.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1263,
+      "completion_tokens": 126,
+      "total_tokens": 1389,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 239
+    }
+  }
+]

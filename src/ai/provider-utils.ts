@@ -1,3 +1,4 @@
+import { validationFeedback } from './validation-feedback';
 import { ProviderError } from './ai-provider';
 import {
   providerReviewSchema,
@@ -74,11 +75,13 @@ export function parseReviewJson(
       alternative_sentence_uses_target_grammar:
         baseline.corrected_sentence_uses_target_grammar,
     });
-  } catch {
+  } catch (error) {
     throw new ProviderError(
       'AI returned invalid structured output',
       'AI_INVALID_RESPONSE',
       true,
+      undefined,
+      validationFeedback(error),
     );
   }
 }

@@ -1,3 +1,4 @@
+import { AiReviewService } from '../../src/ai/ai-review.service';
 import { fileReceipts } from './file-receipts';
 /** Explicit synthetic paid regression; guard disposable local DB. No real user data. */
 import 'dotenv/config';
@@ -65,8 +66,8 @@ global.fetch = async (...args) => {
       model:
         envelope.model ??
         String(args[0]).match(/models\/(.+):generateContent/)?.[1],
-      candidates: envelope.candidates,
-      choices: envelope.choices,
+      candidates: sanitizeCandidates(envelope.candidates),
+      choices: sanitizeChoices(envelope.choices),
       usage: envelope.usage,
       usageMetadata: envelope.usageMetadata,
     });
@@ -183,9 +184,11 @@ async function run(model: string) {
     GEMINI_MODEL: model,
     DEEPSEEK_MODEL: model,
   });
-  const provider = gemini
-    ? new GeminiReviewProvider(config, db)
-    : new DeepSeekReviewProvider(config, db);
+  const provider = new AiReviewService(
+    new GeminiReviewProvider(config, db),
+    new DeepSeekReviewProvider(config, db),
+    config,
+  );
   const vocab = new VocabularyAiService(config, db);
   let unavailable = false;
   const capture = async (
@@ -232,7 +235,7 @@ async function run(model: string) {
   for (const locale of ['zh', 'en'] as const) {
     for (const item of grammarCases)
       await capture(item.id, locale, async () => {
-        const response = await provider.review({
+        const { response } = await provider.review({
           stage: 'CORE',
           explanationLocale: locale,
           grammarTitle: item.title,

@@ -1,3 +1,6 @@
+import { AiReviewService } from '../../src/ai/ai-review.service';
+import { DeepSeekReviewProvider } from '../../src/ai/deepseek.provider';
+import { GeminiReviewProvider } from '../../src/ai/gemini.provider';
 import { ConfigService } from '@nestjs/config';
 import { MeteredAiClient } from '../../src/ai/metered-ai-client';
 import { startHarness, type Harness } from './harness';
@@ -98,4 +101,93 @@ it('timeout leaves an explicit unknown cost receipt instead of zero cost', async
   expect(r.costUsd).toBeNull();
   expect(r.inputTokens).toBeNull();
   expect(r.usageComplete).toBe(false);
+});
+
+it('repairs a strict score-sum failure within two metered calls on the original input', async () => {
+  const config = new ConfigService({
+    DEEPSEEK_API_KEY: 'synthetic',
+    DEEPSEEK_MODEL: 'deepseek-flash',
+    GEMINI_API_KEY: '',
+    AI_PRIMARY_PROVIDER: 'DEEPSEEK',
+  });
+  const original = '日本で働きたいです。';
+  const valid = {
+    total_score: 100,
+    grammar_score: 30,
+    connection_score: 20,
+    completeness_score: 20,
+    naturalness_score: 20,
+    vocabulary_score: 10,
+    is_correct: true,
+    used_target_grammar: true,
+    target_grammar_correct: true,
+    result_level: 'CORRECT',
+    error_spans: [],
+    corrected_sentence: original,
+    corrected_sentence_furigana: '日本[にほん]で働[はたら]きたいです。',
+    corrected_sentence_translation_zh: 'I want to work in Japan.',
+    corrected_sentence_uses_target_grammar: true,
+    explanation_zh: 'You correctly express your wish.',
+    encouragement: 'Keep practicing.',
+  };
+  let requests = 0;
+  const bodies: string[] = [];
+  jest.spyOn(global, 'fetch').mockImplementation((_url, init) => {
+    bodies.push(init!.body as string);
+    requests++;
+    const output = requests === 1 ? { ...valid, total_score: 90 } : valid;
+    return Promise.resolve(
+      new Response(
+        JSON.stringify({
+          model: 'deepseek-flash',
+          usage: {
+            prompt_tokens: 600,
+            completion_tokens: 250,
+            total_tokens: 850,
+            prompt_cache_hit_tokens: 0,
+          },
+          choices: [
+            {
+              finish_reason: 'stop',
+              message: { content: JSON.stringify(output) },
+            },
+          ],
+        }),
+      ),
+    );
+  });
+  const service = new AiReviewService(
+    new GeminiReviewProvider(config, h.prisma),
+    new DeepSeekReviewProvider(config, h.prisma),
+    config,
+  );
+  const result = await service.review({
+    stage: 'CORE',
+    explanationLocale: 'en',
+    grammarTitle: '～たい',
+    explanation: 'want to',
+    sentence: original,
+    usageContext: { taskKind: 'EVALUATION', taskKey: 'strict-repair' },
+  });
+  expect(result.response.result.total_score).toBe(100);
+  expect(requests).toBe(2);
+  expect(bodies[1]).toContain('EXACT sum');
+  for (const body of bodies) expect(body).toContain(original);
+  const rows = await h.prisma.aiUsageRecord.findMany({
+    where: { taskKey: 'strict-repair' },
+    orderBy: { attempt: 'asc' },
+  });
+  expect(
+    rows.map((r) => ({
+      attempt: r.attempt,
+      success: r.success,
+      errorCode: r.errorCode,
+    })),
+  ).toEqual([
+    { attempt: 1, success: false, errorCode: 'AI_INVALID_RESPONSE' },
+    { attempt: 2, success: true, errorCode: null },
+  ]);
+  expect(rows.every((r) => r.usageComplete && Number(r.costUsd) > 0)).toBe(
+    true,
+  );
 });
