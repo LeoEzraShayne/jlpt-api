@@ -1,55 +1,78 @@
+import { contains, excludes } from './vocabulary-test-fixtures';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import type { PrismaService } from '../database/prisma.service';
+import type { PracticeRecord } from './vocabulary-practice.presenter';
 import { VocabularyPracticeService } from './vocabulary-practice.service';
 import { makePractice } from './vocabulary-test-fixtures';
 
 const requestKey = '10203040-5060-4070-8080-102030405060';
+type PracticeMutation = {
+  where: { status: string; hintLevel?: number; answer?: null };
+  data: Partial<Omit<PracticeRecord, 'hintLevel'>> & {
+    hintLevel?: { increment: number };
+  };
+};
 function setup() {
   let row = makePractice();
   const practice = {
-    findFirst: jest.fn(async (args: any) =>
-      args.where.userId && args.where.userId !== row.userId ? null : { ...row },
+    findFirst: jest.fn((args: { where: { userId?: string } }) =>
+      Promise.resolve(
+        args.where.userId && args.where.userId !== row.userId
+          ? null
+          : { ...row },
+      ),
     ),
-    findUniqueOrThrow: jest.fn(async () => ({ ...row })),
-    updateMany: jest.fn(async ({ where, data }: any) => {
+    findUniqueOrThrow: jest.fn(() => Promise.resolve({ ...row })),
+    updateMany: jest.fn(({ where, data }: PracticeMutation) => {
       if (
         where.status !== row.status ||
         (where.hintLevel !== undefined && where.hintLevel !== row.hintLevel) ||
         (where.answer === null && row.answer !== null)
       )
-        return { count: 0 };
+        return Promise.resolve({ count: 0 });
+      const { hintLevel, ...patch } = data;
       row = {
         ...row,
-        ...data,
-        ...(data.hintLevel ? { hintLevel: row.hintLevel + 1 } : {}),
+        ...patch,
+        ...(hintLevel
+          ? { hintLevel: row.hintLevel + hintLevel.increment }
+          : {}),
       };
-      return { count: 1 };
+      return Promise.resolve({ count: 1 });
     }),
-    update: jest.fn(async ({ data }: any) => {
+    update: jest.fn(({ data }: { data: Partial<PracticeRecord> }) => {
       row = { ...row, ...data };
-      return row;
+      return Promise.resolve(row);
     }),
-    create: jest.fn(async ({ data }: any) => {
+    create: jest.fn(({ data }: { data: Partial<PracticeRecord> }) => {
       row = { ...row, ...data, status: 'QUEUED' };
-      return row;
+      return Promise.resolve(row);
     }),
   };
   const db = {
     vocabularyPractice: practice,
-    vocabularyEntry: { findFirst: jest.fn(async () => row.vocabulary) },
+    vocabularyEntry: {
+      findFirst: jest.fn((): Promise<PracticeRecord['vocabulary'] | null> =>
+        Promise.resolve(row.vocabulary),
+      ),
+    },
     vocabularyLearning: {
-      findUnique: jest.fn(async () => row.learning),
-      findFirst: jest.fn(async () => row.learning),
+      findUnique: jest.fn(() => Promise.resolve(row.learning)),
+      findFirst: jest.fn((): Promise<PracticeRecord['learning'] | null> =>
+        Promise.resolve(row.learning),
+      ),
     },
-    grammarPoint: { findFirst: jest.fn(async () => ({ id: 'grammar' })) },
+    grammarPoint: {
+      findFirst: jest.fn(() => Promise.resolve({ id: 'grammar' })),
+    },
     studySession: {
-      findFirst: jest.fn(async () => ({ grammarId: 'grammar' })),
+      findFirst: jest.fn(() => Promise.resolve({ grammarId: 'grammar' })),
     },
-    $queryRaw: jest.fn(async () => []),
+    $queryRaw: jest.fn(() => Promise.resolve([])),
     $transaction: jest.fn(),
   };
   db.$transaction.mockImplementation(
-    async (callback: (tx: typeof db) => unknown) => callback(db),
+    (callback: (tx: typeof db) => Promise<unknown>) => callback(db),
   );
   return {
     service: new VocabularyPracticeService(db as unknown as PrismaService),
@@ -82,8 +105,8 @@ describe('practice API state transitions', () => {
     fixture.practice.findFirst.mockResolvedValueOnce(null);
     await fixture.service.start('owner', { vocabularyId: 'sense-arrival' });
     expect(fixture.practice.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
+      contains({
+        data: contains({
           learningRevision: 1,
           unknownAtStart: true,
           userId: 'owner',
@@ -94,13 +117,13 @@ describe('practice API state transitions', () => {
   });
   it('due selection only considers visible enabled unpaused personal learning', async () => {
     const { service, db } = setup();
-    db.vocabularyLearning.findFirst.mockResolvedValueOnce(null as any);
+    db.vocabularyLearning.findFirst.mockResolvedValueOnce(null);
     await expect(service.start('owner', {})).rejects.toBeInstanceOf(
       NotFoundException,
     );
     expect(db.vocabularyLearning.findFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
+      contains({
+        where: contains({
           userId: 'owner',
           paused: false,
           vocabulary: {
@@ -113,7 +136,7 @@ describe('practice API state transitions', () => {
   });
   it('rejects private, disabled, or missing vocabulary before creating a job', async () => {
     const { service, db, practice } = setup();
-    db.vocabularyEntry.findFirst.mockResolvedValueOnce(null as any);
+    db.vocabularyEntry.findFirst.mockResolvedValueOnce(null);
     await expect(
       service.start('owner', { vocabularyId: 'private' }),
     ).rejects.toBeInstanceOf(NotFoundException);
@@ -143,11 +166,11 @@ describe('practice API state transitions', () => {
       NotFoundException,
     );
     expect(practice.findFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
+      contains({
+        where: contains({
           id: 'practice',
           userId: 'stranger',
-          vocabulary: expect.objectContaining({
+          vocabulary: contains({
             validationStatus: 'VALIDATED',
           }),
         }),
@@ -244,8 +267,8 @@ describe('practice API state transitions', () => {
       expect(result.status).toBe(answer ? 'ASSESSING' : 'QUEUED');
       expect(fixture.row).toMatchObject({ answer, hintLevel: 3, attempts: 1 });
       expect(fixture.practice.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.not.objectContaining({ answer: expect.anything() }),
+        contains({
+          data: excludes({ answer: expect.anything() as unknown }),
         }),
       );
     },

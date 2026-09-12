@@ -11,6 +11,13 @@ import {
   makePractice,
   now,
 } from './vocabulary-test-fixtures';
+import type { Prisma } from '@prisma/client';
+
+function savedCard(result: ReturnType<typeof scheduleWord>): Prisma.JsonValue {
+  if (!result.data || !('memoryCard' in result.data) || !result.data.memoryCard)
+    throw new Error('Expected this review to persist a memory card');
+  return result.data.memoryCard as Prisma.JsonValue;
+}
 
 describe('manual vocabulary authority', () => {
   it('UNKNOWN preserves memory/history and resets enabled practice', () => {
@@ -112,10 +119,8 @@ describe('per-word FSRS evidence', () => {
     expect(result.outcome).toBe('PROMPTED');
     expect(result.data).not.toHaveProperty('knowledge');
     const independent = evaluate();
-    expect(
-      restoreCard((result.data as any).memoryCard, now).stability,
-    ).toBeLessThan(
-      restoreCard((independent.data as any).memoryCard, now).stability,
+    expect(restoreCard(savedCard(result), now).stability).toBeLessThan(
+      restoreCard(savedCard(independent), now).stability,
     );
   });
   it.each([
@@ -130,7 +135,10 @@ describe('per-word FSRS evidence', () => {
     expect(result.data).not.toHaveProperty('nextReviewAt');
   });
   it('missing evidence cannot become success', () => {
-    expect(wordOutcome({} as any, makePractice())).toBe('UNVERIFIED');
+    // Deliberately bypass the type contract to exercise malformed evidence.
+    expect(
+      wordOutcome({} as Parameters<typeof wordOutcome>[0], makePractice()),
+    ).toBe('UNVERIFIED');
   });
   it('wrong target usage is Again even when the sentence is otherwise good', () => {
     expect(
@@ -156,7 +164,7 @@ describe('per-word FSRS evidence', () => {
   it('does not advance a card already scheduled on the same local date', () => {
     const initial = evaluate();
     const result = evaluate({
-      learning: makeLearning({ memoryCard: (initial.data as any).memoryCard }),
+      learning: makeLearning({ memoryCard: savedCard(initial) }),
     });
     expect(result.counted).toBe(false);
     expect(result.data).not.toHaveProperty('memoryCard');
@@ -190,7 +198,7 @@ describe('per-word FSRS evidence', () => {
     for (let i = 0; i < 20; i++) {
       const time = learning.nextReviewAt!;
       const result = evaluate({ learning, now: time });
-      const card = restoreCard((result.data as any).memoryCard, time);
+      const card = restoreCard(savedCard(result), time);
       expect(card.due).toBeInstanceOf(Date);
       expect(card.last_review).toBeInstanceOf(Date);
       expect(card.scheduled_days).toBeLessThanOrEqual(365);

@@ -1,6 +1,19 @@
 import type { VocabularyLearning } from '@prisma/client';
 import type { PracticeRecord } from './vocabulary-practice.presenter';
 
+// @types/jest returns `any` for asymmetric matchers. Keep that boundary typed
+// so nested expected objects do not spread `any` through test assertions.
+export function contains(
+  value: Record<string, unknown>,
+): jest.AsymmetricMatcher {
+  return expect.objectContaining(value) as jest.AsymmetricMatcher;
+}
+export function excludes(
+  value: Record<string, unknown>,
+): jest.AsymmetricMatcher {
+  return expect.not.objectContaining(value) as jest.AsymmetricMatcher;
+}
+
 export const now = new Date('2026-09-12T10:00:00.000Z');
 export const challenge = {
   promptZh: '告诉朋友周末去哪里。',

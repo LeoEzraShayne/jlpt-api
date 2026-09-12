@@ -69,7 +69,22 @@ describe('public practice secrecy', () => {
     expect(
       presentPractice(
         makePractice({
-          grammar: { id: 'grammar', title: '〜から' } as any,
+          grammar: {
+            id: 'grammar',
+            title: '〜から',
+            level: 'N4',
+            chineseExplanation: '表示原因',
+            connectionRule: null,
+            usageScene: null,
+            commonErrors: null,
+            sortOrder: 1,
+            status: 'PUBLISHED',
+            sourceDataset: 'test',
+            sourceOrdinal: 1,
+            sourceHash: 'test',
+            createdAt: new Date(0),
+            updatedAt: new Date(0),
+          },
           grammarId: 'grammar',
         }),
       ),

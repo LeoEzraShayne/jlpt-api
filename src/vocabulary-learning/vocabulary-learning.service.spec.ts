@@ -1,4 +1,6 @@
+import { contains, excludes } from './vocabulary-test-fixtures';
 import type { PrismaService } from '../database/prisma.service';
+import type { VocabularyLearning } from '@prisma/client';
 import { VocabularyLearningService } from './vocabulary-learning.service';
 import { makeLearning, makePractice } from './vocabulary-test-fixtures';
 
@@ -6,29 +8,41 @@ function setup() {
   const learning = makeLearning();
   const vocabulary = makePractice().vocabulary;
   const db = {
-    $queryRaw: jest.fn(async () => []),
+    $queryRaw: jest.fn(() => Promise.resolve([])),
     $transaction: jest.fn(),
-    vocabularyEntry: { findFirst: jest.fn(async () => vocabulary) },
+    vocabularyEntry: { findFirst: jest.fn(() => Promise.resolve(vocabulary)) },
     vocabularyLearning: {
-      upsert: jest.fn(async () => learning),
-      findUnique: jest.fn(async () => learning),
-      findMany: jest.fn(async () => [{ ...learning, vocabulary }]),
-      count: jest.fn(async () => 1),
-      update: jest.fn(async ({ data }: any) => ({
-        ...learning,
-        ...data,
-        manualRevision: learning.manualRevision + 1,
-      })),
+      upsert: jest.fn(() => Promise.resolve(learning)),
+      findUnique: jest.fn(() => Promise.resolve(learning)),
+      findMany: jest.fn(() => Promise.resolve([{ ...learning, vocabulary }])),
+      count: jest.fn(() => Promise.resolve(1)),
+      update: jest.fn(
+        ({
+          data,
+        }: {
+          data: Partial<Omit<VocabularyLearning, 'manualRevision'>>;
+        }) =>
+          Promise.resolve({
+            ...learning,
+            ...data,
+            manualRevision: learning.manualRevision + 1,
+          }),
+      ),
     },
     vocabularyPractice: {
-      updateMany: jest.fn(async () => ({ count: 1 })),
-      findMany: jest.fn(async () => [makePractice({ status: 'COMPLETED' })]),
-      count: jest.fn(async () => 2),
+      updateMany: jest.fn(() => Promise.resolve({ count: 1 })),
+      findMany: jest.fn(() =>
+        Promise.resolve([makePractice({ status: 'COMPLETED' })]),
+      ),
+      count: jest.fn(() => Promise.resolve(2)),
     },
-    user: { findUnique: jest.fn(async () => ({ timezone: 'Asia/Tokyo' })) },
+    user: {
+      findUnique: jest.fn(() => Promise.resolve({ timezone: 'Asia/Tokyo' })),
+    },
   };
-  db.$transaction.mockImplementation(async (value: any) =>
-    Array.isArray(value) ? Promise.all(value) : value(db),
+  db.$transaction.mockImplementation(
+    (value: Promise<unknown>[] | ((tx: typeof db) => Promise<unknown>)) =>
+      Array.isArray(value) ? Promise.all(value) : value(db),
   );
   return {
     db,
@@ -58,8 +72,8 @@ describe('learning service query and mutation boundaries', () => {
       data: { status: 'FAILED', lockedAt: null, errorCode: 'LEARNING_CHANGED' },
     });
     expect(db.vocabularyLearning.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.not.objectContaining({ memoryCard: expect.anything() }),
+      contains({
+        data: excludes({ memoryCard: expect.anything() as unknown }),
       }),
     );
   });
@@ -90,16 +104,16 @@ describe('learning service query and mutation boundaries', () => {
       'sense-arrival',
     );
     expect(db.vocabularyLearning.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
+      contains({
+        where: contains({
           userId: 'owner',
           knowledge: 'UNKNOWN',
           vocabularyId: { gt: 'previous-sense' },
-          vocabulary: expect.objectContaining({
+          vocabulary: contains({
             level: 'N1',
             validationStatus: 'VALIDATED',
             OR: [{ ownerId: null }, { ownerId: 'owner' }],
-            AND: expect.any(Array),
+            AND: expect.any(Array) as unknown,
           }),
         }),
         orderBy: { vocabularyId: 'asc' },
@@ -123,7 +137,7 @@ describe('learning service query and mutation boundaries', () => {
       const { service, db } = setup();
       await service.list('owner', { list });
       expect(db.vocabularyLearning.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expect.objectContaining(filter) }),
+        contains({ where: contains(filter) }),
       );
       expect(db.vocabularyLearning.upsert).not.toHaveBeenCalled();
     },
@@ -153,7 +167,7 @@ describe('learning service query and mutation boundaries', () => {
       limit: 2,
     });
     expect(db.vocabularyPractice.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
+      contains({
         where: {
           userId: 'owner',
           vocabularyId: 'sense-arrival',
@@ -177,10 +191,10 @@ describe('learning service query and mutation boundaries', () => {
         completedTodayCount: 2,
       });
       expect(db.vocabularyLearning.count).toHaveBeenLastCalledWith({
-        where: expect.objectContaining({ userId: 'owner', paused: false }),
+        where: contains({ userId: 'owner', paused: false }),
       });
       expect(db.vocabularyPractice.count).toHaveBeenCalledWith({
-        where: expect.objectContaining({
+        where: contains({
           userId: 'owner',
           status: 'COMPLETED',
           completedAt: {
