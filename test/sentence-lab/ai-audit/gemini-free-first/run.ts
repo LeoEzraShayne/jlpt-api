@@ -63,6 +63,7 @@ async function main() {
     new GeminiReviewProvider(config, db),
     new DeepSeekReviewProvider(config, db),
     config,
+    db,
   );
   const vocab = new VocabularyAiService(config, db);
   const runId = new Date().toISOString();
