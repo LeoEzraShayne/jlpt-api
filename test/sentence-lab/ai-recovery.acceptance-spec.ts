@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access -- HTTP identifiers are checked against real PostgreSQL rows. */
 import { randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
+import { Prisma } from '@prisma/client';
 import { startHarness, type Harness } from '../learning-v2/harness';
 import { reviewSession } from '../learning-v2/review-fixtures';
 import { QuotaService } from '../../src/billing/quota.service';
@@ -50,143 +51,159 @@ function worker(service: AiReviewService, quota: QuotaService) {
   return new AiWorkerService(h.prisma, service, config, undefined, quota);
 }
 
-test('free-first quota failure then paid correction records two calls but consumes one task once', async () => {
-  const f = await fixture();
-  const candidateConfig = new ConfigService({
-    AI_WORKER_ENABLED: true,
-    GEMINI_FREE_FIRST: 'true',
-    AI_PRIMARY_PROVIDER: 'DEEPSEEK',
-    GEMINI_API_KEY: `synthetic-gemini-${randomUUID()}`,
-    GEMINI_MODEL: 'gemini-3.8-flash',
-    DEEPSEEK_API_KEY: 'synthetic-deepseek-no-network',
-    DEEPSEEK_MODEL: 'deepseek-flash',
-    DEEPSEEK_THINKING_EFFORT: 'low',
-    DEEPSEEK_THINKING_SCOPE: 'grammar',
-  });
-  const payload = {
-    total_score: 40,
-    grammar_score: 10,
-    connection_score: 5,
-    completeness_score: 10,
-    naturalness_score: 10,
-    vocabulary_score: 5,
-    is_correct: false,
-    used_target_grammar: true,
-    target_grammar_correct: false,
-    result_level: 'INCORRECT',
-    error_spans: [
-      {
-        text: '聞くながら',
-        start: 3,
-        end: 8,
-        reason: 'ながら前面需要使用动词ます形去掉ます的形式。',
-        replacement: '聞きながら',
-      },
-    ],
-    corrected_sentence: '音楽を聞きながら歩きます。',
-    corrected_sentence_furigana:
-      '音楽[おんがく]を聞[き]きながら歩[ある]きます。',
-    corrected_sentence_translation_zh: '我一边听音乐一边走路。',
-    corrected_sentence_uses_target_grammar: true,
-    explanation_zh: '聞く需要改成聞き，再接ながら。',
-    encouragement: '继续练习动词的连接形式。',
-    scenario_task_completed: false,
-  };
-  const transport = jest
-    .spyOn(global, 'fetch')
-    .mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          error: {
-            details: [
+test.each([false, true])(
+  'free-first failure then paid success consumes once; missing-scenario raw claim=%s',
+  async (spuriousScenario) => {
+    const f = await fixture();
+    if (spuriousScenario)
+      await h.prisma.studySession.update({
+        where: { id: f.session.id },
+        data: { trainingContext: Prisma.DbNull, scenarioId: null },
+      });
+    const candidateConfig = new ConfigService({
+      AI_WORKER_ENABLED: true,
+      GEMINI_FREE_FIRST: 'true',
+      AI_PRIMARY_PROVIDER: 'DEEPSEEK',
+      GEMINI_API_KEY: `synthetic-gemini-${randomUUID()}`,
+      GEMINI_MODEL: 'gemini-3.8-flash',
+      DEEPSEEK_API_KEY: 'synthetic-deepseek-no-network',
+      DEEPSEEK_MODEL: 'deepseek-flash',
+      DEEPSEEK_THINKING_EFFORT: 'low',
+      DEEPSEEK_THINKING_SCOPE: 'grammar',
+    });
+    const payload = {
+      total_score: 40,
+      grammar_score: 10,
+      connection_score: 5,
+      completeness_score: 10,
+      naturalness_score: 10,
+      vocabulary_score: 5,
+      is_correct: false,
+      used_target_grammar: true,
+      target_grammar_correct: false,
+      result_level: 'INCORRECT',
+      error_spans: [
+        {
+          text: '聞くながら',
+          start: 3,
+          end: 8,
+          reason: 'ながら前面需要使用动词ます形去掉ます的形式。',
+          replacement: '聞きながら',
+        },
+      ],
+      corrected_sentence: '音楽を聞きながら歩きます。',
+      corrected_sentence_furigana:
+        '音楽[おんがく]を聞[き]きながら歩[ある]きます。',
+      corrected_sentence_translation_zh: '我一边听音乐一边走路。',
+      corrected_sentence_uses_target_grammar: true,
+      explanation_zh: '聞く需要改成聞き，再接ながら。',
+      encouragement: '继续练习动词的连接形式。',
+      scenario_task_completed: spuriousScenario,
+    };
+    const transport = jest
+      .spyOn(global, 'fetch')
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            error: {
+              details: [
+                {
+                  violations: [
+                    {
+                      quotaId:
+                        'GenerateRequestsPerDayPerProjectPerModel-FreeTier',
+                    },
+                  ],
+                },
+              ],
+            },
+          }),
+          { status: 429 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            model: 'deepseek-flash',
+            choices: [
               {
-                violations: [
-                  {
-                    quotaId:
-                      'GenerateRequestsPerDayPerProjectPerModel-FreeTier',
-                  },
-                ],
+                finish_reason: 'stop',
+                message: { content: JSON.stringify(payload) },
               },
             ],
-          },
-        }),
-        { status: 429 },
-      ),
-    )
-    .mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          model: 'deepseek-flash',
-          choices: [
-            {
-              finish_reason: 'stop',
-              message: { content: JSON.stringify(payload) },
+            usage: {
+              prompt_tokens: 100,
+              completion_tokens: 60,
+              total_tokens: 160,
+              completion_tokens_details: { reasoning_tokens: 10 },
             },
-          ],
-          usage: {
-            prompt_tokens: 100,
-            completion_tokens: 60,
-            total_tokens: 160,
-            completion_tokens_details: { reasoning_tokens: 10 },
-          },
-        }),
-      ),
+          }),
+        ),
+      );
+    const service = new AiReviewService(
+      new GeminiReviewProvider(candidateConfig, h.prisma),
+      new DeepSeekReviewProvider(candidateConfig, h.prisma),
+      candidateConfig,
+      h.prisma,
     );
-  const service = new AiReviewService(
-    new GeminiReviewProvider(candidateConfig, h.prisma),
-    new DeepSeekReviewProvider(candidateConfig, h.prisma),
-    candidateConfig,
-    h.prisma,
-  );
-  const candidateWorker = new AiWorkerService(
-    h.prisma,
-    service,
-    candidateConfig,
-    undefined,
-    f.quota,
-  );
-  await candidateWorker.poll();
-  await candidateWorker.poll();
-  expect(transport).toHaveBeenCalledTimes(2);
-  expect(transport.mock.calls[0][0]).toEqual(
-    expect.stringContaining('generativelanguage.googleapis.com'),
-  );
-  expect(transport.mock.calls[1][0]).toEqual(
-    expect.stringContaining('api.deepseek.com'),
-  );
-  const receipts = await h.prisma.aiUsageRecord.findMany({
-    where: { taskKey: f.session.id },
-    orderBy: { attempt: 'asc' },
-  });
-  expect(receipts.map((r) => [r.provider, r.attempt, r.success])).toEqual([
-    ['GEMINI', 1, false],
-    ['DEEPSEEK', 2, true],
-  ]);
-  expect(receipts[0]).toMatchObject({
-    costUsd: null,
-    usageComplete: false,
-    errorCode: 'AI_HTTP_429',
-  });
-  expect(receipts[1]).toMatchObject({
-    thinkingTokens: 10,
-    outputTokens: 60,
-    usageComplete: true,
-  });
-  expect(Number(receipts[1].costUsd)).toBeGreaterThan(0);
-  expect((await f.quota.summary(f.user.id)).quota).toMatchObject({
-    reserved: 0,
-    consumed: 1,
-    remaining: 4,
-  });
-  expect(await h.prisma.aiReviewResult.count({ where: { jobId: f.id } })).toBe(
-    1,
-  );
-  expect(
-    await h.prisma.taskSubmission.count({
-      where: { userId: f.user.id, status: 'SUCCEEDED' },
-    }),
-  ).toBe(1);
-});
+    const candidateWorker = new AiWorkerService(
+      h.prisma,
+      service,
+      candidateConfig,
+      undefined,
+      f.quota,
+    );
+    await candidateWorker.poll();
+    await candidateWorker.poll();
+    expect(transport).toHaveBeenCalledTimes(2);
+    expect(transport.mock.calls[0][0]).toEqual(
+      expect.stringContaining('generativelanguage.googleapis.com'),
+    );
+    expect(transport.mock.calls[1][0]).toEqual(
+      expect.stringContaining('api.deepseek.com'),
+    );
+    const receipts = await h.prisma.aiUsageRecord.findMany({
+      where: { taskKey: f.session.id },
+      orderBy: { attempt: 'asc' },
+    });
+    expect(receipts.map((r) => [r.provider, r.attempt, r.success])).toEqual([
+      ['GEMINI', 1, false],
+      ['DEEPSEEK', 2, true],
+    ]);
+    expect(receipts[0]).toMatchObject({
+      costUsd: null,
+      usageComplete: false,
+      errorCode: 'AI_HTTP_429',
+    });
+    expect(receipts[1]).toMatchObject({
+      thinkingTokens: 10,
+      outputTokens: 60,
+      usageComplete: true,
+    });
+    expect(Number(receipts[1].costUsd)).toBeGreaterThan(0);
+    expect((await f.quota.summary(f.user.id)).quota).toMatchObject({
+      reserved: 0,
+      consumed: 1,
+      remaining: 4,
+    });
+    expect(
+      await h.prisma.aiReviewResult.count({ where: { jobId: f.id } }),
+    ).toBe(1);
+    if (spuriousScenario)
+      expect(
+        (
+          await h.prisma.aiReviewResult.findUniqueOrThrow({
+            where: { jobId: f.id },
+          })
+        ).scenarioTaskCompleted,
+      ).toBeNull();
+    expect(
+      await h.prisma.taskSubmission.count({
+        where: { userId: f.user.id, status: 'SUCCEEDED' },
+      }),
+    ).toBe(1);
+  },
+);
 
 test('six concurrent manual retries admit one final round, then release quota without any fifth round', async () => {
   const f = await fixture();
