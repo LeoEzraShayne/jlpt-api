@@ -30,8 +30,22 @@ async function main() {
     createHash('sha256').update(source).digest('hex') !== manifest.fixtureSha256
   )
     throw Error('FIXTURE_HASH_MISMATCH');
-  const cases = (JSON.parse(source.toString()) as { rows: Case[] }).rows;
-  if (cases.length !== 12) throw Error('EXACTLY_12_OPERATIONS_REQUIRED');
+  const frozen = (JSON.parse(source.toString()) as { rows: Case[] }).rows;
+  if (frozen.length !== 12)
+    throw Error('EXACTLY_12_FROZEN_OPERATIONS_REQUIRED');
+  const selected = process.env.F_CASE_IDS?.split(',');
+  if (
+    selected &&
+    (new Set(selected).size !== selected.length ||
+      selected.some((id) => !frozen.some((c) => c.caseId === id)))
+  )
+    throw Error('INVALID_EXPLICIT_SUBSET');
+  const cases = selected
+    ? selected.map((id) => frozen.find((c) => c.caseId === id)!)
+    : frozen;
+  const spacing = Number(process.env.F_CALL_SPACING_MS ?? 0);
+  if (!Number.isSafeInteger(spacing) || spacing < 0 || spacing > 65_000)
+    throw Error('INVALID_SPACING');
   if (!process.env.F_OUTPUT_DIR || !process.env.F_CANDIDATE_COMMIT)
     throw Error('OUTPUT_AND_CANDIDATE_REQUIRED');
   const output = resolve(process.env.F_OUTPUT_DIR);
@@ -162,6 +176,25 @@ async function main() {
   };
   try {
     for (const c of cases) {
+      if (rows.length && spacing) {
+        const circuit = await db.aiProviderCircuit.findFirst({
+          select: { blockedUntil: true },
+        });
+        const waitUntil = Math.max(
+          Date.now() + spacing,
+          circuit?.blockedUntil?.getTime() ?? 0,
+        );
+        if (waitUntil - Date.now() > 360_000)
+          throw Error('COOLDOWN_EXCEEDS_BOUNDED_RUN');
+        while (Date.now() < waitUntil) {
+          console.log(
+            'F waiting for scheduled spacing / isolated provider cooldown',
+          );
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.min(30_000, waitUntil - Date.now())),
+          );
+        }
+      }
       current = c;
       currentCalls = 0;
       const start = Date.now();
@@ -210,6 +243,8 @@ async function main() {
         candidateCommit: process.env.F_CANDIDATE_COMMIT,
         fixtureSha256: manifest.fixtureSha256,
         geminiModel: settings.GEMINI_MODEL,
+        selectedCaseIds: cases.map((c) => c.caseId),
+        callSpacingMs: spacing,
         rows,
       });
       console.log(c.caseId, `recorded (${currentCalls} requests)`);

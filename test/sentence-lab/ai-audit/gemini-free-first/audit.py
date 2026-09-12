@@ -10,6 +10,10 @@ manifest = json.loads((base / 'manifest.json').read_text())
 assert hashlib.sha256((base / 'cases.json').read_bytes()).hexdigest() == manifest['fixtureSha256']
 fixtures = json.loads((base / 'cases.json').read_text())['rows']
 results = json.loads((output / 'results.json').read_text())
+if results.get('selectedCaseIds'):
+    selected = results['selectedCaseIds']
+    assert len(selected) == len(set(selected)) and set(selected).issubset({f['caseId'] for f in fixtures})
+    fixtures = [next(f for f in fixtures if f['caseId'] == case_id) for case_id in selected]
 raw = json.loads((output / 'raw.json').read_text())
 usage = json.loads((output / 'usage.json').read_text())
 assert results['fixtureSha256'] == manifest['fixtureSha256']
