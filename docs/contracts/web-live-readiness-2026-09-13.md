@@ -46,15 +46,35 @@ performs account, secret, production and activation operations.
    Refunds and Disputes access; creating Checkout requires write access. The
    one-off readiness script additionally reads the current Account and Webhook
    Endpoints; do not silently broaden a restricted runtime key merely for it.
-4. Run the read-only checker in the protected deployment environment:
+4. Run the read-only **runtime subset** with the approved least-privilege key in
+   the protected deployment environment:
 
    ```sh
-   node --env-file=.env --import tsx scripts/billing/check-live-readiness.ts
+   node --env-file=.env --import tsx scripts/billing/check-live-readiness.ts --runtime-only
    ```
 
-   It writes only booleans/version and performs no mutations. A successful
+   This mode reads only the three Prices with expanded Products and checks
+   signing-secret presence locally. It never calls Account or Webhook Endpoints
+   management APIs; the approved runtime key's `/v1/account` 403 is expected
+   evidence of restricted permissions, not a reason to broaden the key.
+   `runtimeChecksPassed: true` and exit 0 mean only this subset passed. Overall
+   `passed` remains `null`; skipped checks remain `null` / `NOT_CHECKED` and are
+   listed in `manualChecks`. Missing/wrong prices, missing secret, or API failure
+   still fail. The script does not accept or synthesize manual attestations.
+
+   The main agent must independently record the correct account and enabled
+   card/charge/payout capability in the control panel, then the exact live
+   endpoint URL, SDK-compatible API version and all 15 required event types.
+   Main agent reported creating endpoint `we_1UF0OfKId1Bt4Wq3LVDDM0ww` with
+   `2026-08-26.dahlia` and 15 events. That configuration observation is separate
+   from actual signed delivery evidence, and is not a passing script check.
+   The optional full configuration mode (omit `--runtime-only`) still requires
+   Account/Webhook management read access and fails on missing permission; do
+   not use it with the restricted runtime key or expand that key for this tool.
+
+   Output contains no secrets and performs no mutations. A successful subset
    result cannot prove that the configured signing secret matches Stripe or
-   that delivery works. Confirm the registered endpoint delivery separately;
+   that delivery works. Confirm actual registered-endpoint delivery separately;
    use the existing sandbox for real payment-state/duplicate/refund tests.
    A fake locally signed event is not evidence of Stripe production delivery.
 5. Deploy and validate the versioned Checkout expiry policy described below
