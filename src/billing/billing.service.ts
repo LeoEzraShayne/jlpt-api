@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { PaymentOrder } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
@@ -17,6 +17,20 @@ export interface CheckoutInput {
   market: BillingMarket;
   requestKey: string;
   locale: 'zh' | 'en';
+}
+
+function ensureCreationWindow(snapshot: unknown) {
+  const policy = snapshot as {
+    checkoutExpiryPolicy?: string;
+    checkoutCreationEndsAt?: string;
+  };
+  if (
+    policy.checkoutExpiryPolicy === 'CHECKOUT_60M_V1' &&
+    (!policy.checkoutCreationEndsAt ||
+      !Number.isFinite(Date.parse(policy.checkoutCreationEndsAt)) ||
+      Date.parse(policy.checkoutCreationEndsAt) <= Date.now())
+  )
+    billingError('CHECKOUT_EXPIRED');
 }
 export function presentOrder(order: PaymentOrder): OrderSummary {
   return {
@@ -115,6 +129,7 @@ export class BillingService {
       const price = catalog.products.find(
         (p) => p.productCode === input.productCode,
       )!;
+      const quotedAt = Math.floor(Date.now() / 1000) * 1000;
       return tx.paymentOrder.create({
         data: {
           userId,
@@ -123,13 +138,17 @@ export class BillingService {
           environment: this.gateway.environment,
           market: input.market,
           ...price,
-          expiresAt: new Date(Date.now() + 30 * 60_000),
+          expiresAt: new Date(quotedAt + 60 * 60_000),
           snapshot: {
             ...price,
             market: input.market,
             locale: input.locale,
             paymentMethodPolicy: 'CARD_ONLY_V1',
             currencyPolicy: 'USD_FIXED_V1',
+            checkoutExpiryPolicy: 'CHECKOUT_60M_V1',
+            checkoutCreationEndsAt: new Date(
+              quotedAt + 25 * 60_000,
+            ).toISOString(),
             launchAt: catalog.launchAt,
             launchEndsAt: catalog.launchEndsAt,
             stripePriceId:
@@ -150,6 +169,7 @@ export class BillingService {
       billingError('CHECKOUT_EXPIRED');
     if (order.checkoutUrl)
       return { orderId: order.id, checkoutUrl: order.checkoutUrl };
+    ensureCreationWindow(order.snapshot);
     const frontend = new URL(this.config.getOrThrow<string>('FRONTEND_URL'))
       .origin;
     try {
@@ -168,6 +188,9 @@ export class BillingService {
         )
           billingError('PAYMENT_UNAVAILABLE', 503);
       }
+      // Price reads can be slow. Leave at least five minutes above Stripe's
+      // 30-minute minimum for network delay and the SDK's bounded retries.
+      ensureCreationWindow(order.snapshot);
       // Persisted quote parameters keep provider idempotency stable across retries.
       const session = await stripe.checkout.sessions.create(
         {
@@ -232,7 +255,12 @@ export class BillingService {
         },
       });
       return { orderId: order.id, checkoutUrl: session.url };
-    } catch {
+    } catch (error) {
+      if (
+        error instanceof HttpException &&
+        (error.getResponse() as { code?: string }).code === 'CHECKOUT_EXPIRED'
+      )
+        throw error;
       billingError('PAYMENT_UNAVAILABLE', 503);
     }
   }

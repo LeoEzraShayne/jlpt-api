@@ -57,37 +57,49 @@ performs account, secret, production and activation operations.
    that delivery works. Confirm the registered endpoint delivery separately;
    use the existing sandbox for real payment-state/duplicate/refund tests.
    A fake locally signed event is not evidence of Stripe production delivery.
-5. Reconcile the Checkout minimum-expiry boundary described below before
-   charging. Finish the requested Gemini-first quality/fallback acceptance and
+5. Deploy and validate the versioned Checkout expiry policy described below
+   before charging. Finish the requested Gemini-first quality/fallback acceptance and
    paired API/Web checks. Then execute the one-time activation section of
    `w3-release-runbook.md`, keeping rewards false for Web. Confirm the owner's
    `LAUNCH_GIFT` under the billing lock; no fake order or administrator upgrade.
 
-## Remaining checkout expiry boundary to verify
+## Checkout expiry boundary and versioned fix
 
-The locked contract promises a 30-minute quote. The current code persists
-`now + 30 minutes`, retrieves the configured Price, and then passes that fixed
-timestamp to Stripe. Stripe's documented minimum is **30 minutes after Checkout
-Session creation**. A delayed first request or retry can therefore fall below
-that minimum even though the local quote has not expired. Prior mock tests do
-not emulate this Stripe constraint. The review does not silently change the
-user's quote window or existing provider idempotency parameters.
+Previously, the code persisted `now + 30 minutes` before Price retrieval and
+Session creation. Stripe documents at least 30 minutes after Session creation.
+The main agent's authorized sandbox experiment accepted a requested 1795-second
+remaining lifetime (reported remaining 1794 seconds), but rejected 900 seconds
+with HTTP 400 and the explicit 30-minute-minimum error. Thus small delay was
+not proven to fail, while a long retry was proven to fail.
 
-Before activation, use the authorized sandbox and an isolated test order to
-delay the Price retrieval by at least 2 seconds (also test a later retry), then
-verify that the actual Session create accepts/rejects the expiry. Record only
-the sanitized error code/parameter and timing. If rejected, implement a
-versioned expiry policy with a sufficient provider creation buffer and a
-bounded retry window, and update the quote contract consistently. Never change
-`expires_at` across retries using the same existing Stripe idempotency key.
+New quotes now persist `checkoutExpiryPolicy: CHECKOUT_60M_V1`, a fixed expiry
+60 minutes after the quote and `checkoutCreationEndsAt` 25 minutes after the
+quote. The creation deadline is checked both before and after Price retrieval;
+the five-minute margin above Stripe's minimum covers bounded SDK network
+retries and ordinary clock/network delays. Retries never recompute
+`expires_at`, preserving Stripe idempotency. Whole-second quote timestamps
+avoid an extra fractional-second truncation at the provider boundary.
+
+A saved pending Checkout URL can be returned until its 60-minute expiry. An
+uncreated quote at or beyond its 25-minute creation deadline returns
+`CHECKOUT_EXPIRED` and needs a new request key. Historical quotes without this
+policy keep their original request parameters and expiry; no order migration
+occurs. A pre-cutoff launch-price quote retains USD64 through its own fixed
+payment deadline; new quotes at or after the shared 90-day cutoff use USD99.
+The public contract's old blanket 30-minute statement must be updated to
+describe this versioned behavior. Product durations and pricing are unchanged.
 
 ## Local acceptance
 
-29 tests in four real isolated-Postgres suites passed: Checkout, Stripe
+32 tests in four real isolated-Postgres suites passed: Checkout, Stripe
 reconciliation, HTTP origin/raw-signature/account isolation and entitlement
 boundaries. Includes four new stale-URL cases: expired status, paid status,
-refunded status and a pending order whose deadline has elapsed. No production
-database, Stripe API, browser session or credential was accessed by this agent.
+refunded status and a pending order whose deadline has elapsed. Additional
+coverage verifies lost-response retry parameters, a 25-minute creation cutoff,
+a fresh request after expiry, delayed Price retrieval, historical quote
+parameters and the full 60-minute launch-price window. No production database,
+Stripe API, browser session or credential was accessed by this agent; the
+sandbox observations above were supplied by the main agent.
 
 ```sh
 npx jest --config test/sentence-lab/jest.json --runInBand \

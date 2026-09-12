@@ -33,6 +33,7 @@ async function fixture() {
     { id: string; url: string; livemode: boolean; expires_at: number }
   >();
   const requestParams = new Map<string, string>();
+  const retrieve = jest.fn();
   const create = jest.fn(
     (
       params: Stripe.Checkout.SessionCreateParams,
@@ -56,11 +57,14 @@ async function fixture() {
     },
   );
   jest.spyOn(gateway, 'stripe', 'get').mockReturnValue({
+    prices: { retrieve },
     checkout: { sessions: { create } },
   } as unknown as Stripe);
   return {
     user,
     create,
+    config,
+    retrieve,
     service: new BillingService(h.prisma as PrismaService, gateway, config),
   };
 }
@@ -119,7 +123,7 @@ test('checkout snapshots server price, fixed return URLs and one-time mode; para
   ).rejects.toMatchObject({ response: { code: 'IDEMPOTENCY_CONFLICT' } });
 });
 
-test('quote made before 90-day cutoff keeps USD64 for 30 minutes while new quotes cost USD99', async () => {
+test('quote made before 90-day cutoff keeps USD64 for 60 minutes while new quotes cost USD99', async () => {
   const f = await fixture();
   const launchAt = new Date('2026-06-01T00:00:00Z');
   const cutoff = new Date(launchAt.getTime() + 90 * day);
@@ -140,7 +144,11 @@ test('quote made before 90-day cutoff keeps USD64 for 30 minutes while new quote
     where: { id: quote.orderId },
   });
   expect(before.amount).toBe(6400);
-  expect(before.expiresAt!.getTime() - Date.now()).toBe(30 * 60000);
+  expect(before.expiresAt!.getTime() - Date.now()).toBe(60 * 60000);
+  expect(before.snapshot).toMatchObject({
+    checkoutExpiryPolicy: 'CHECKOUT_60M_V1',
+    checkoutCreationEndsAt: new Date(Date.now() + 25 * 60000).toISOString(),
+  });
   jest.setSystemTime(cutoff);
   expect(await f.service.checkout(f.user.id, input)).toEqual(quote);
   const newQuote = await f.service.checkout(f.user.id, {
@@ -159,6 +167,12 @@ test('quote made before 90-day cutoff keeps USD64 for 30 minutes while new quote
       where: { id: quote.orderId },
     }),
   ).toEqual(before);
+  jest.setSystemTime(new Date(before.expiresAt!.getTime() - 1));
+  expect(await f.service.checkout(f.user.id, input)).toEqual(quote);
+  jest.setSystemTime(before.expiresAt!);
+  await expect(f.service.checkout(f.user.id, input)).rejects.toMatchObject({
+    response: { code: 'CHECKOUT_EXPIRED' },
+  });
 });
 
 test.each([undefined, 'CARD_ONLY_V1'])(
@@ -213,6 +227,9 @@ test.each([undefined, 'CARD_ONLY_V1'])(
     expect(f.create.mock.calls[1]).toEqual(f.create.mock.calls[0]);
     const [params, options] = f.create.mock.calls[1];
     expect(params).not.toHaveProperty('adaptive_pricing');
+    expect(params.expires_at).toBe(
+      Math.floor(order.expiresAt!.getTime() / 1000),
+    );
     expect(options.idempotencyKey).toBe(`checkout:${order.id}`);
     if (paymentMethodPolicy)
       expect(params.payment_method_types).toEqual(['card']);
@@ -260,3 +277,93 @@ test.each(['EXPIRED', 'PAID', 'REFUNDED', 'PENDING'])(
     expect(f.create).not.toHaveBeenCalled();
   },
 );
+
+async function enableSales() {
+  await h.prisma.billingConfig.upsert({
+    where: { id: 'default' },
+    create: { launchAt: new Date(Date.now() - day), salesEnabled: true },
+    update: { launchAt: new Date(Date.now() - day), salesEnabled: true },
+  });
+}
+
+test('a delayed response retry keeps the same 60-minute provider expiry and parameters', async () => {
+  freezeDate(new Date('2026-09-13T01:00:00Z'));
+  await enableSales();
+  const f = await fixture();
+  const input = {
+    productCode: 'DAY_PASS' as const,
+    market: 'GLOBAL' as const,
+    requestKey: randomUUID(),
+    locale: 'en' as const,
+  };
+  const providerCreate = f.create.getMockImplementation()!;
+  f.create.mockImplementationOnce(async (params, options) => {
+    await providerCreate(params, options);
+    throw new Error('Provider accepted, response lost');
+  });
+  await expect(f.service.checkout(f.user.id, input)).rejects.toMatchObject({
+    response: { code: 'PAYMENT_UNAVAILABLE' },
+  });
+  jest.setSystemTime(new Date('2026-09-13T01:24:00Z'));
+  const response = await f.service.checkout(f.user.id, input);
+  expect(f.create.mock.calls[1]).toEqual(f.create.mock.calls[0]);
+  expect(f.create.mock.calls[1][0].expires_at! - Date.now() / 1000).toBe(
+    36 * 60,
+  );
+  jest.setSystemTime(new Date('2026-09-13T01:59:00Z'));
+  expect(await f.service.checkout(f.user.id, input)).toEqual(response);
+  expect(f.create).toHaveBeenCalledTimes(2);
+});
+
+test('an uncreated quote cannot retry at the 25-minute cutoff; a new request starts a new quote', async () => {
+  freezeDate(new Date('2026-09-13T02:00:00Z'));
+  await enableSales();
+  const f = await fixture();
+  const input = {
+    productCode: 'DAY_PASS' as const,
+    market: 'GLOBAL' as const,
+    requestKey: randomUUID(),
+    locale: 'en' as const,
+  };
+  f.create.mockRejectedValueOnce(new Error('Provider unavailable'));
+  await expect(f.service.checkout(f.user.id, input)).rejects.toMatchObject({
+    response: { code: 'PAYMENT_UNAVAILABLE' },
+  });
+  jest.setSystemTime(new Date('2026-09-13T02:25:00Z'));
+  await expect(f.service.checkout(f.user.id, input)).rejects.toMatchObject({
+    response: { code: 'CHECKOUT_EXPIRED' },
+  });
+  expect(f.create).toHaveBeenCalledTimes(1);
+  await f.service.checkout(f.user.id, { ...input, requestKey: randomUUID() });
+  expect(f.create).toHaveBeenCalledTimes(2);
+  expect(f.create.mock.calls[1][1].idempotencyKey).not.toBe(
+    f.create.mock.calls[0][1].idempotencyKey,
+  );
+});
+
+test('slow price retrieval rechecks the creation window before contacting Checkout', async () => {
+  freezeDate(new Date('2026-09-13T03:00:00Z'));
+  await enableSales();
+  const f = await fixture();
+  f.config.set('STRIPE_PRICE_DAY_USD', 'price_test_day_fixture');
+  f.retrieve.mockImplementation(() => {
+    jest.setSystemTime(new Date('2026-09-13T03:26:00Z'));
+    return Promise.resolve({
+      active: true,
+      type: 'one_time',
+      unit_amount: 99,
+      currency: 'usd',
+      livemode: false,
+    });
+  });
+  await expect(
+    f.service.checkout(f.user.id, {
+      productCode: 'DAY_PASS',
+      market: 'GLOBAL',
+      requestKey: randomUUID(),
+      locale: 'en',
+    }),
+  ).rejects.toMatchObject({ response: { code: 'CHECKOUT_EXPIRED' } });
+  expect(f.retrieve).toHaveBeenCalledTimes(1);
+  expect(f.create).not.toHaveBeenCalled();
+});
