@@ -25,6 +25,10 @@ const envSchema = z.object({
   GEMINI_MODEL: z.string().default('gemini-3.5-flash'),
   DEEPSEEK_API_KEY: z.string().optional(),
   DEEPSEEK_MODEL: z.string().default('deepseek-chat'),
+  DEEPSEEK_THINKING_EFFORT: z
+    .enum(['disabled', 'low', 'high', 'max'])
+    .optional(),
+  DEEPSEEK_THINKING_SCOPE: z.enum(['all', 'grammar']).optional(),
   AI_WORKER_ENABLED: z
     .string()
     .default('true')
