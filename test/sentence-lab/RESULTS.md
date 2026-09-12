@@ -79,3 +79,9 @@ Static semantic review is separately **not passed**: 62 targeted records reviewe
 F also independently inspected D's first live DeepSeek regression artifact and found an additional semantic miss: `report-generate/en` was automatically marked `passed:true`, but the generated prompt asks the learner to answer **in English**, violating Japanese practice. D acknowledged and will preserve the automatic result while recording the failed semantic review and adding a constraint/regression check. This is separate from the already-known incorrect 聞くながら acceptance. **Runtime language quality and cost acceptance remain pending.**
 
 Final expanded automated run: **36 / 36 passed**, 7 suites, 4.926 seconds; dedicated TypeScript, targeted ESLint, and `git diff --check` passed. Automated success does not override the four open semantic findings above.
+
+## 2026-09-13 F fourth round: corrected source and AI cost pre-review
+
+C source correction `8b5cc2d` independently closes the four reviewed language errors and one advisory; see `language-review/RECHECK.md`. Two additional real Postgres correction tests cover pre-English and prior-English states, atomic drift rejection and repeat no-op. Existing 546-source coverage uses a distinct corrected snapshot; historical findings are preserved.
+
+D `c32e91e` was independently examined with original token receipts and 12 previously undisclosed real synthetic calls. See `ai-audit/REVIEW.md` and executable Python recomputations. Cost arithmetic reproduces the disclosed annual stress losses and positive sampled daily-ticket cash contributions, with strict scenario/uncertainty qualifications. Held-out produced 11 structured feedback results and one charged score-sum rejection; all 12 requests are metered, actual paid estimate $0.002234844. No general JLPT accuracy claim or charging qualification is made. Follow-up qualification should measure the real bounded retry route including every rejected attempt.

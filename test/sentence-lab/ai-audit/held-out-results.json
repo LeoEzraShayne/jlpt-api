@@ -1,0 +1,511 @@
+{
+  "runId": "2026-09-12T16:04:34.467Z",
+  "implementation": "c32e91eb99c9ce388b13d33084e78bb39e4bacbc",
+  "fixtureSha256": "306cc76edc093ae3451494fa2da9beba725933dd62f0a5e6518fc2269d7ddf8f",
+  "rows": [
+    {
+      "caseId": "zh:stem-wrong",
+      "input": {
+        "id": "stem-wrong",
+        "title": "～やすい",
+        "meaning": "容易做某事",
+        "connection": "动词ます形去ます＋やすい",
+        "sentence": "このペンは書くやすいです。",
+        "target": true,
+        "correct": false
+      },
+      "result": {
+        "result": {
+          "total_score": 39,
+          "grammar_score": 10,
+          "connection_score": 0,
+          "completeness_score": 10,
+          "naturalness_score": 10,
+          "vocabulary_score": 9,
+          "is_correct": false,
+          "used_target_grammar": true,
+          "target_grammar_correct": false,
+          "result_level": "INCORRECT",
+          "error_spans": [
+            {
+              "text": "書くやすい",
+              "start": 5,
+              "end": 10,
+              "reason": "「～やすい」接续规则是动词ます形去ます＋やすい，五段动词「書く」的ます形是「書きます」，去ます后应为「書き」，不能直接接辞书形「書く」。",
+              "replacement": "書きやすい"
+            }
+          ],
+          "corrected_sentence": "このペンは書きやすいです。",
+          "corrected_sentence_furigana": "このペンは書[か]きやすいです。",
+          "corrected_sentence_translation_zh": "这支笔很好写。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "「～やすい」必须接动词ます形去ます，五段动词「書く」应变为「書きやすい」，不能写成「書くやすい」。",
+          "encouragement": "接续规则已经接近掌握，记住「ます形去ます＋やすい」就对了，继续加油！",
+          "scenario_task_completed": false
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 627,
+          "outputTokens": 280
+        },
+        "latencyMs": 1947,
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "zh:stem-valid",
+      "input": {
+        "id": "stem-valid",
+        "title": "～やすい",
+        "meaning": "容易做某事",
+        "connection": "动词ます形去ます＋やすい",
+        "sentence": "このペンは書きやすいです。",
+        "target": true,
+        "correct": true
+      },
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "このペンは書きやすいです。",
+          "corrected_sentence_furigana": "このペンは書[か]きやすいです。",
+          "corrected_sentence_translation_zh": "这支笔很好写。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "「書きやすい」由动词「書く」的ます形去ます「書き」加「やすい」构成，接续正确，句子自然。",
+          "encouragement": "接续和表达都很准确，继续保持！",
+          "scenario_task_completed": false
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 626,
+          "outputTokens": 194
+        },
+        "latencyMs": 1258,
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "zh:obligation",
+      "input": {
+        "id": "obligation",
+        "title": "～ないわけにはいかない",
+        "meaning": "由于责任等原因不能不做，即必须做",
+        "connection": "动词ない形＋わけにはいかない",
+        "sentence": "締め切りが明日なので、提出しないわけにはいかない。",
+        "target": true,
+        "correct": true,
+        "semanticExpected": "must submit; cannot leave it unsubmitted"
+      },
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "締め切りが明日なので、提出しないわけにはいかない。",
+          "corrected_sentence_furigana": "締[し]め切[き]りが明日[あす]なので、提出[ていしゅつ]しないわけにはいかない。",
+          "corrected_sentence_translation_zh": "因为明天就是截止日期，所以不能不提交。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "「提出しないわけにはいかない」接续正确，动词ない形＋わけにはいかない，表示因截止日期在即而不得不提交。",
+          "encouragement": "接续和语义都准确，继续保持！",
+          "scenario_task_completed": false
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 644,
+          "outputTokens": 226
+        },
+        "latencyMs": 1662,
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "zh:prohibition",
+      "input": {
+        "id": "prohibition",
+        "title": "～わけにはいかない",
+        "meaning": "由于社会责任或情理不能做",
+        "connection": "动词辞书形＋わけにはいかない",
+        "sentence": "秘密が書いてあるので、この書類を提出するわけにはいかない。",
+        "target": true,
+        "correct": true,
+        "semanticExpected": "cannot submit this document because it contains a secret"
+      },
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "秘密が書いてあるので、この書類を提出するわけにはいかない。",
+          "corrected_sentence_furigana": "秘密[ひみつ]が書[か]いてあるので、この書類[しょるい]を提出[ていしゅつ]するわけにはいかない。",
+          "corrected_sentence_translation_zh": "因为上面写着秘密，所以不能提交这份文件。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "「提出する」为动词辞书形，接续「わけにはいかない」正确，整句自然通顺。",
+          "encouragement": "接续和语义都掌握得很好，继续保持！",
+          "scenario_task_completed": false
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 644,
+          "outputTokens": 232
+        },
+        "latencyMs": 1643,
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "zh:reservation-target",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "预订座位等",
+          "senseKey": "F-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; booking"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语告诉朋友你已经预订了明天餐厅的座位。",
+          "meaningHintZh": "提前预订。",
+          "grammarId": null,
+          "referenceSentence": "明日のレストランの席を予約しました。",
+          "referenceFurigana": "明日[あした]のレストランの席[せき]を予約[よやく]しました。",
+          "referenceTranslationZh": "我预订了明天餐厅的座位。",
+          "chunks": [
+            "明日のレストランの席を",
+            "予約しました。"
+          ]
+        },
+        "sentence": "明日のレストランの席を予約しました。",
+        "expectedTarget": true
+      },
+      "result": {
+        "assessment": {
+          "usedTarget": true,
+          "targetCorrect": true,
+          "meaningCorrect": true,
+          "readingCorrect": null,
+          "explanationZh": "你正确使用了「予約」表示“预订座位”，与题目要求的“提前预订餐厅座位”这一含义一致，搭配「席を予約しました」也很自然。",
+          "corrections": [],
+          "correctedSentence": "明日のレストランの席を予約しました。",
+          "correctedFurigana": "明日[あした]のレストランの席[せき]を予約[よやく]しました。",
+          "correctedTranslationZh": "我预订了明天餐厅的座位。"
+        },
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "zh:reservation-alternative",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "预订座位等",
+          "senseKey": "F-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; booking"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语告诉朋友你已经预订了明天餐厅的座位。",
+          "meaningHintZh": "提前预订。",
+          "grammarId": null,
+          "referenceSentence": "明日のレストランの席を予約しました。",
+          "referenceFurigana": "明日[あした]のレストランの席[せき]を予約[よやく]しました。",
+          "referenceTranslationZh": "我预订了明天餐厅的座位。",
+          "chunks": [
+            "明日のレストランの席を",
+            "予約しました。"
+          ]
+        },
+        "sentence": "明日のレストランの席を取っておきました。",
+        "expectedTarget": false
+      },
+      "result": {
+        "assessment": {
+          "usedTarget": false,
+          "targetCorrect": null,
+          "meaningCorrect": null,
+          "readingCorrect": null,
+          "explanationZh": "这句话表达自然，意思是“我事先占好了明天餐厅的座位”，但没有用到本次练习的词“予約”，因此还不能判断你是否会使用这个词。",
+          "corrections": [],
+          "correctedSentence": "明日のレストランの席を取っておきました。",
+          "correctedFurigana": "明日[あした]のレストランの席[せき]を取[と]っておきました。",
+          "correctedTranslationZh": "我事先占好了明天餐厅的座位。"
+        },
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "en:stem-wrong",
+      "input": {
+        "id": "stem-wrong",
+        "title": "～やすい",
+        "meaning": "容易做某事",
+        "connection": "动词ます形去ます＋やすい",
+        "sentence": "このペンは書くやすいです。",
+        "target": true,
+        "correct": false
+      },
+      "error": "AI_INVALID_RESPONSE"
+    },
+    {
+      "caseId": "en:stem-valid",
+      "input": {
+        "id": "stem-valid",
+        "title": "～やすい",
+        "meaning": "容易做某事",
+        "connection": "动词ます形去ます＋やすい",
+        "sentence": "このペンは書きやすいです。",
+        "target": true,
+        "correct": true
+      },
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "このペンは書きやすいです。",
+          "corrected_sentence_furigana": "このペンは書[か]きやすいです。",
+          "corrected_sentence_translation_zh": "This pen is easy to write with.",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "You correctly formed ～やすい from the ます-stem of 書きます, giving 書きやすい. The sentence is natural and complete.",
+          "encouragement": "Great job—your use of ～やすい is accurate and natural!",
+          "scenario_task_completed": true
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 623,
+          "outputTokens": 200
+        },
+        "latencyMs": 1440,
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "en:obligation",
+      "input": {
+        "id": "obligation",
+        "title": "～ないわけにはいかない",
+        "meaning": "由于责任等原因不能不做，即必须做",
+        "connection": "动词ない形＋わけにはいかない",
+        "sentence": "締め切りが明日なので、提出しないわけにはいかない。",
+        "target": true,
+        "correct": true,
+        "semanticExpected": "must submit; cannot leave it unsubmitted"
+      },
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "締め切りが明日なので、提出しないわけにはいかない。",
+          "corrected_sentence_furigana": "締[し]め切[き]りが明日[あした]なので、提出[ていしゅつ]しないわけにはいかない。",
+          "corrected_sentence_translation_zh": "Since the deadline is tomorrow, I have no choice but to submit it.",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "You correctly used the ない form of the verb with わけにはいかない to express that, because of the deadline, you must submit it.",
+          "encouragement": "Great job using the target grammar accurately and naturally!",
+          "scenario_task_completed": true
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 641,
+          "outputTokens": 231
+        },
+        "latencyMs": 1424,
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "en:prohibition",
+      "input": {
+        "id": "prohibition",
+        "title": "～わけにはいかない",
+        "meaning": "由于社会责任或情理不能做",
+        "connection": "动词辞书形＋わけにはいかない",
+        "sentence": "秘密が書いてあるので、この書類を提出するわけにはいかない。",
+        "target": true,
+        "correct": true,
+        "semanticExpected": "cannot submit this document because it contains a secret"
+      },
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "秘密が書いてあるので、この書類を提出するわけにはいかない。",
+          "corrected_sentence_furigana": "秘密[ひみつ]が書[か]いてあるので、この書類[しょるい]を提出[ていしゅつ]するわけにはいかない。",
+          "corrected_sentence_translation_zh": "Because it contains secrets, I cannot submit this document.",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "You correctly used the dictionary form of the verb 提出する before わけにはいかない to express that social or moral obligations prevent an action.",
+          "encouragement": "Great job! Your sentence is grammatically correct and natural.",
+          "scenario_task_completed": false
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 641,
+          "outputTokens": 282
+        },
+        "latencyMs": 1807,
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "en:reservation-target",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "预订座位等",
+          "senseKey": "F-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; booking"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Tell a friend that you booked restaurant seats for tomorrow. Answer in Japanese.",
+          "meaningHintZh": "Book something in advance.",
+          "grammarId": null,
+          "referenceSentence": "明日のレストランの席を予約しました。",
+          "referenceFurigana": "明日[あした]のレストランの席[せき]を予約[よやく]しました。",
+          "referenceTranslationZh": "I booked restaurant seats for tomorrow.",
+          "chunks": [
+            "明日のレストランの席を",
+            "予約しました。"
+          ]
+        },
+        "sentence": "明日のレストランの席を予約しました。",
+        "expectedTarget": true
+      },
+      "result": {
+        "assessment": {
+          "usedTarget": true,
+          "targetCorrect": true,
+          "meaningCorrect": true,
+          "readingCorrect": null,
+          "explanationZh": "You used 予約 in the intended sense of booking/reserving something in advance, and it fits naturally with レストランの席を予約しました. The sentence is correct and expresses the requested meaning well.",
+          "corrections": [],
+          "correctedSentence": "明日のレストランの席を予約しました。",
+          "correctedFurigana": "明日[あした]のレストランの席[せき]を予約[よやく]しました。",
+          "correctedTranslationZh": "I booked restaurant seats for tomorrow."
+        },
+        "structuralExpectationPassed": true
+      }
+    },
+    {
+      "caseId": "en:reservation-alternative",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "预订座位等",
+          "senseKey": "F-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; booking"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Tell a friend that you booked restaurant seats for tomorrow. Answer in Japanese.",
+          "meaningHintZh": "Book something in advance.",
+          "grammarId": null,
+          "referenceSentence": "明日のレストランの席を予約しました。",
+          "referenceFurigana": "明日[あした]のレストランの席[せき]を予約[よやく]しました。",
+          "referenceTranslationZh": "I booked restaurant seats for tomorrow.",
+          "chunks": [
+            "明日のレストランの席を",
+            "予約しました。"
+          ]
+        },
+        "sentence": "明日のレストランの席を取っておきました。",
+        "expectedTarget": false
+      },
+      "result": {
+        "assessment": {
+          "usedTarget": false,
+          "targetCorrect": null,
+          "meaningCorrect": null,
+          "readingCorrect": null,
+          "explanationZh": "This sentence is natural and correctly expresses that you reserved restaurant seats for tomorrow, but it uses 取っておきました instead of the practice word 予約. Because the target word does not appear, I cannot judge whether you can use it.",
+          "corrections": [],
+          "correctedSentence": "明日のレストランの席を取っておきました。",
+          "correctedFurigana": "明日[あした]のレストランの席[せき]を取[と]っておきました。",
+          "correctedTranslationZh": "I reserved restaurant seats for tomorrow."
+        },
+        "structuralExpectationPassed": true
+      }
+    }
+  ]
+}

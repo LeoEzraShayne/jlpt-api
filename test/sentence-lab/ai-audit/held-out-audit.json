@@ -1,0 +1,113 @@
+{
+  "runId": "2026-09-12T16:04:34.467Z",
+  "requests": 12,
+  "validStructuredFeedback": 11,
+  "failedChargedFeedback": 1,
+  "unknownUsageCalls": 0,
+  "actualPaidEstimateUsd": 0.0022348439999999997,
+  "peakColdSameCallsUsd": 0.0060126,
+  "qualityGate": "NOT_APPROVED: bounded held-out set cannot certify general JLPT accuracy or close prior regression failures",
+  "sourceHashes": {
+    "held-out-results.json": "d125e157b4c1f9f0c4301aab7be981919a57f56746040dd1e6fdd7ed4d8e3589",
+    "held-out-raw.json": "412e99aecc96d3b400a060dec3a1609b911b601ca787657e8bd9976638633b59",
+    "held-out-usage.json": "73e9271c4bb931568f2f5772a9749774f9201c552a0e3134b9b903f3e22e1b4d"
+  },
+  "reviews": [
+    {
+      "caseId": "zh:stem-wrong",
+      "requestId": "02b8054e-86ec-43bc-a6b4-58e600b371f9",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "F model review: target evidence, correction and language semantically accepted."
+    },
+    {
+      "caseId": "zh:stem-valid",
+      "requestId": "9fbc05a6-b90c-44a2-a08c-a7b5ee16fd86",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "F model review: target evidence, correction and language semantically accepted."
+    },
+    {
+      "caseId": "zh:obligation",
+      "requestId": "e0bc2827-2ce5-4262-b014-6c8d3b7110a2",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "F model review: target evidence, correction and language semantically accepted."
+    },
+    {
+      "caseId": "zh:prohibition",
+      "requestId": "ad274afd-b8d3-4e4f-b1b3-aa99144e5052",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "F model review: target evidence, correction and language semantically accepted."
+    },
+    {
+      "caseId": "zh:reservation-target",
+      "requestId": "6c9ec66a-f786-42bb-a465-0656435beaa4",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "F model review: target evidence, correction and language semantically accepted."
+    },
+    {
+      "caseId": "zh:reservation-alternative",
+      "requestId": "f8210116-6dac-41d1-89cc-03fa8493c189",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "Natural alternative correctly leaves target/meaning/reading unverified and original unchanged. 占好 translation is less idiomatic than 预留/订好 but does not reverse the booking meaning."
+    },
+    {
+      "caseId": "en:stem-wrong",
+      "requestId": "d880dc73-0d75-4958-b1d5-1aa4c79801f5",
+      "structuralAccepted": false,
+      "reviewStatus": "FAIL_CLOSED",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "Correct connection diagnosis, inconsistent score arithmetic. Rejected and charged; not usable feedback."
+    },
+    {
+      "caseId": "en:stem-valid",
+      "requestId": "516f0a71-8a2b-4260-96d4-8761d2041ba9",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS_WITH_MODEL_DEVIATION",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "Grammar/translation valid; absent scenario was reported completed. Existing worker requires matching stored scenario, otherwise persists null. No scenario success may be inferred from this provider field."
+    },
+    {
+      "caseId": "en:obligation",
+      "requestId": "ec67dd95-3e42-4676-b065-0318e3945223",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS_WITH_MODEL_DEVIATION",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "Grammar/translation valid; absent scenario was reported completed. Existing worker requires matching stored scenario, otherwise persists null. No scenario success may be inferred from this provider field."
+    },
+    {
+      "caseId": "en:prohibition",
+      "requestId": "6cdb31a5-b964-4a5c-a88c-cb47155a0ac9",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "F model review: target evidence, correction and language semantically accepted."
+    },
+    {
+      "caseId": "en:reservation-target",
+      "requestId": "5551d471-678b-4ca3-8966-8a44d38e7272",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "F model review: target evidence, correction and language semantically accepted."
+    },
+    {
+      "caseId": "en:reservation-alternative",
+      "requestId": "f820f0eb-0689-4780-b83c-fbcbd6fb3b60",
+      "structuralAccepted": true,
+      "reviewStatus": "PASS",
+      "reviewMethod": "F independent model review, not human linguist certification",
+      "note": "F model review: target evidence, correction and language semantically accepted."
+    }
+  ]
+}
