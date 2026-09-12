@@ -7,6 +7,8 @@ interface CurrentUser {
   avatarUrl: string | null;
   role: UserRole;
   timezone: string;
+  uiLocale?: string;
+  explanationLocale?: string;
   targetLevel: JlptLevel;
   colorTheme: Theme;
   dailyMinutes: number;

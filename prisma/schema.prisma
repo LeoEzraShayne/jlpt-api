@@ -774,6 +774,7 @@ model VocabularyPractice {
 
 // Financial/source IDs intentionally retained independently of learning rows.
 model BillingConfig {
+  enforcementAt      DateTime?
   id                 String    @id @default("default")
   launchAt           DateTime?
   salesEnabled       Boolean   @default(false)
@@ -810,19 +811,21 @@ model PaymentOrder {
 }
 
 model EntitlementGrant {
-  id              String    @id @default(cuid())
-  userId          String
-  sourceKey       String    @unique
-  orderId         String?   @unique
-  source          String
-  durationSeconds Int
-  startsAt        DateTime
-  endsAt          DateTime
-  status          String    @default("ACTIVE")
-  revokedAt       DateTime?
-  metadata        Json?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  consumedSeconds  Int       @default(0)
+  remainingSeconds Int?
+  id               String    @id @default(cuid())
+  userId           String
+  sourceKey        String    @unique
+  orderId          String?   @unique
+  source           String
+  durationSeconds  Int
+  startsAt         DateTime
+  endsAt           DateTime
+  status           String    @default("ACTIVE")
+  revokedAt        DateTime?
+  metadata         Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   @@index([userId, status, endsAt])
 }

@@ -14,6 +14,7 @@ ALTER TABLE "VocabularyPractice" ADD COLUMN     "explanationLocale" TEXT NOT NUL
 
 -- CreateTable
 CREATE TABLE "BillingConfig" (
+    "enforcementAt" TIMESTAMP(3),
     "id" TEXT NOT NULL DEFAULT 'default',
     "launchAt" TIMESTAMP(3),
     "salesEnabled" BOOLEAN NOT NULL DEFAULT false,
@@ -53,6 +54,8 @@ CREATE TABLE "PaymentOrder" (
 
 -- CreateTable
 CREATE TABLE "EntitlementGrant" (
+    "consumedSeconds" INTEGER NOT NULL DEFAULT 0,
+    "remainingSeconds" INTEGER,
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "sourceKey" TEXT NOT NULL,
