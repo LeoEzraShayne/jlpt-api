@@ -153,6 +153,8 @@ model User {
   targetLevel         JlptLevel             @default(N1)
   dailyMinutes        Int                   @default(30)
   primaryShare        Int                   @default(80)
+  uiLocale            String                @default("zh")
+  explanationLocale   String                @default("zh")
   learningV2Enabled   Boolean               @default(false)
   colorTheme          Theme                 @default(sunshine)
   createdAt           DateTime              @default(now())
@@ -379,6 +381,7 @@ model ReviewSchedule {
 }
 
 model StudySession {
+  explanationLocale   String               @default("zh")
   vocabularyPractices VocabularyPractice[]
   id                  String               @id @default(cuid())
   userId              String
@@ -445,6 +448,8 @@ model AiReviewJob {
 }
 
 model AiReviewResult {
+  explanationLocale                String            @default("zh")
+  localizedFeedback                Json?
   id                               String            @id @default(cuid())
   jobId                            String            @unique
   provider                         AiProvider
@@ -733,6 +738,7 @@ model VocabularyLearning {
 }
 
 model VocabularyPractice {
+  explanationLocale    String             @default("zh")
   id                   String             @id @default(cuid())
   userId               String
   vocabularyId         String
@@ -764,4 +770,216 @@ model VocabularyPractice {
 
   @@index([status, availableAt])
   @@index([userId, vocabularyId, createdAt])
+}
+
+// Financial/source IDs intentionally retained independently of learning rows.
+model BillingConfig {
+  id                 String    @id @default("default")
+  launchAt           DateTime?
+  salesEnabled       Boolean   @default(false)
+  enforcementEnabled Boolean   @default(false)
+  rewardsEnabled     Boolean   @default(false)
+  updatedAt          DateTime  @updatedAt
+}
+
+model PaymentOrder {
+  id                String    @id @default(cuid())
+  userId            String
+  provider          String
+  environment       String    @default("test")
+  productCode       String
+  market            String
+  currency          String
+  amount            Int
+  durationSeconds   Int
+  launchPrice       Boolean   @default(false)
+  status            String    @default("PENDING")
+  requestKey        String
+  providerOrderId   String?   @unique
+  providerPaymentId String?   @unique
+  checkoutUrl       String?
+  expiresAt         DateTime?
+  paidAt            DateTime?
+  refundedAmount    Int       @default(0)
+  snapshot          Json
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([userId, requestKey])
+  @@index([userId, createdAt])
+}
+
+model EntitlementGrant {
+  id              String    @id @default(cuid())
+  userId          String
+  sourceKey       String    @unique
+  orderId         String?   @unique
+  source          String
+  durationSeconds Int
+  startsAt        DateTime
+  endsAt          DateTime
+  status          String    @default("ACTIVE")
+  revokedAt       DateTime?
+  metadata        Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId, status, endsAt])
+}
+
+model BillingEvent {
+  id                String    @id @default(cuid())
+  provider          String
+  environment       String
+  eventId           String
+  eventType         String
+  providerCreatedAt DateTime?
+  status            String    @default("RECEIVED")
+  orderId           String?
+  payload           Json
+  errorCode         String?
+  processedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([provider, environment, eventId])
+}
+
+model QuotaAccount {
+  userId          String   @id
+  currentPeriodId String?
+  rewardBalance   Int      @default(0)
+  rewardReserved  Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model QuotaPeriod {
+  id         String   @id @default(cuid())
+  userId     String
+  timezone   String
+  startsAt   DateTime
+  endsAt     DateTime
+  dailyLimit Int      @default(5)
+  reserved   Int      @default(0)
+  consumed   Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, startsAt])
+  @@index([userId, endsAt])
+}
+
+model TaskAuthorization {
+  id                String    @id @default(cuid())
+  userId            String
+  kind              String
+  taskKey           String
+  periodId          String?
+  source            String
+  status            String    @default("RESERVED")
+  successfulReviews Int       @default(0)
+  reservedReviews   Int       @default(0)
+  consumedAt        DateTime?
+  releasedAt        DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([kind, taskKey])
+  @@index([userId, status])
+}
+
+model TaskSubmission {
+  id              String    @id @default(cuid())
+  authorizationId String
+  userId          String
+  requestKey      String
+  status          String    @default("PENDING")
+  resultId        String?
+  payloadHash     String?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([authorizationId, requestKey])
+  @@index([userId, status])
+}
+
+model RewardEvent {
+  id         String   @id @default(cuid())
+  userId     String
+  provider   String
+  eventId    String
+  amount     Int      @default(1)
+  verifiedAt DateTime
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@unique([provider, eventId])
+  @@index([userId, createdAt])
+}
+
+model VocabularyPracticeAttempt {
+  id           String    @id @default(cuid())
+  practiceId   String
+  userId       String
+  ordinal      Int
+  requestKey   String
+  answer       String
+  assessment   Json?
+  status       String    @default("QUEUED")
+  errorCode    String?
+  submissionId String?   @unique
+  createdAt    DateTime  @default(now())
+  completedAt  DateTime?
+
+  @@unique([practiceId, requestKey])
+  @@unique([practiceId, ordinal])
+}
+
+model ContentTranslation {
+  id          String    @id @default(cuid())
+  entityType  String
+  entityId    String
+  locale      String
+  sourceHash  String
+  fields      Json
+  status      String    @default("DRAFT")
+  provenance  Json
+  validatedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([entityType, entityId, locale, sourceHash])
+  @@index([entityType, entityId, locale, status])
+}
+
+model AiUsageRecord {
+  id                String   @id @default(cuid())
+  purpose           String
+  provider          String
+  model             String
+  requestId         String   @unique
+  userId            String?
+  taskKind          String?
+  taskKey           String?
+  attempt           Int      @default(1)
+  success           Boolean
+  errorCode         String?
+  inputTokens       Int?
+  outputTokens      Int?
+  thinkingTokens    Int?
+  cachedInputTokens Int?
+  cacheWriteTokens  Int?
+  totalTokens       Int?
+  usageComplete     Boolean  @default(false)
+  latencyMs         Int
+  costUsd           Decimal? @db.Decimal(18, 10)
+  pricingVersion    String?
+  rawUsage          Json?
+  createdAt         DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([taskKind, taskKey])
+  @@index([purpose, model, createdAt])
 }
