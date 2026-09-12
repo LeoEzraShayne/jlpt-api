@@ -1,0 +1,116 @@
+{
+  "candidateCommit": "55f1763",
+  "runId": "2026-09-12T23:19:58.281Z",
+  "operations": 12,
+  "requests": 14,
+  "receipts": 14,
+  "knownTokensAtDeepSeekPeakColdUsd": 0.009849599999999998,
+  "unknownUsageCalls": 1,
+  "checks": [
+    {
+      "caseId": "zh:connection-error",
+      "finalProvider": "GEMINI",
+      "geminiRequests": 1,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "zh:natural-control",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 1,
+      "requests": 2,
+      "mechanicalProblems": [
+        "invented_scenario_evidence"
+      ],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "zh:no-obligation",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "zh:wrong-meaning",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "zh:generate",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 2,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:connection-error",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:natural-control",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:no-obligation",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:wrong-meaning",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:generate",
+      "finalProvider": "DEEPSEEK",
+      "geminiRequests": 0,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    }
+  ],
+  "failures": [
+    {
+      "caseId": "zh:natural-control",
+      "problem": "invented_scenario_evidence"
+    }
+  ],
+  "qualityVerdict": "PENDING_INDEPENDENT_READING"
+}

@@ -1,0 +1,365 @@
+{
+  "runId": "2026-09-12T23:19:58.281Z",
+  "candidateCommit": "55f1763",
+  "fixtureSha256": "efac0faa37ac3309dc5fa0c1f5d169f49d0c38a784570f0140f4088bdc8872b9",
+  "geminiModel": "gemini-3.8-flash",
+  "rows": [
+    {
+      "caseId": "zh:connection-error",
+      "kind": "grammar",
+      "result": {
+        "provider": "GEMINI",
+        "response": {
+          "result": {
+            "total_score": 58,
+            "grammar_score": 15,
+            "connection_score": 8,
+            "completeness_score": 18,
+            "naturalness_score": 8,
+            "vocabulary_score": 9,
+            "is_correct": false,
+            "used_target_grammar": true,
+            "target_grammar_correct": false,
+            "result_level": "NEEDS_REVISION",
+            "error_spans": [
+              {
+                "text": "書くやすい",
+                "start": 9,
+                "end": 14,
+                "reason": "「～やすい」前需要接动词「ます形」的语干，不能接辞书形（原形）。",
+                "replacement": "書きやすい"
+              }
+            ],
+            "corrected_sentence": "このペンは軽くて、書きやすいです。",
+            "corrected_sentence_furigana": "このペンは軽[かる]くて、書[か]きやすいです。",
+            "corrected_sentence_translation_zh": "这支笔很轻，很好写。",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "「～やすい」接在动词「ます形」去掉「ます」的形式之后，因此「書く」应变为「書きやすい」。",
+            "encouragement": "句子整体构思很好，注意动词接续规则就能写得更准确！",
+            "scenario_task_completed": false
+          },
+          "model": "gemini-3.8-flash",
+          "usage": {
+            "inputTokens": 707,
+            "outputTokens": 358
+          },
+          "latencyMs": 2206
+        }
+      },
+      "requests": 1,
+      "latencyMs": 2258
+    },
+    {
+      "caseId": "zh:natural-control",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "このペンは軽くて、書きやすいです。",
+            "corrected_sentence_furigana": "このペンは軽[かる]くて、書[か]きやすいです。",
+            "corrected_sentence_translation_zh": "这支笔很轻，容易书写。",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "「書きます」去掉ます变成「書き」，再接「やすい」，构成「書きやすい」，用法完全正确。",
+            "encouragement": "接续和意思都掌握得很好，继续保持！",
+            "scenario_task_completed": true
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 735,
+            "outputTokens": 461
+          },
+          "latencyMs": 2795
+        }
+      },
+      "requests": 2,
+      "latencyMs": 8136
+    },
+    {
+      "caseId": "zh:no-obligation",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "資料はメールで送ったので、印刷しなくてもいいです。",
+            "corrected_sentence_furigana": "資料[しりょう]はメールで送[おく]ったので、印刷[いんさつ]しなくてもいいです。",
+            "corrected_sentence_translation_zh": "因为资料已经用邮件发送了，所以不打印也可以。",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "你正确使用了「～なくてもいい」，表示不做也可以。句子自然完整。",
+            "encouragement": "很好，继续保持！",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 746,
+            "outputTokens": 911
+          },
+          "latencyMs": 4149
+        }
+      },
+      "requests": 1,
+      "latencyMs": 4156
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "explanationZh": "这句话表达自然，意思是“我订了明天餐厅的座位”，但没有用到本次练习的词“予約”，因此还不能判断你是否会使用这个词。",
+        "corrections": [],
+        "correctedSentence": "明日のレストランの席を取りました。",
+        "correctedFurigana": "明日[あした]のレストランの席[せき]を取[と]りました。",
+        "correctedTranslationZh": "我订了明天餐厅的座位。"
+      },
+      "requests": 1,
+      "latencyMs": 1704
+    },
+    {
+      "caseId": "zh:wrong-meaning",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "explanationZh": "这里想表达因为口渴而一口气喝水，但“予約”是“事先预订座位或服务”的意思，不能作为“水”的宾语，也不能表示“喝”。所以这个词用错了，可以改成“飲みました”。",
+        "corrections": [
+          {
+            "text": "予約しました",
+            "replacement": "飲みました",
+            "reason": "“予約”表示事先预订，不能用于喝水；这里应表达“喝了”。"
+          }
+        ],
+        "correctedSentence": "のどが渇いたので、コップの水を一気に飲みました。",
+        "correctedFurigana": "のどが渇[かわ]いたので、コップの水[みず]を一気[いっき]に飲[の]みました。",
+        "correctedTranslationZh": "因为口渴，我一口气把杯子里的水喝了。"
+      },
+      "requests": 1,
+      "latencyMs": 1469
+    },
+    {
+      "caseId": "zh:generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "你打算周末和朋友去一家很受欢迎的餐厅吃饭，担心去晚了没有位置，于是你打电话给餐厅，想请对方帮你把位置提前定下来。请用日语说出你要表达的意思。",
+        "meaningHintZh": "事先把座位或服务定下来，以免到时候没有空位。",
+        "grammarId": null,
+        "referenceSentence": "人気のレストランなので、席を予約しておきます。",
+        "referenceFurigana": "人気[にんき]のレストランなので、席[せき]を予約[よやく]しておきます。",
+        "referenceTranslationZh": "因为是很受欢迎的餐厅，所以我事先把座位预订好。",
+        "chunks": [
+          "人気のレストランなので、",
+          "席を",
+          "予約して",
+          "おきます。"
+        ]
+      },
+      "requests": 2,
+      "latencyMs": 3496
+    },
+    {
+      "caseId": "en:connection-error",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 59,
+            "grammar_score": 14,
+            "connection_score": 5,
+            "completeness_score": 18,
+            "naturalness_score": 14,
+            "vocabulary_score": 8,
+            "is_correct": false,
+            "used_target_grammar": true,
+            "target_grammar_correct": false,
+            "result_level": "NEEDS_REVISION",
+            "error_spans": [
+              {
+                "text": "書く",
+                "start": 9,
+                "end": 11,
+                "reason": "やすい attaches to the masu-stem of a verb, not the dictionary form. The dictionary form 書く must become 書き.",
+                "replacement": "書き"
+              }
+            ],
+            "corrected_sentence": "このペンは軽くて、書きやすいです。",
+            "corrected_sentence_furigana": "このペンは軽[かる]くて、書[か]きやすいです。",
+            "corrected_sentence_translation_zh": "This pen is light and easy to write with.",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "The pattern ～やすい comes after the masu-stem of a verb, so 書く has to change to 書き, giving 書きやすい. The rest of your sentence, including 軽くて, is fine as it is.",
+            "encouragement": "You used the right pattern — just remember to switch the verb to its masu-stem next time.",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 733,
+            "outputTokens": 856
+          },
+          "latencyMs": 3863
+        }
+      },
+      "requests": 1,
+      "latencyMs": 3869
+    },
+    {
+      "caseId": "en:natural-control",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "このペンは軽くて、書きやすいです。",
+            "corrected_sentence_furigana": "このペンは軽[かる]くて、書[か]きやすいです。",
+            "corrected_sentence_translation_zh": "This pen is light, so it is easy to write with.",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "You correctly took the ます-stem of 書きます, which is 書き, and attached やすい to form 書きやすい. The sentence is natural and accurate as written.",
+            "encouragement": "Nice work—your form is correct and sounds completely natural!",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 732,
+            "outputTokens": 618
+          },
+          "latencyMs": 2944
+        }
+      },
+      "requests": 1,
+      "latencyMs": 2949
+    },
+    {
+      "caseId": "en:no-obligation",
+      "kind": "grammar",
+      "result": {
+        "provider": "DEEPSEEK",
+        "response": {
+          "result": {
+            "total_score": 100,
+            "grammar_score": 30,
+            "connection_score": 20,
+            "completeness_score": 20,
+            "naturalness_score": 20,
+            "vocabulary_score": 10,
+            "is_correct": true,
+            "used_target_grammar": true,
+            "target_grammar_correct": true,
+            "result_level": "CORRECT",
+            "error_spans": [],
+            "corrected_sentence": "資料はメールで送ったので、印刷しなくてもいいです。",
+            "corrected_sentence_furigana": "資料[しりょう]はメールで送[おく]ったので、印刷[いんさつ]しなくてもいいです。",
+            "corrected_sentence_translation_zh": "Since the documents were sent by email, there is no need to print them.",
+            "corrected_sentence_uses_target_grammar": true,
+            "explanation_zh": "You correctly formed the ない形 of 印刷する and attached なくてもいい, so the sentence means that printing is not necessary. The sentence is natural and complete.",
+            "encouragement": "Good work — this sentence uses the target grammar accurately and naturally.",
+            "scenario_task_completed": false
+          },
+          "model": "deepseek-flash",
+          "usage": {
+            "inputTokens": 743,
+            "outputTokens": 835
+          },
+          "latencyMs": 4244
+        }
+      },
+      "requests": 1,
+      "latencyMs": 4248
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "explanationZh": "This sentence is natural and correctly expresses that you reserved a seat at a restaurant for tomorrow, but it uses the expression 席を取る rather than the practice word 予約. Because the target word does not appear, I cannot judge whether you can use it yet.",
+        "corrections": [],
+        "correctedSentence": "明日のレストランの席を取りました。",
+        "correctedFurigana": "明日[あした]のレストランの席[せき]を取[と]りました。",
+        "correctedTranslationZh": "I reserved a seat at a restaurant for tomorrow."
+      },
+      "requests": 1,
+      "latencyMs": 1362
+    },
+    {
+      "caseId": "en:wrong-meaning",
+      "kind": "vocabulary",
+      "result": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "explanationZh": "You used 予約, but here it means to reserve or book a seat or service in advance. Drinking a glass of water is not something you can reserve, so the word does not fit this sentence. To express that you were thirsty and drank the water in one go, use a verb like 飲みました instead.",
+        "corrections": [
+          {
+            "text": "予約しました",
+            "replacement": "飲みました",
+            "reason": "予約 means to book or reserve something in advance, but water cannot be reserved; the intended meaning is that you drank the water."
+          }
+        ],
+        "correctedSentence": "のどが渇いたので、コップの水を一気に飲みました。",
+        "correctedFurigana": "のどが渇[かわ]いたので、コップの水[みず]を一気[いっき]に飲[の]みました。",
+        "correctedTranslationZh": "I was thirsty, so I drank the glass of water in one go."
+      },
+      "requests": 1,
+      "latencyMs": 2422
+    },
+    {
+      "caseId": "en:generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "You are at a popular restaurant with a friend on a busy Friday evening. The host tells you there are no tables available for walk-ins, but you can secure a table for later tonight if you act now. You want to tell your friend that you will go ahead and secure the table for 8 p.m. so you don't lose the chance. Say this in Japanese.",
+        "meaningHintZh": "Use the noun that means securing a table or service in advance for a later time.",
+        "grammarId": null,
+        "referenceSentence": "今夜八時に予約します。",
+        "referenceFurigana": "今夜[こんや]八時[はちじ]に予約[よやく]します。",
+        "referenceTranslationZh": "I will make a reservation for eight o'clock tonight.",
+        "chunks": [
+          "今夜",
+          "八時に",
+          "予約します。"
+        ]
+      },
+      "requests": 1,
+      "latencyMs": 1553
+    }
+  ]
+}

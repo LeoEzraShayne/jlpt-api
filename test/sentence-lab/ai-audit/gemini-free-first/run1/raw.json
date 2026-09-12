@@ -1,0 +1,618 @@
+{
+  "runId": "2026-09-12T23:19:58.281Z",
+  "raw": [
+    {
+      "caseId": "zh:connection-error",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "responseJsonSchema": {
+          "type": "object",
+          "properties": {
+            "total_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "grammar_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 30
+            },
+            "connection_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "completeness_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "naturalness_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "vocabulary_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "is_correct": {
+              "type": "boolean"
+            },
+            "used_target_grammar": {
+              "type": "boolean"
+            },
+            "target_grammar_correct": {
+              "type": "boolean"
+            },
+            "result_level": {
+              "type": "string",
+              "enum": [
+                "CORRECT",
+                "MOSTLY_CORRECT",
+                "NEEDS_REVISION",
+                "INCORRECT"
+              ]
+            },
+            "error_spans": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "start": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "end": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "replacement": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "text",
+                  "start",
+                  "end",
+                  "reason",
+                  "replacement"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "corrected_sentence": {
+              "type": "string"
+            },
+            "corrected_sentence_furigana": {
+              "type": "string"
+            },
+            "corrected_sentence_translation_zh": {
+              "type": "string"
+            },
+            "corrected_sentence_uses_target_grammar": {
+              "type": "boolean"
+            },
+            "explanation_zh": {
+              "type": "string"
+            },
+            "encouragement": {
+              "type": "string"
+            },
+            "scenario_task_completed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "total_score",
+            "grammar_score",
+            "connection_score",
+            "completeness_score",
+            "naturalness_score",
+            "vocabulary_score",
+            "is_correct",
+            "used_target_grammar",
+            "target_grammar_correct",
+            "result_level",
+            "error_spans",
+            "corrected_sentence",
+            "corrected_sentence_furigana",
+            "corrected_sentence_translation_zh",
+            "corrected_sentence_uses_target_grammar",
+            "explanation_zh",
+            "encouragement",
+            "scenario_task_completed"
+          ],
+          "additionalProperties": false
+        },
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 200,
+      "finishReason": "STOP",
+      "content": "{\n  \"total_score\": 58,\n  \"grammar_score\": 15,\n  \"connection_score\": 8,\n  \"completeness_score\": 18,\n  \"naturalness_score\": 8,\n  \"vocabulary_score\": 9,\n  \"is_correct\": false,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": false,\n  \"result_level\": \"NEEDS_REVISION\",\n  \"error_spans\": [\n    {\n      \"text\": \"書くやすい\",\n      \"start\": 9,\n      \"end\": 14,\n      \"reason\": \"「～やすい」前需要接动词「ます形」的语干，不能接辞书形（原形）。\",\n      \"replacement\": \"書きやすい\"\n    }\n  ],\n  \"corrected_sentence\": \"このペンは軽くて、書きやすいです。\",\n  \"corrected_sentence_furigana\": \"このペンは軽[かる]くて、書[か]きやすいです。\",\n  \"corrected_sentence_translation_zh\": \"这支笔很轻，很好写。\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"「～やすい」接在动词「ます形」去掉「ます」的形式之后，因此「書く」应变为「書きやすい」。\",\n  \"encouragement\": \"句子整体构思很好，注意动词接续规则就能写得更准确！\",\n  \"scenario_task_completed\": false\n}",
+      "usage": {
+        "promptTokenCount": 707,
+        "candidatesTokenCount": 358,
+        "totalTokenCount": 1065,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 707
+          }
+        ],
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "caseId": "zh:natural-control",
+      "ordinal": 1,
+      "provider": "GEMINI",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "generationConfig": {
+        "responseMimeType": "application/json",
+        "responseJsonSchema": {
+          "type": "object",
+          "properties": {
+            "total_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "grammar_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 30
+            },
+            "connection_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "completeness_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "naturalness_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "vocabulary_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "is_correct": {
+              "type": "boolean"
+            },
+            "used_target_grammar": {
+              "type": "boolean"
+            },
+            "target_grammar_correct": {
+              "type": "boolean"
+            },
+            "result_level": {
+              "type": "string",
+              "enum": [
+                "CORRECT",
+                "MOSTLY_CORRECT",
+                "NEEDS_REVISION",
+                "INCORRECT"
+              ]
+            },
+            "error_spans": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "start": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "end": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "replacement": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "text",
+                  "start",
+                  "end",
+                  "reason",
+                  "replacement"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "corrected_sentence": {
+              "type": "string"
+            },
+            "corrected_sentence_furigana": {
+              "type": "string"
+            },
+            "corrected_sentence_translation_zh": {
+              "type": "string"
+            },
+            "corrected_sentence_uses_target_grammar": {
+              "type": "boolean"
+            },
+            "explanation_zh": {
+              "type": "string"
+            },
+            "encouragement": {
+              "type": "string"
+            },
+            "scenario_task_completed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "total_score",
+            "grammar_score",
+            "connection_score",
+            "completeness_score",
+            "naturalness_score",
+            "vocabulary_score",
+            "is_correct",
+            "used_target_grammar",
+            "target_grammar_correct",
+            "result_level",
+            "error_spans",
+            "corrected_sentence",
+            "corrected_sentence_furigana",
+            "corrected_sentence_translation_zh",
+            "corrected_sentence_uses_target_grammar",
+            "explanation_zh",
+            "encouragement",
+            "scenario_task_completed"
+          ],
+          "additionalProperties": false
+        },
+        "thinkingConfig": {
+          "thinkingLevel": "low"
+        },
+        "temperature": 0.2
+      },
+      "httpStatus": 503
+    },
+    {
+      "caseId": "zh:natural-control",
+      "ordinal": 2,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "enabled"
+      },
+      "reasoningEffort": "low",
+      "maxTokens": 4096,
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"type\": \"json_object\", \"grammar_score\": 30, \"connection_score\": 20, \"completeness_score\": 20, \"naturalness_score\": 20, \"vocabulary_score\": 10, \"total_score\": 100, \"is_correct\": true, \"used_target_grammar\": true, \"target_grammar_correct\": true, \"result_level\": \"CORRECT\", \"error_spans\": [], \"corrected_sentence\": \"このペンは軽くて、書きやすいです。\", \"corrected_sentence_furigana\": \"このペンは軽[かる]くて、書[か]きやすいです。\", \"corrected_sentence_translation_zh\": \"这支笔很轻，容易书写。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"「書きます」去掉ます变成「書き」，再接「やすい」，构成「書きやすい」，用法完全正确。\", \"encouragement\": \"接续和意思都掌握得很好，继续保持！\", \"scenario_task_completed\": true}",
+      "usage": {
+        "prompt_tokens": 735,
+        "completion_tokens": 461,
+        "total_tokens": 1196,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 224
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 223
+      }
+    },
+    {
+      "caseId": "zh:no-obligation",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "enabled"
+      },
+      "reasoningEffort": "low",
+      "maxTokens": 4096,
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"grammar_score\": 30, \"connection_score\": 20, \"completeness_score\": 20, \"naturalness_score\": 20, \"vocabulary_score\": 10, \"total_score\": 100, \"is_correct\": true, \"used_target_grammar\": true, \"target_grammar_correct\": true, \"result_level\": \"CORRECT\", \"error_spans\": [], \"corrected_sentence\": \"資料はメールで送ったので、印刷しなくてもいいです。\", \"corrected_sentence_furigana\": \"資料[しりょう]はメールで送[おく]ったので、印刷[いんさつ]しなくてもいいです。\", \"corrected_sentence_translation_zh\": \"因为资料已经用邮件发送了，所以不打印也可以。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"你正确使用了「～なくてもいい」，表示不做也可以。句子自然完整。\", \"encouragement\": \"很好，继续保持！\", \"scenario_task_completed\": false}",
+      "usage": {
+        "prompt_tokens": 746,
+        "completion_tokens": 911,
+        "total_tokens": 1657,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 672
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 234
+      }
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"这句话表达自然，意思是“我订了明天餐厅的座位”，但没有用到本次练习的词“予約”，因此还不能判断你是否会使用这个词。\",\"corrections\":[],\"correctedSentence\":\"明日のレストランの席を取りました。\",\"correctedFurigana\":\"明日[あした]のレストランの席[せき]を取[と]りました。\",\"correctedTranslationZh\":\"我订了明天餐厅的座位。\"}",
+      "usage": {
+        "prompt_tokens": 1165,
+        "completion_tokens": 123,
+        "total_tokens": 1288,
+        "prompt_tokens_details": {
+          "cached_tokens": 768
+        },
+        "prompt_cache_hit_tokens": 768,
+        "prompt_cache_miss_tokens": 397
+      }
+    },
+    {
+      "caseId": "zh:wrong-meaning",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"这里想表达因为口渴而一口气喝水，但“予約”是“事先预订座位或服务”的意思，不能作为“水”的宾语，也不能表示“喝”。所以这个词用错了，可以改成“飲みました”。\",\"corrections\":[{\"text\":\"予約しました\",\"replacement\":\"飲みました\",\"reason\":\"“予約”表示事先预订，不能用于喝水；这里应表达“喝了”。\"}],\"correctedSentence\":\"のどが渇いたので、コップの水を一気に飲みました。\",\"correctedFurigana\":\"のどが渇[かわ]いたので、コップの水[みず]を一気[いっき]に飲[の]みました。\",\"correctedTranslationZh\":\"因为口渴，我一口气把杯子里的水喝了。\"}",
+      "usage": {
+        "prompt_tokens": 1175,
+        "completion_tokens": 201,
+        "total_tokens": 1376,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024
+        },
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 151
+      }
+    },
+    {
+      "caseId": "zh:generate",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": null,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"promptZh\":\"你打算周末和几位同事去一家很受欢迎的餐厅吃饭，担心人多没位置，于是打电话给餐厅，想请对方帮你把周六晚上的位子提前安排好。请用日语说出你打电话时想表达的请求。\",\"meaningHintZh\":\"指事先把座位或服务安排下来，而不是临时到店再找。\",\"grammarId\":null,\"referenceSentence\":\"土曜日の夜、四人分の席を予約したいのですが。\",\"referenceFurigana\":\"土曜日[どようび]の夜[よる]、四人分[よにんぶん]の席[せき]を予約[よやく]したいのですが。\",\"referenceTranslationZh\":\"我想预订周六晚上四个人的座位。\",\"chunks\":[\"土曜日[どようび]の\",\"夜[よる]、\",\"四人分[よにんぶん]の\",\"席[せき]を\",\"予約[よやく]したいのですが。\"]}",
+      "usage": {
+        "prompt_tokens": 657,
+        "completion_tokens": 208,
+        "total_tokens": 865,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 273
+      }
+    },
+    {
+      "caseId": "zh:generate",
+      "ordinal": 2,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": null,
+      "repair": true,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"promptZh\":\"你打算周末和朋友去一家很受欢迎的餐厅吃饭，担心去晚了没有位置，于是你打电话给餐厅，想请对方帮你把位置提前定下来。请用日语说出你要表达的意思。\",\"meaningHintZh\":\"事先把座位或服务定下来，以免到时候没有空位。\",\"grammarId\":null,\"referenceSentence\":\"人気のレストランなので、席を予約しておきます。\",\"referenceFurigana\":\"人気[にんき]のレストランなので、席[せき]を予約[よやく]しておきます。\",\"referenceTranslationZh\":\"因为是很受欢迎的餐厅，所以我事先把座位预订好。\",\"chunks\":[\"人気のレストランなので、\",\"席を\",\"予約して\",\"おきます。\"]}",
+      "usage": {
+        "prompt_tokens": 879,
+        "completion_tokens": 169,
+        "total_tokens": 1048,
+        "prompt_tokens_details": {
+          "cached_tokens": 640
+        },
+        "prompt_cache_hit_tokens": 640,
+        "prompt_cache_miss_tokens": 239
+      }
+    },
+    {
+      "caseId": "en:connection-error",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "enabled"
+      },
+      "reasoningEffort": "low",
+      "maxTokens": 4096,
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"grammar_score\":14,\"connection_score\":5,\"completeness_score\":18,\"naturalness_score\":14,\"vocabulary_score\":8,\"total_score\":59,\"is_correct\":false,\"used_target_grammar\":true,\"target_grammar_correct\":false,\"result_level\":\"NEEDS_REVISION\",\"error_spans\":[{\"text\":\"書く\",\"start\":9,\"end\":11,\"reason\":\"やすい attaches to the masu-stem of a verb, not the dictionary form. The dictionary form 書く must become 書き.\",\"replacement\":\"書き\"}],\"corrected_sentence\":\"このペンは軽くて、書きやすいです。\",\"corrected_sentence_furigana\":\"このペンは軽[かる]くて、書[か]きやすいです。\",\"corrected_sentence_translation_zh\":\"This pen is light and easy to write with.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"The pattern ～やすい comes after the masu-stem of a verb, so 書く has to change to 書き, giving 書きやすい. The rest of your sentence, including 軽くて, is fine as it is.\",\"encouragement\":\"You used the right pattern — just remember to switch the verb to its masu-stem next time.\",\"scenario_task_completed\":false}",
+      "usage": {
+        "prompt_tokens": 733,
+        "completion_tokens": 856,
+        "total_tokens": 1589,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 562
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 221
+      }
+    },
+    {
+      "caseId": "en:natural-control",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "enabled"
+      },
+      "reasoningEffort": "low",
+      "maxTokens": 4096,
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"total_score\":100,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"このペンは軽くて、書きやすいです。\",\"corrected_sentence_furigana\":\"このペンは軽[かる]くて、書[か]きやすいです。\",\"corrected_sentence_translation_zh\":\"This pen is light, so it is easy to write with.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"You correctly took the ます-stem of 書きます, which is 書き, and attached やすい to form 書きやすい. The sentence is natural and accurate as written.\",\"encouragement\":\"Nice work—your form is correct and sounds completely natural!\",\"scenario_task_completed\":false}",
+      "usage": {
+        "prompt_tokens": 732,
+        "completion_tokens": 618,
+        "total_tokens": 1350,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 395
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 220
+      }
+    },
+    {
+      "caseId": "en:no-obligation",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "enabled"
+      },
+      "reasoningEffort": "low",
+      "maxTokens": 4096,
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"total_score\":100,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"資料はメールで送ったので、印刷しなくてもいいです。\",\"corrected_sentence_furigana\":\"資料[しりょう]はメールで送[おく]ったので、印刷[いんさつ]しなくてもいいです。\",\"corrected_sentence_translation_zh\":\"Since the documents were sent by email, there is no need to print them.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"You correctly formed the ない形 of 印刷する and attached なくてもいい, so the sentence means that printing is not necessary. The sentence is natural and complete.\",\"encouragement\":\"Good work — this sentence uses the target grammar accurately and naturally.\",\"scenario_task_completed\":false}",
+      "usage": {
+        "prompt_tokens": 743,
+        "completion_tokens": 835,
+        "total_tokens": 1578,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 594
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 231
+      }
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"This sentence is natural and correctly expresses that you reserved a seat at a restaurant for tomorrow, but it uses the expression 席を取る rather than the practice word 予約. Because the target word does not appear, I cannot judge whether you can use it yet.\",\"corrections\":[],\"correctedSentence\":\"明日のレストランの席を取りました。\",\"correctedFurigana\":\"明日[あした]のレストランの席[せき]を取[と]りました。\",\"correctedTranslationZh\":\"I reserved a seat at a restaurant for tomorrow.\"}",
+      "usage": {
+        "prompt_tokens": 1253,
+        "completion_tokens": 149,
+        "total_tokens": 1402,
+        "prompt_tokens_details": {
+          "cached_tokens": 896
+        },
+        "prompt_cache_hit_tokens": 896,
+        "prompt_cache_miss_tokens": 357
+      }
+    },
+    {
+      "caseId": "en:wrong-meaning",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": true,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"You used 予約, but here it means to reserve or book a seat or service in advance. Drinking a glass of water is not something you can reserve, so the word does not fit this sentence. To express that you were thirsty and drank the water in one go, use a verb like 飲みました instead.\",\"corrections\":[{\"text\":\"予約しました\",\"replacement\":\"飲みました\",\"reason\":\"予約 means to book or reserve something in advance, but water cannot be reserved; the intended meaning is that you drank the water.\"}],\"correctedSentence\":\"のどが渇いたので、コップの水を一気に飲みました。\",\"correctedFurigana\":\"のどが渇[かわ]いたので、コップの水[みず]を一気[いっき]に飲[の]みました。\",\"correctedTranslationZh\":\"I was thirsty, so I drank the glass of water in one go.\"}",
+      "usage": {
+        "prompt_tokens": 1263,
+        "completion_tokens": 231,
+        "total_tokens": 1494,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024
+        },
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 239
+      }
+    },
+    {
+      "caseId": "en:generate",
+      "ordinal": 1,
+      "provider": "DEEPSEEK",
+      "originalSentenceRetained": null,
+      "repair": false,
+      "thinking": {
+        "type": "disabled"
+      },
+      "httpStatus": 200,
+      "model": "deepseek-flash",
+      "finishReason": "stop",
+      "content": "{\n  \"promptZh\": \"You are at a popular restaurant with a friend on a busy Friday evening. The host tells you there are no tables available for walk-ins, but you can secure a table for later tonight if you act now. You want to tell your friend that you will go ahead and secure the table for 8 p.m. so you don't lose the chance. Say this in Japanese.\",\n  \"meaningHintZh\": \"Use the noun that means securing a table or service in advance for a later time.\",\n  \"grammarId\": null,\n  \"referenceSentence\": \"今夜八時に予約します。\",\n  \"referenceFurigana\": \"今夜[こんや]八時[はちじ]に予約[よやく]します。\",\n  \"referenceTranslationZh\": \"I will make a reservation for eight o'clock tonight.\",\n  \"chunks\": [\n    \"今夜\",\n    \"八時に\",\n    \"予約します。\"\n  ]\n}",
+      "usage": {
+        "prompt_tokens": 740,
+        "completion_tokens": 206,
+        "total_tokens": 946,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "prompt_cache_hit_tokens": 512,
+        "prompt_cache_miss_tokens": 228
+      }
+    }
+  ]
+}
