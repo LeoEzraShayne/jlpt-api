@@ -1,0 +1,674 @@
+[
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"total_score\":100,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"手紙を書きながら電話をしました。\",\"corrected_sentence_furigana\":\"手紙[てがみ]を書[か]きながら電話[でんわ]をしました。\",\"corrected_sentence_translation_zh\":\"我一边写信，一边打电话。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"原句正确使用了「～ながら」：动词ます形去ます「書き」＋「ながら」，表示同一人同时进行“写信”和“打电话”。\",\"encouragement\":\"很好，继续注意前后动作的主语要一致。\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 734,
+      "completion_tokens": 2151,
+      "total_tokens": 2885,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1938
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 222
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":15,\"connection_score\":5,\"completeness_score\":20,\"naturalness_score\":10,\"vocabulary_score\":9,\"total_score\":59,\"is_correct\":false,\"used_target_grammar\":true,\"target_grammar_correct\":false,\"result_level\":\"NEEDS_REVISION\",\"error_spans\":[{\"text\":\"書くながら\",\"start\":3,\"end\":8,\"reason\":\"「～ながら」前接动词ます形去ます，書く应变为書き。\",\"replacement\":\"書きながら\"}],\"corrected_sentence\":\"手紙を書きながら電話をしました。\",\"corrected_sentence_furigana\":\"手紙[てがみ]を書[か]きながら電話[でんわ]をしました。\",\"corrected_sentence_translation_zh\":\"我一边写信，一边打了电话。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"「～ながら」要接动词ます形去ます，書く应变成書き，所以这里应改为「書きながら」。\",\"encouragement\":\"继续加油，记住动词ます形的接续规则。\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 736,
+      "completion_tokens": 2520,
+      "total_tokens": 3256,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 2268
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 224
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"total_score\":100,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"この説明は理解しやすいです。\",\"corrected_sentence_furigana\":\"この説明[せつめい]は理解[りかい]しやすいです。\",\"corrected_sentence_translation_zh\":\"这个说明很容易理解。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"这个句子正确使用了「动词ます形去ます＋やすい」的接续，把「理解します」变为「理解しやすい」很自然。\",\"encouragement\":\"很好，继续加油！\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 731,
+      "completion_tokens": 1262,
+      "total_tokens": 1993,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1065
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 219
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":18,\"connection_score\":0,\"completeness_score\":20,\"naturalness_score\":10,\"vocabulary_score\":10,\"total_score\":58,\"is_correct\":false,\"used_target_grammar\":true,\"target_grammar_correct\":false,\"result_level\":\"NEEDS_REVISION\",\"error_spans\":[{\"text\":\"理解するやすい\",\"start\":5,\"end\":12,\"reason\":\"～やすい要接动词ます形去ます，理解する应变为理解し。\",\"replacement\":\"理解しやすい\"}],\"corrected_sentence\":\"この説明は理解しやすいです。\",\"corrected_sentence_furigana\":\"この説明[せつめい]は理解[りかい]しやすいです。\",\"corrected_sentence_translation_zh\":\"这个说明容易理解。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"「理解するやすい」的接续有误：～やすい要接动词ます形去ます，因此「理解する」应变成「理解し」，整句为「理解しやすいです」。\",\"encouragement\":\"继续注意动词ます形去ます的变形，下次一定能写对！\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 731,
+      "completion_tokens": 2070,
+      "total_tokens": 2801,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1809
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 219
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"total_score\":100,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"出発する前に、窓を閉めました。\",\"corrected_sentence_furigana\":\"出発[しゅっぱつ]する前[まえ]に、窓[まど]を閉[し]めました。\",\"corrected_sentence_translation_zh\":\"出发前，关上了窗户。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"句子正确使用了动词辞书形「出発する」＋「前に」，表示在出发之前，整体表达自然。\",\"encouragement\":\"很好，继续保持！\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 734,
+      "completion_tokens": 1009,
+      "total_tokens": 1743,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 800
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 222
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "length",
+        "message": {
+          "content": "{\n  \"grammar_score\": 14,\n  \"connection_score\": 0,\n  \"completeness_score\": "
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 734,
+      "completion_tokens": 4096,
+      "total_tokens": 4830,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 4069
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 222
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":17,\"connection_score\":5,\"completeness_score\":18,\"naturalness_score\":11,\"vocabulary_score\":8,\"total_score\":59,\"is_correct\":false,\"used_target_grammar\":true,\"target_grammar_correct\":false,\"result_level\":\"NEEDS_REVISION\",\"error_spans\":[{\"text\":\"出発した\",\"start\":0,\"end\":4,\"reason\":\"「～前に」前面需要接动词的辞书形，这里误用了过去式「出発した」，应改为「出発する」。\",\"replacement\":\"出発する\"}],\"corrected_sentence\":\"出発する前に、窓を閉めました。\",\"corrected_sentence_furigana\":\"出発[しゅっぱつ]する前[まえ]に、窓[まど]を閉[し]めました。\",\"corrected_sentence_translation_zh\":\"出发前，我关上了窗户。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"「～前に」前面必须接动词的辞书形，这里用了过去式「出発した」，所以应改为「出発する前に」。\",\"encouragement\":\"意思表达得很清楚，只要注意接续形式就更自然了。\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1056,
+      "completion_tokens": 1854,
+      "total_tokens": 2910,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1571
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 1056
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\n  \"grammar_score\": 30,\n  \"connection_score\": 20,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"total_score\": 100,\n  \"is_correct\": true,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": true,\n  \"result_level\": \"CORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"遅れないように、早く家を出ました。\",\n  \"corrected_sentence_furigana\": \"遅[おく]れないように、早[はや]く家[いえ]を出[で]ました。\",\n  \"corrected_sentence_translation_zh\": \"为了不迟到，我早早地出了家门。\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"「遅れないように」正确使用了「ない形＋ように」表示目的，整句意思通顺，没有错误。\",\n  \"encouragement\": \"做得很好，继续保持！\",\n  \"scenario_task_completed\": false\n}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 739,
+      "completion_tokens": 1566,
+      "total_tokens": 2305,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1305
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 227
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "length",
+        "message": {
+          "content": "{\"grammar_score\":0,\"connection_score\":0,\"completeness_score\":10,\"naturalness_score\":10,\"vocabulary_score\":10,\"total_score\":30,\"is_correct\":false,\"used_target_grammar\":false,\"target_grammar_correct\":false,\"result_level\":\"INCORRECT\",\"error_spans\":[{\"text\":\"ために\",\"start\":4,\"end\":7,\"reason\":\"目标语法「～ように」表示目的，接续为「ない形＋ように」；这里用了「ために」，未使用目标语法。\",\"replacement\":\"ように\"}],\"corrected_sentence\":\"遅れないように、早く家を出ました。\",\"corrected_sentence_furigana\":\"遅[おく]れないように、早[はや]く家[いえ]を出[で]ました。\",\"corrected_sentence_translation_zh\":\"为了不迟到，早早出了门。\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"原句使用了「ために」，但目标语法是「～ように」；表示“为了避免某种状态”时，应使用「ない形＋ように」，所以应改为"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 739,
+      "completion_tokens": 4096,
+      "total_tokens": 4835,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 3847
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 227
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "length",
+        "message": {
+          "content": "{\n  \"grammar_score\": 10,\n  \"connection_score\": 0,\n  \"completeness_score\": 10,\n  \"naturalness_score\": 5,\n  \"vocabulary_score\": 5,\n  \"total_score\": 30,\n  \"is_correct\": false,\n  \"used_target_grammar\": false,\n  \"target_grammar_correct\": false,\n  \"result_level\": \"INCORRECT\",\n  \"error_spans\": [\n    {\n      \"text\": \"ために\",\n      \"start\": 4,\n      \"end\": 7,\n      \"reason\": \"这里应该使用目标语法「～ように」来表示目的，而不是「ために」。\",\n      \"replacement\": \"ように\"\n    }\n  ],\n  \"corrected_sentence\": \"遅れないように、早く家を出ました。\",\n  \"corrected_sentence_furigana\": \"遅[おく]れないように、早[はや]く家[いえ]を出[で]ました。\",\n  \"corrected_sentence_translation_zh\": \"为了不迟到，我很早就出门了。\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"原句使用了「ために」表示目的，但题目要求使用「～ように」。表示“为了不……”时，应使用「ない形＋ように」，所以应改为「遅れないように」。\",\n  \"encouragement\": \"继续加油，注意区分「ために」和「ように」的用法。\",\n  \"scenario_task_completed"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1061,
+      "completion_tokens": 4096,
+      "total_tokens": 5157,
+      "prompt_tokens_details": {
+        "cached_tokens": 768
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 3757
+      },
+      "prompt_cache_hit_tokens": 768,
+      "prompt_cache_miss_tokens": 293
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"promptZh\":\"你是一名大学生，明天要交一份报告，但今晚朋友邀请你去聚会。你决定先快速把报告写完，然后再去聚会。你会怎么用日语对朋友说？\",\"meaningHintZh\":\"表示把某件事完成、结束掉，强调做完。\",\"grammarId\":null,\"referenceSentence\":\"レポートを早く済ませてから、飲み会に行くよ。\",\"referenceFurigana\":\"レポートを早[はや]く済[す]ませてから、飲[の]み会[かい]に行[い]くよ。\",\"referenceTranslationZh\":\"我会快点把报告做完，然后去参加聚会。\",\"chunks\":[\"レポートを\",\"早く\",\"済ませてから\",\"飲み会に\",\"行くよ\"]}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 672,
+      "completion_tokens": 2596,
+      "total_tokens": 3268,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 2426
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 288
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":true,\"meaningCorrect\":true,\"readingCorrect\":null,\"explanationZh\":\"你在这句话里用了「済ませる」的て形「済ませて」，搭配「宿題を」，表示把作业做完，完全符合本次练习词“把事情做完”的含义，用法自然正确。\",\"corrections\":[],\"correctedSentence\":\"宿題を済ませてから、友達と遊びました。\",\"correctedFurigana\":\"宿題[しゅくだい]を済[す]ませてから、友達[ともだち]と遊[あそ]びました。\",\"correctedTranslationZh\":\"做完作业后，我和朋友玩了。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1208,
+      "completion_tokens": 363,
+      "total_tokens": 1571,
+      "prompt_tokens_details": {
+        "cached_tokens": 768
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 211
+      },
+      "prompt_cache_hit_tokens": 768,
+      "prompt_cache_miss_tokens": 440
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"你确实使用了“済ませる”，但这里的意思不自然。“済ませる”表示把某项任务、事情做完，例如作业、用事、手续等；而“バスを済ませて”会让人觉得“把公交车办完/做完”，这不是它在这个含义下能搭配的对象。这里想表达的是坐公交车去学校，应改用“バスに乗って”。\",\"corrections\":[{\"text\":\"バスを済ませて\",\"replacement\":\"バスに乗って\",\"reason\":\"这里想表达乘坐公交车去学校，但“済ませる”表示把某件事做完，不能以“バス”为对象；应改为“バスに乗って”。\"}],\"correctedSentence\":\"バスに乗って学校に行きました。\",\"correctedFurigana\":\"バスに乗[の]って学校[がっこう]に行[い]きました。\",\"correctedTranslationZh\":\"坐公交车去了学校。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1203,
+      "completion_tokens": 863,
+      "total_tokens": 2066,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 637
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 179
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"你写的句子意思是“做完作业后和朋友玩了”，用的是「終える」，整句话本身很自然，但没有用到本次练习的词「済ませる」，所以还不能判断你是否会使用这个词。\",\"corrections\":[],\"correctedSentence\":\"宿題を終えてから、友達と遊びました。\",\"correctedFurigana\":\"宿題[しゅくだい]を終[お]えてから、友達[ともだち]と遊[あそ]びました。\",\"correctedTranslationZh\":\"做完作业后，我和朋友玩了。\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1207,
+      "completion_tokens": 286,
+      "total_tokens": 1493,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 140
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 183
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"total_score\":100,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"手紙を書きながら電話をしました。\",\"corrected_sentence_furigana\":\"手紙[てがみ]を書[か]きながら電話[でんわ]をしました。\",\"corrected_sentence_translation_zh\":\"I made a phone call while writing a letter.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"The masu-stem of 書く is 書き, so 書きながら correctly expresses doing both actions at the same time.\",\"encouragement\":\"Great work—your sentence uses the target pattern accurately and naturally.\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 731,
+      "completion_tokens": 897,
+      "total_tokens": 1628,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 685
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 219
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":15,\"connection_score\":5,\"completeness_score\":20,\"naturalness_score\":9,\"vocabulary_score\":10,\"total_score\":59,\"is_correct\":false,\"used_target_grammar\":true,\"target_grammar_correct\":false,\"result_level\":\"NEEDS_REVISION\",\"error_spans\":[{\"text\":\"書くながら\",\"start\":3,\"end\":8,\"reason\":\"The verb before ～ながら must be in its masu-stem form (書き), not the dictionary form (書く).\",\"replacement\":\"書きながら\"}],\"corrected_sentence\":\"手紙を書きながら電話をしました。\",\"corrected_sentence_furigana\":\"手紙[てがみ]を書[か]きながら電話[でんわ]をしました。\",\"corrected_sentence_translation_zh\":\"I wrote a letter while talking on the phone.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"The verb before ～ながら must be in its masu-stem form: 書きながら, not 書くながら.\",\"encouragement\":\"You're close—just remember to drop ます and attach ながら to the stem.\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 733,
+      "completion_tokens": 1360,
+      "total_tokens": 2093,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1090
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 221
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"total_score\":100,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"この説明は理解しやすいです。\",\"corrected_sentence_furigana\":\"この説明[せつめい]は理解[りかい]しやすいです。\",\"corrected_sentence_translation_zh\":\"This explanation is easy to understand.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"You used ～やすい correctly after the ます-stem of 理解する, forming 理解しやすい. The sentence is complete and natural.\",\"encouragement\":\"Nice work—this sentence is clear and natural.\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 728,
+      "completion_tokens": 965,
+      "total_tokens": 1693,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 762
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 216
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"type\":\"json_object\",\"grammar_score\": 18, \"connection_score\": 4, \"completeness_score\": 16, \"naturalness_score\": 12, \"vocabulary_score\": 9, \"total_score\": 59, \"is_correct\": false, \"used_target_grammar\": true, \"target_grammar_correct\": false, \"result_level\": \"MOSTLY_CORRECT\", \"error_spans\": [{\"text\": \"理解する\", \"start\": 5, \"end\": 9, \"reason\": \"～やすい attaches to the verb stem (the ます-form with ます removed), so the dictionary form 理解する cannot be used directly before やすい.\", \"replacement\": \"理解し\"}], \"corrected_sentence\": \"この説明は理解しやすいです。\", \"corrected_sentence_furigana\": \"この説明[せつめい]は理解[りかい]しやすいです。\", \"corrected_sentence_translation_zh\": \"This explanation is easy to understand.\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"～やすい must follow the verb stem, so 理解する has to become 理解し before やすい. You kept the dictionary form, which breaks the connection rule.\", \"encouragement\": \"Your meaning comes across clearly — just use the verb stem before やすい and this sentence is perfect!\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 728,
+      "completion_tokens": 1140,
+      "total_tokens": 1868,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 825
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 216
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\": 30, \"connection_score\": 20, \"completeness_score\": 20, \"naturalness_score\": 20, \"vocabulary_score\": 10, \"total_score\": 100, \"is_correct\": true, \"used_target_grammar\": true, \"target_grammar_correct\": true, \"result_level\": \"CORRECT\", \"error_spans\": [], \"corrected_sentence\": \"出発する前に、窓を閉めました。\", \"corrected_sentence_furigana\": \"出発[しゅっぱつ]する前[まえ]に、窓[まど]を閉[し]めました。\", \"corrected_sentence_translation_zh\": \"在出发之前，我关上了窗户。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"Your sentence is correct: the dictionary form 出発する correctly connects to 前に, and the main clause 窓を閉めました finishes the sentence naturally.\", \"encouragement\": \"Great work — this is exactly how ～前に should be used!\", \"scenario_task_completed\": true}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 731,
+      "completion_tokens": 451,
+      "total_tokens": 1182,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 195
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 219
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"type\": \"json_object\", \"grammar_score\": 30, \"connection_score\": 20, \"completeness_score\": 20, \"naturalness_score\": 20, \"vocabulary_score\": 10, \"total_score\": 100, \"is_correct\": true, \"used_target_grammar\": true, \"target_grammar_correct\": true, \"result_level\": \"CORRECT\", \"error_spans\": [], \"corrected_sentence\": \"出発する前に、窓を閉めました。\", \"corrected_sentence_furigana\": \"出発[しゅっぱつ]する前[まえ]に、窓[まど]を閉[し]めました。\", \"corrected_sentence_translation_zh\": \"Before departing, I closed the window.\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"You correctly used the dictionary form 出発する before 前に, and the sentence clearly means that you closed the window before leaving.\", \"encouragement\": \"Well done — the target grammar is used correctly and the sentence sounds natural.\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1006,
+      "completion_tokens": 730,
+      "total_tokens": 1736,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 475
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 1006
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\": 12, \"connection_score\": 6, \"completeness_score\": 18, \"naturalness_score\": 14, \"vocabulary_score\": 9, \"total_score\": 59, \"is_correct\": false, \"used_target_grammar\": true, \"target_grammar_correct\": false, \"result_level\": \"NEEDS_REVISION\", \"error_spans\": [{\"text\": \"出発した\", \"start\": 0, \"end\": 4, \"reason\": \"～前に must be preceded by the dictionary form of a verb, but you used the past (ta) form here.\", \"replacement\": \"出発する\"}], \"corrected_sentence\": \"出発する前に、窓を閉めました。\", \"corrected_sentence_furigana\": \"出発[しゅっぱつ]する前[まえ]に、窓[まど]を閉[し]めました。\", \"corrected_sentence_translation_zh\": \"出发前，我关上了窗户。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"The pattern ～前に always follows a verb in its dictionary form, so 出発した前に should be 出発する前に. The rest of the sentence is fine.\", \"encouragement\": \"You have the right idea—just remember that 前に always takes the dictionary form, and this sentence will be perfect.\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 731,
+      "completion_tokens": 688,
+      "total_tokens": 1419,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 360
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 219
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\": 11, \"connection_score\": 4, \"completeness_score\": 20, \"naturalness_score\": 14, \"vocabulary_score\": 10, \"total_score\": 59, \"is_correct\": false, \"used_target_grammar\": true, \"target_grammar_correct\": false, \"result_level\": \"NEEDS_REVISION\", \"error_spans\": [{\"text\": \"出発した\", \"start\": 0, \"end\": 4, \"reason\": \"～前に must follow the dictionary form of the verb, but the past form 出発した is used here. Change it to the dictionary form 出発する.\", \"replacement\": \"出発する\"}], \"corrected_sentence\": \"出発する前に、窓を閉めました。\", \"corrected_sentence_furigana\": \"出発[しゅっぱつ]する前[まえ]に、窓[まど]を閉[し]めました。\", \"corrected_sentence_translation_zh\": \"Before departing, I closed the window.\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"The pattern ～前に always comes after a verb in its dictionary form, so 出発した前に is wrong and should be 出発する前に. The rest of the sentence is clear and natural, so only the verb form before 前に needs fixing.\", \"encouragement\": \"You expressed the idea clearly; just remember that 前に takes the dictionary form, and this sentence will be perfect.\", \"scenario_task_completed\": false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1006,
+      "completion_tokens": 715,
+      "total_tokens": 1721,
+      "prompt_tokens_details": {
+        "cached_tokens": 768
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 362
+      },
+      "prompt_cache_hit_tokens": 768,
+      "prompt_cache_miss_tokens": 238
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"total_score\":100,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"遅れないように、早く家を出ました。\",\"corrected_sentence_furigana\":\"遅[おく]れないように、早[はや]く家[いえ]を出[で]ました。\",\"corrected_sentence_translation_zh\":\"I left home early so as not to be late.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"The sentence correctly uses ～ないように after the negative form 遅れない to express 'so as not to be late.' It is complete and natural.\",\"encouragement\":\"Nice work! Your sentence is accurate and natural.\",\"scenario_task_completed\":false}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 736,
+      "completion_tokens": 836,
+      "total_tokens": 1572,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 611
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 224
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\n  \"grammar_score\": 5,\n  \"connection_score\": 0,\n  \"completeness_score\": 15,\n  \"naturalness_score\": 5,\n  \"vocabulary_score\": 5,\n  \"total_score\": 30,\n  \"is_correct\": false,\n  \"used_target_grammar\": false,\n  \"target_grammar_correct\": false,\n  \"result_level\": \"INCORRECT\",\n  \"error_spans\": [\n    {\n      \"text\": \"ために\",\n      \"start\": 4,\n      \"end\": 7,\n      \"reason\": \"ために is used instead of ように to express purpose; the target grammar requires ように after the ない form.\",\n      \"replacement\": \"ように\"\n    }\n  ],\n  \"corrected_sentence\": \"遅れないように、早く家を出ました。\",\n  \"corrected_sentence_furigana\": \"遅[おく]れないように、早[はや]く家[いえ]を出[で]ました。\",\n  \"corrected_sentence_translation_zh\": \"I left home early so as not to be late.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"You used ために instead of ように. To express 'so that' or 'in order to' with a negative verb, use ない形＋ように, not ために.\",\n  \"encouragement\": \"Keep practicing using ように for purpose; you're on the right track!\",\n  \"scenario_task_completed\": false\n}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 736,
+      "completion_tokens": 2591,
+      "total_tokens": 3327,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 2247
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 224
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"promptZh\":\"Your friend is spending a lazy Saturday drifting through errands, and the two of you have cinema tickets for later that afternoon. You want to nudge them along: tell your friend to get the shopping and everything else wrapped up fast, so you can both head to the movie together.\",\"meaningHintZh\":\"This verb means to get a task, errand, or piece of business over and done with — to bring it to completion, often quickly.\",\"grammarId\":null,\"referenceSentence\":\"買い物を早く済ませて、一緒に映画を見に行こう。\",\"referenceFurigana\":\"買[か]い物[もの]を早[はや]く済[す]ませて、一緒[いっしょ]に映画[えいが]を見[み]に行[い]こう。\",\"referenceTranslationZh\":\"Get the shopping done quickly, and let's go see a movie together.\",\"chunks\":[\"買い物を\",\"早く\",\"済ませて\",\"一緒に\",\"映画を見に\",\"行こう\"]}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 755,
+      "completion_tokens": 973,
+      "total_tokens": 1728,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 744
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 243
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":true,\"meaningCorrect\":true,\"readingCorrect\":null,\"explanationZh\":\"You used 済ませる correctly here. In the pattern 宿題を済ませてから, the verb means \\\"to finish or get a task done,\\\" so it matches the intended sense perfectly. The particle を marks 宿題 as the thing being completed, and the whole sentence reads naturally as \\\"After finishing my homework, I played with my friends.\\\"\",\"corrections\":[],\"correctedSentence\":\"宿題を済ませてから、友達と遊びました。\",\"correctedFurigana\":\"宿題[しゅくだい]を済[す]ませてから、友達[ともだち]と遊[あそ]びました。\",\"correctedTranslationZh\":\"After finishing my homework, I played with my friends.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1296,
+      "completion_tokens": 275,
+      "total_tokens": 1571,
+      "prompt_tokens_details": {
+        "cached_tokens": 896
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 88
+      },
+      "prompt_cache_hit_tokens": 896,
+      "prompt_cache_miss_tokens": 400
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":true,\"targetCorrect\":false,\"meaningCorrect\":false,\"readingCorrect\":null,\"explanationZh\":\"You did use the word 済ませる, but here it is attached to バス (bus). 済ませる means to finish or get a task done, so a bus cannot be its object. If you meant that you rode the bus to school, a different expression is needed.\",\"corrections\":[{\"text\":\"バスを済ませて\",\"replacement\":\"バスに乗って\",\"reason\":\"済ませる means to finish or complete a task, so it cannot take バス (bus) as its object. To say you took the bus, use バスに乗って.\"}],\"correctedSentence\":\"バスに乗って学校に行きました。\",\"correctedFurigana\":\"バスに乗[の]って学校[がっこう]に行[い]きました。\",\"correctedTranslationZh\":\"I took the bus and went to school.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1291,
+      "completion_tokens": 469,
+      "total_tokens": 1760,
+      "prompt_tokens_details": {
+        "cached_tokens": 1024
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 258
+      },
+      "prompt_cache_hit_tokens": 1024,
+      "prompt_cache_miss_tokens": 267
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"usedTarget\":false,\"targetCorrect\":null,\"meaningCorrect\":null,\"readingCorrect\":null,\"explanationZh\":\"Your sentence is natural and expresses the intended meaning, but it uses 終える (to finish) instead of the practice word 済ませる. Because the target word does not appear, I cannot judge whether you can use it yet.\",\"corrections\":[],\"correctedSentence\":\"宿題を終えてから、友達と遊びました。\",\"correctedFurigana\":\"宿題[しゅくだい]を終[お]えてから、友達[ともだち]と遊[あそ]びました。\",\"correctedTranslationZh\":\"After finishing my homework, I played with my friends.\"}"
+        }
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1295,
+      "completion_tokens": 277,
+      "total_tokens": 1572,
+      "prompt_tokens_details": {
+        "cached_tokens": 1152
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 120
+      },
+      "prompt_cache_hit_tokens": 1152,
+      "prompt_cache_miss_tokens": 143
+    }
+  }
+]

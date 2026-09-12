@@ -96,3 +96,5 @@ Final build, source line limit, targeted ESLint and git diff whitespace checks p
 ## Bounded repair follow-up
 
 See [REPAIR_ACCEPTANCE.md](REPAIR_ACCEPTANCE.md) for the current 2-call runtime policy, all v3–v6 rejected attempts and recalculated economics. The original results in this README remain archival. Current candidate is not qualified; semantic false positives persist.
+
+See [THINKING_ACCEPTANCE.md](THINKING_ACCEPTANCE.md) for the separately authorized thinking-low comparison, complete rejected-attempt costs and latency. It is not a qualified default.

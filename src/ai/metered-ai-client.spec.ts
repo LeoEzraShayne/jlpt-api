@@ -9,7 +9,7 @@ jest.mock('./provider-utils', () => ({
   fetchWithTimeout: jest.fn(),
 }));
 const network = jest.mocked(fetchWithTimeout);
-function fixture() {
+function fixture(effort?: string) {
   const db = {
     aiUsageRecord: {
       create: jest.fn().mockResolvedValue({}),
@@ -20,6 +20,7 @@ function fixture() {
     new ConfigService({
       DEEPSEEK_API_KEY: 'mock-secret',
       DEEPSEEK_MODEL: 'deepseek-flash',
+      DEEPSEEK_THINKING_EFFORT: effort,
     }),
     db as unknown as PrismaService,
   );
@@ -163,4 +164,21 @@ describe('durable per-network receipts', () => {
       retryable: false,
     });
   });
+});
+
+it('enables only explicitly selected supported thinking effort, retaining an output bound', async () => {
+  const { client, db } = fixture('low');
+  network.mockResolvedValueOnce(response());
+  await client.request('DEEPSEEK', 'synthetic', 'TEST', {}, () => true);
+  const body = JSON.parse(network.mock.calls[0][1].body as string) as Record<
+    string,
+    unknown
+  >;
+  expect(body).toMatchObject({
+    thinking: { type: 'enabled' },
+    reasoning_effort: 'low',
+    max_tokens: 4096,
+  });
+  expect(body).not.toHaveProperty('temperature');
+  expect(db.aiUsageRecord.update).toHaveBeenCalledTimes(1);
 });

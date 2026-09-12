@@ -49,7 +49,8 @@ export function normalizeUsage(
         ? totalTokens === inputTokens + outputTokens
         : totalTokens === inputTokens + outputTokens + thinkingTokens
       : totalTokens === inputTokens + outputTokens) &&
-    (cachedInputTokens === null || cachedInputTokens <= inputTokens);
+    (cachedInputTokens === null || cachedInputTokens <= inputTokens) &&
+    (gemini || thinkingTokens === null || thinkingTokens <= outputTokens);
   return {
     inputTokens,
     outputTokens,

@@ -1,3 +1,4 @@
+import { transferGrammarCases, transferWords } from './transfer-corpus';
 import { AiReviewService } from '../../src/ai/ai-review.service';
 import { fileReceipts } from './file-receipts';
 /** Explicit synthetic paid regression; guard disposable local DB. No real user data. */
@@ -49,6 +50,14 @@ const models = selectedModel
       : process.argv.includes('--lite')
         ? ['gemini-2.5-flash-lite']
         : ['deepseek-flash', 'gemini-2.5-flash-lite', 'gemini-3.5-flash'];
+const effort = process.argv.find((a) => a.startsWith('--thinking='))?.slice(11);
+if (effort && !['low', 'high', 'max'].includes(effort))
+  throw Error('Invalid thinking effort');
+const policy = {
+  thinking: effort ?? 'disabled',
+  maxOutputTokens: effort ? 4096 : null,
+  callsPerOperation: 2,
+};
 const rows: unknown[] = [];
 const syntheticRaw: unknown[] = [];
 const originalFetch = global.fetch;
@@ -183,6 +192,7 @@ async function run(model: string) {
     AI_PRIMARY_PROVIDER: gemini ? 'GEMINI' : 'DEEPSEEK',
     GEMINI_MODEL: model,
     DEEPSEEK_MODEL: model,
+    DEEPSEEK_THINKING_EFFORT: effort,
   });
   const provider = new AiReviewService(
     new GeminiReviewProvider(config, db),
@@ -229,11 +239,13 @@ async function run(model: string) {
     }
     writeFileSync(
       `scripts/ai-cost/results-${tag}.json`,
-      JSON.stringify({ runId, rows }, null, 2),
+      JSON.stringify({ runId, policy, rows }, null, 2),
     );
   };
   for (const locale of ['zh', 'en'] as const) {
-    for (const item of grammarCases)
+    for (const item of process.argv.includes('--transfer')
+      ? transferGrammarCases
+      : grammarCases)
       await capture(item.id, locale, async () => {
         const { response } = await provider.review({
           stage: 'CORE',
@@ -261,7 +273,9 @@ async function run(model: string) {
               : !item.target || r.error_spans.length > 0),
         };
       });
-    for (const word of words) {
+    for (const word of process.argv.includes('--transfer')
+      ? transferWords
+      : words) {
       const input: AiVocabularyInput = {
         explanationLocale: locale,
         word: word.word,
@@ -339,7 +353,7 @@ async function main() {
   );
   writeFileSync(
     `scripts/ai-cost/results-${tag}.json`,
-    JSON.stringify({ runId, rows }, null, 2),
+    JSON.stringify({ runId, policy, rows }, null, 2),
     { mode: 0o600 },
   );
   await db.$disconnect();

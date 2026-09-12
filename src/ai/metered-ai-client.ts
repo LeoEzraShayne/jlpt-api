@@ -34,6 +34,8 @@ export class MeteredAiClient {
       `${provider}_MODEL`,
       provider === 'GEMINI' ? 'gemini-3.5-flash' : 'deepseek-chat',
     );
+    const effort = this.config.get<string>('DEEPSEEK_THINKING_EFFORT');
+    const thinking = ['low', 'high', 'max'].includes(effort ?? '');
     const key = this.config.get<string>(`${provider}_API_KEY`);
     if (!key)
       throw new ProviderError(
@@ -110,8 +112,13 @@ export class MeteredAiClient {
                   model,
                   messages: [{ role: 'user', content: prompt }],
                   response_format: { type: 'json_object' },
-                  thinking: { type: 'disabled' },
-                  temperature: 0.2,
+                  ...(thinking
+                    ? {
+                        thinking: { type: 'enabled' },
+                        reasoning_effort: effort,
+                        max_tokens: 4096,
+                      }
+                    : { thinking: { type: 'disabled' }, temperature: 0.2 }),
                 },
           ),
         },

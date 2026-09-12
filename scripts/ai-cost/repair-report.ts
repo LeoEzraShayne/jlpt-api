@@ -16,6 +16,7 @@ type Usage = FullUsage & {
   costUsd: string | null;
   createdAt: string;
   errorCode: string | null;
+  latencyMs: number;
 };
 type Outcome = {
   model: string;
@@ -54,11 +55,28 @@ const peakCold = (rows: Usage[]) =>
       ) ?? 0),
     0,
   );
+const latency = (values: number[]) => {
+  const sorted = [...values].sort((a, b) => a - b);
+  return {
+    medianMs: sorted[Math.floor(sorted.length / 2)] ?? null,
+    p95Ms: sorted[Math.max(0, Math.ceil(sorted.length * 0.95) - 1)] ?? null,
+    maxMs: sorted.at(-1) ?? null,
+  };
+};
 const report = {
   tag,
   runId,
   operations: rows.length,
   networkCalls: usage.length,
+  inputTokensKnown: usage.reduce((s, u) => s + (u.inputTokens ?? 0), 0),
+  outputTokensKnown: usage.reduce((s, u) => s + (u.outputTokens ?? 0), 0),
+  thinkingTokensKnown: usage.reduce((s, u) => s + (u.thinkingTokens ?? 0), 0),
+  thinkingCounterUnknownCalls: usage.filter((u) => u.thinkingTokens === null)
+    .length,
+  callLatency: latency(usage.map((u) => u.latencyMs)),
+  operationNetworkLatency: latency(
+    groups.map((g) => g.calls.reduce((s, u) => s + u.latencyMs, 0)),
+  ),
   firstCandidateFailures: groups.filter(
     (g) => g.calls[0] && !g.calls[0].success,
   ).length,
@@ -95,6 +113,10 @@ const report = {
       firstCandidateFailures: jobs.filter((g) => !g.calls[0].success).length,
       finalExpectedAssertionsPassed: successful,
       networkCalls: calls.length,
+      callLatency: latency(calls.map((c) => c.latencyMs)),
+      operationNetworkLatency: latency(
+        jobs.map((g) => g.calls.reduce((s, u) => s + u.latencyMs, 0)),
+      ),
       failedCalls: calls.filter((c) => !c.success).length,
       paidCostAllAttemptsUsd: sum(calls),
       paidCostPerSuccessfulOperationUsd: successful
@@ -110,6 +132,10 @@ const report = {
     repairCallsPerRound: 1,
     grammarWorkerRounds: 3,
     grammarCallsAcrossWorkerRounds: 6,
+    explicitManualRecoveryRounds: 1,
+    lifecycleGrammarCallsIncludingManualRecovery: 8,
+    leaseBudgetStatus:
+      'Main owns crash-safe admission fix; baseline claim did not bound crash recoveries.',
     vocabularyCallsPerGenerationOrAssessment: 2,
   },
   qualification:

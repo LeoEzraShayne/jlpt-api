@@ -1,0 +1,113 @@
+{
+  "tag": "thinking-low-transfer-v1",
+  "runId": "2026-09-12T16:26:39.562Z",
+  "operations": 24,
+  "networkCalls": 28,
+  "inputTokensKnown": 24788,
+  "outputTokensKnown": 41195,
+  "thinkingTokensKnown": 34665,
+  "thinkingCounterUnknownCalls": 0,
+  "callLatency": {
+    "medianMs": 4796,
+    "p95Ms": 17625,
+    "maxMs": 18675
+  },
+  "operationNetworkLatency": {
+    "medianMs": 5320,
+    "p95Ms": 25214,
+    "maxMs": 36300
+  },
+  "firstCandidateFailures": 4,
+  "firstCandidateFailureRate": 0.16666666666666666,
+  "repairOperations": 4,
+  "structurallyRecovered": 3,
+  "finalStructuralSuccesses": 23,
+  "finalExpectedAssertionsPassed": 23,
+  "finalOperationErrors": [
+    {
+      "id": "purpose-alternate",
+      "locale": "zh",
+      "error": "AI_INVALID_RESPONSE"
+    }
+  ],
+  "semanticAssertionFailures": [],
+  "unknownCostCalls": 0,
+  "allAttemptsPaidEstimateUsd": 0.026007935999999995,
+  "allAttemptsPeakColdEstimateUsd": 0.0568704,
+  "perPurpose": [
+    {
+      "purpose": "GRAMMAR_REVIEW",
+      "operations": 16,
+      "firstCandidateFailures": 4,
+      "finalExpectedAssertionsPassed": 15,
+      "networkCalls": 20,
+      "callLatency": {
+        "medianMs": 6418,
+        "p95Ms": 17625,
+        "maxMs": 18675
+      },
+      "operationNetworkLatency": {
+        "medianMs": 6720,
+        "p95Ms": 36300,
+        "maxMs": 36300
+      },
+      "failedCalls": 5,
+      "paidCostAllAttemptsUsd": 0.022004934,
+      "paidCostPerSuccessfulOperationUsd": 0.0014669956,
+      "peakColdCostPerSuccessfulOperationUsd": 0.00312466
+    },
+    {
+      "purpose": "VOCABULARY_ASSESS",
+      "operations": 6,
+      "firstCandidateFailures": 0,
+      "finalExpectedAssertionsPassed": 6,
+      "networkCalls": 6,
+      "callLatency": {
+        "medianMs": 2367,
+        "p95Ms": 4664,
+        "maxMs": 4664
+      },
+      "operationNetworkLatency": {
+        "medianMs": 2367,
+        "p95Ms": 4664,
+        "maxMs": 4664
+      },
+      "failedCalls": 0,
+      "paidCostAllAttemptsUsd": 0.001779264,
+      "paidCostPerSuccessfulOperationUsd": 0.000296544,
+      "peakColdCostPerSuccessfulOperationUsd": 0.0008815999999999999
+    },
+    {
+      "purpose": "VOCABULARY_GENERATE",
+      "operations": 2,
+      "firstCandidateFailures": 0,
+      "finalExpectedAssertionsPassed": 2,
+      "networkCalls": 2,
+      "callLatency": {
+        "medianMs": 11474,
+        "p95Ms": 11474,
+        "maxMs": 11474
+      },
+      "operationNetworkLatency": {
+        "medianMs": 11474,
+        "p95Ms": 11474,
+        "maxMs": 11474
+      },
+      "failedCalls": 0,
+      "paidCostAllAttemptsUsd": 0.0022237380000000003,
+      "paidCostPerSuccessfulOperationUsd": 0.0011118690000000001,
+      "peakColdCostPerSuccessfulOperationUsd": 0.00235545
+    }
+  ],
+  "limits": {
+    "callsPerRound": 2,
+    "repairCallsPerRound": 1,
+    "grammarWorkerRounds": 3,
+    "grammarCallsAcrossWorkerRounds": 6,
+    "explicitManualRecoveryRounds": 1,
+    "lifecycleGrammarCallsIncludingManualRecovery": 8,
+    "leaseBudgetStatus": "Main owns crash-safe admission fix; baseline claim did not bound crash recoveries.",
+    "vocabularyCallsPerGenerationOrAssessment": 2
+  },
+  "qualification": "Automatic expected assertions and schema success are not independent semantic acceptance. Cold-cache and peak scenarios are synthetic stress estimates. Unknown cost is not zero."
+}

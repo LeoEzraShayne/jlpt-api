@@ -96,3 +96,14 @@ describe('complete paid AI usage semantics', () => {
     });
   });
 });
+
+it('rejects impossible DeepSeek reasoning greater than inclusive completion total', () => {
+  const u = normalizeUsage('DEEPSEEK', {
+    prompt_tokens: 10,
+    completion_tokens: 20,
+    total_tokens: 30,
+    completion_tokens_details: { reasoning_tokens: 21 },
+  });
+  expect(u.usageComplete).toBe(false);
+  expect(paidCost('DEEPSEEK', 'deepseek-flash', u)).toBeNull();
+});
