@@ -1,0 +1,55 @@
+{
+  "runId": "2026-09-12T23:35:12.671Z",
+  "candidateCommit": "55f1763+runner-c3d941d",
+  "fixtureSha256": "efac0faa37ac3309dc5fa0c1f5d169f49d0c38a784570f0140f4088bdc8872b9",
+  "geminiModel": "gemini-3.8-flash",
+  "selectedCaseIds": [
+    "zh:generate",
+    "en:generate"
+  ],
+  "callSpacingMs": 65000,
+  "rows": [
+    {
+      "caseId": "zh:generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "你和朋友计划周末去一家人气很旺的餐厅聚餐。你提醒朋友这家店经常客满，建议他现在就先通过电话把位置订好。请用日语说出这句话。",
+        "meaningHintZh": "提前向店家锁定座位或服务",
+        "grammarId": null,
+        "referenceSentence": "電話で席を予約したほうがいいよ。",
+        "referenceFurigana": "電話[でんわ]で席[せき]を予約[よやく]したほうがいいよ。",
+        "referenceTranslationZh": "最好打电话预约一下座位哦。",
+        "chunks": [
+          "電話で",
+          "席を",
+          "予約した",
+          "ほうが",
+          "いいよ"
+        ]
+      },
+      "requests": 1,
+      "latencyMs": 1511
+    },
+    {
+      "caseId": "en:generate",
+      "kind": "generate",
+      "result": {
+        "promptZh": "You are calling a popular Italian restaurant to secure a table for four people for tomorrow night. State politely that you would like to make a reservation for tomorrow evening.",
+        "meaningHintZh": "reservation; advance booking of a seat or service",
+        "grammarId": null,
+        "referenceSentence": "明日の夜の予約をお願いしたいのですが。",
+        "referenceFurigana": "明日[あした]の夜[よる]の予約[よやく]をお願[ねが]いしたいのですが。",
+        "referenceTranslationZh": "I would like to make a reservation for tomorrow evening.",
+        "chunks": [
+          "明日の",
+          "夜の",
+          "予約を",
+          "お願いしたいの",
+          "ですが"
+        ]
+      },
+      "requests": 1,
+      "latencyMs": 2279
+    }
+  ]
+}

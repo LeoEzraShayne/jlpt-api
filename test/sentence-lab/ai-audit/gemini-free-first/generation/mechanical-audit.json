@@ -1,0 +1,29 @@
+{
+  "candidateCommit": "55f1763+runner-c3d941d",
+  "runId": "2026-09-12T23:35:12.671Z",
+  "operations": 2,
+  "requests": 2,
+  "receipts": 2,
+  "knownTokensAtDeepSeekPeakColdUsd": 0.0007212,
+  "unknownUsageCalls": 0,
+  "checks": [
+    {
+      "caseId": "zh:generate",
+      "finalProvider": "GEMINI",
+      "geminiRequests": 1,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    },
+    {
+      "caseId": "en:generate",
+      "finalProvider": "GEMINI",
+      "geminiRequests": 1,
+      "requests": 1,
+      "mechanicalProblems": [],
+      "independentSemanticReview": "REQUIRED"
+    }
+  ],
+  "failures": [],
+  "qualityVerdict": "PENDING_INDEPENDENT_READING"
+}

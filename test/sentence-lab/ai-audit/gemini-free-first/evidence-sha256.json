@@ -1,0 +1,20 @@
+{
+  "run1": {
+    "results.json": "150f4dfc35295a70d7aa7068a24cf5ba6161337b874557b92c158c9dbbdd62ac",
+    "raw.json": "e9047844b7f025689bdb8dfdc416f8846ecf81bc7d69a7aaab885c95fd92f5e4",
+    "usage.json": "1dd335f15d5c1b390dcf606b9f060762b9ad1c331250e286d46ed6a2345ba4ff",
+    "mechanical-audit.json": "266490f9fe002903d5a90958452f0466e4136d2efc046c6435fcc1644431e909"
+  },
+  "spaced": {
+    "results.json": "b956d362d36f90bbd3e784f2c102f55e2d70e734bc070046b7887f23dd95b6e4",
+    "raw.json": "53abd1908e64099185b3ceb7157ce6a73e16c87391833911c55543942e851a44",
+    "usage.json": "78e26661537c212f15a20e12652ed146d2c2aee40a78833acb0a5d08da103f02",
+    "mechanical-audit.json": "4bf3fb8fc675e23c4c596420f8d9eb8d652d5fb366b1cf2e15922f1fe9e61835"
+  },
+  "generation": {
+    "results.json": "b908403ac70b0f8a0a0d4503c6cc49030cb9f8ea17a1a17d7335c2da28d24a41",
+    "raw.json": "39179e4169fbbcbac39bb86daf82b56eda3f20e3deff25c61e2afb6829bf7a8e",
+    "usage.json": "a466d90e1b92117602331526de29165c8b5f8c261ef2942f2b2f3ba600cef275",
+    "mechanical-audit.json": "66567193c1a29c7574d6d42e798f8c409d270d861573c982a8e88a2b1a88744a"
+  }
+}

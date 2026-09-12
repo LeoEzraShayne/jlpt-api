@@ -1,0 +1,60 @@
+[
+  {
+    "id": "cmtz0w4gy0000ywvbpf4kat5i",
+    "purpose": "VOCABULARY_GENERATE",
+    "provider": "GEMINI",
+    "model": "gemini-3.8-flash",
+    "requestId": "d08ffb7a-4454-4c67-9572-5a8f1493b351",
+    "userId": null,
+    "taskKind": "F_GEMINI_FREE_FIRST",
+    "taskKey": "2026-09-12T23:35:12.671Z:zh:generate",
+    "attempt": 1,
+    "success": true,
+    "errorCode": null,
+    "inputTokens": 618,
+    "outputTokens": 136,
+    "thinkingTokens": null,
+    "cachedInputTokens": null,
+    "cacheWriteTokens": null,
+    "totalTokens": 754,
+    "usageComplete": true,
+    "latencyMs": 1407,
+    "costUsd": "0.0009735",
+    "pricingVersion": "2026-09-13-standard-text-v2",
+    "rawUsage": {
+      "totalTokenCount": 754,
+      "promptTokenCount": 618,
+      "candidatesTokenCount": 136
+    },
+    "createdAt": "2026-09-12T23:35:12.802Z"
+  },
+  {
+    "id": "cmtz0xjpj0001ywvbjlupd14d",
+    "purpose": "VOCABULARY_GENERATE",
+    "provider": "GEMINI",
+    "model": "gemini-3.8-flash",
+    "requestId": "04057ad2-8d8a-4b32-b4ab-89a78264b4a4",
+    "userId": null,
+    "taskKind": "F_GEMINI_FREE_FIRST",
+    "taskKey": "2026-09-12T23:35:12.671Z:en:generate",
+    "attempt": 1,
+    "success": true,
+    "errorCode": null,
+    "inputTokens": 702,
+    "outputTokens": 135,
+    "thinkingTokens": null,
+    "cachedInputTokens": null,
+    "cacheWriteTokens": null,
+    "totalTokens": 837,
+    "usageComplete": true,
+    "latencyMs": 2263,
+    "costUsd": "0.00103275",
+    "pricingVersion": "2026-09-13-standard-text-v2",
+    "rawUsage": {
+      "totalTokenCount": 837,
+      "promptTokenCount": 702,
+      "candidatesTokenCount": 135
+    },
+    "createdAt": "2026-09-12T23:36:19.207Z"
+  }
+]
