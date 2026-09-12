@@ -69,6 +69,11 @@ function setup() {
       findFirst: jest.fn(() => Promise.resolve({ grammarId: 'grammar' })),
     },
     $queryRaw: jest.fn(() => Promise.resolve([])),
+    user: {
+      findUniqueOrThrow: jest.fn(() =>
+        Promise.resolve({ timezone: 'Asia/Tokyo' }),
+      ),
+    },
     $transaction: jest.fn(),
   };
   db.$transaction.mockImplementation(

@@ -38,6 +38,9 @@ function setup() {
     },
     user: {
       findUnique: jest.fn(() => Promise.resolve({ timezone: 'Asia/Tokyo' })),
+      findUniqueOrThrow: jest.fn(() =>
+        Promise.resolve({ timezone: 'Asia/Tokyo' }),
+      ),
     },
   };
   db.$transaction.mockImplementation(

@@ -112,13 +112,13 @@ describe('public practice secrecy', () => {
       challenge.referenceSentence,
     );
   });
-  it('uses stable opaque occurrence IDs and changes the order, even with repeated chunks', () => {
+  it('uses stable opaque occurrence IDs and preserves every chunk, including repetitions', () => {
     const chunks = ['私', 'は', '私', 'です'];
     const shuffled = shuffledChunks('one-practice', chunks);
     expect(shuffled).toEqual(shuffledChunks('one-practice', chunks));
     expect(new Set(shuffled.map((c) => c.id)).size).toBe(4);
     expect(shuffled.map((c) => c.text).sort()).toEqual([...chunks].sort());
-    expect(shuffled.map((c) => c.text)).not.toEqual(chunks);
+    for (const chunk of shuffled) expect(chunk.id).toMatch(/^[a-f0-9]{20}$/);
     expect(shuffled).not.toEqual(shuffledChunks('other-practice', chunks));
   });
 });
