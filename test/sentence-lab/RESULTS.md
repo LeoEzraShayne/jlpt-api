@@ -28,3 +28,42 @@ Billing, Stripe, and memory-evidence suites are **prepared, not yet run** at thi
 5. D/F independent live zh/en grammar+vocabulary quality and full AI cost accounting, including generation, reasoning/cache, failed/retry calls, unknown usage uncertainty, provider fees and server costs.
 6. Main's actual Stripe sandbox end-to-end evidence and live configuration checks; no local simulator test substitutes for external delivery.
 7. Android phase: Google cross-platform purchases/ownership, SSV duplicate rewards, pending/refund/restore, exact signing/version upgrade, device interactions, consent and real store release state.
+
+## 2026-09-13 — integrated A/C independent acceptance
+
+Tested main integration `9d0bc70` + documentation `ccd16b6` (local cherry-picks `8cde45e` + `4f8560e`). No business implementation was changed by F.
+
+Final command: `ACCEPTANCE_STATIC_SNAPSHOT=<public-only snapshot> npx jest --config test/sentence-lab/jest.json --runInBand`.
+
+**31 passed / 1 failed / 32 total; 5 suites passed / 1 failed; 5.05 seconds.**
+
+| Suite                                    | Result       |
+| ---------------------------------------- | ------------ |
+| Quota                                    | 7 / 7 passed |
+| Entitlements                             | 8 / 8 passed |
+| Checkout                                 | 2 / 2 passed |
+| Memory evidence through HTTP and workers | 2 / 2 passed |
+| Static corpus import and presentation    | 4 / 4 passed |
+| Stripe signature/reconciliation          | 8 / 9 passed |
+
+`npx tsc --project test/sentence-lab/tsconfig.json` and `npx eslint test/sentence-lab --no-fix` both passed. The dedicated typecheck includes app declaration files and imported service dependencies, without unrelated legacy test files. A broad repository `tsc --noEmit` also identified pre-existing mock typing errors in `src/ai/progressive-review.spec.ts` and A's `test/learning-v2/billing.integration-spec.ts`; these do not originate in F tests and are outside F's write boundary.
+
+Added Checkout evidence confirms server-priced JPY 6,400 for an English UI, one-time Checkout mode, allowlisted return origins, concurrent replay sharing one order, no grant from Checkout creation alone, and a USD 64 quote retaining its immutable 30-minute snapshot across the exclusive 90-day cutoff while a new quote costs USD 99.99. These are actual application service calls with a provider simulator; external Stripe acceptance of the expiry timestamp is still a separate sandbox gate.
+
+Quota verification includes real concurrent mixed grammar/vocabulary admission and completion transactions. Member corrections exceed the free three-review boundary, and subsequent expiration cannot create extra free corrections. Failed submissions release daily/reward reservations. Current-period timezone changes do not issue a second allowance; simultaneous rollover issues one period. Historical and restored completed tasks do not consume a new allowance.
+
+Actual vocabulary worker results preserve the first answer, first assessment, completion timestamp, counted evidence and the entire vocabulary learning/FSRS record after two corrections. Grammar completion after three reviews retains the first score and creates exactly one review event despite four concurrent completion requests. Test fixtures were corrected to supply required source metadata and a valid `NEEDS_REVISION` result enum; assertions now verify every grammar job completed before inspecting evidence.
+
+### F-001 — duplicate Stripe event receipt insertion race (open)
+
+- Owner: A; reported to main for assignment. F did not edit the implementation.
+- Location: `src/billing/stripe-webhook.service.ts:27`, initial `billingEvent.upsert({ update: {} })` before the outer reconciliation try/catch.
+- Reproduction: `stripe.acceptance-spec.ts`, `concurrent duplicate verified events create one grant and one durable receipt` sends six independently verified copies of one event ID concurrently into the real service and PostgreSQL.
+- Observed without injected latency on the first full run: Prisma `P2002` on `(provider, environment, eventId)`. A subsequent normal-speed run happened to pass, establishing a race rather than a deterministic input failure.
+- The final regression fixture installs a **test-database-only** `BEFORE INSERT` trigger adding 50 ms for event IDs beginning `evt_race_`. This ensures overlapping receipt inserts under realistic slow writes. It does not mock database operations, change application code, or delay unrelated events.
+- Final observation: **1 delivery fulfilled, 5 rejected**. Earlier direct rejection stack identified the above `P2002` unique conflict. `Promise.allSettled` waits for every transaction before cleanup.
+- Impact: simultaneous valid duplicate notifications receive avoidable server failures instead of idempotent success. One receipt may process correctly; the test does not claim duplicated grants or permanently lost payments.
+- Required fix: atomic insert-on-conflict or explicit uniqueness-conflict recovery that re-reads the existing durable receipt and continues its reconciliation. Do not mask retryable reconciliation failures with a success response.
+- Acceptance: all six valid deliveries succeed; exactly one processed receipt and one grant; rerun the full suite after main integrates the fix.
+
+Real sales remain gated on this regression fix and the independent D/F live AI quality/cost acceptance. No claim of live sales enablement or Android acceptance is made.

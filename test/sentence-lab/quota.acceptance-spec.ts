@@ -25,6 +25,10 @@ beforeAll(async () => {
     data: {
       id: 'f-quota-grammar',
       title: 'ながら',
+      sortOrder: 1,
+      sourceDataset: 'f-quota-fixture',
+      sourceOrdinal: 1,
+      sourceHash: 'f-quota-fixture',
       level: 'N2',
       chineseExplanation: '同时',
     },
@@ -102,7 +106,7 @@ async function submit(
 }
 const expectCode = async (action: Promise<unknown>, code: string) => {
   await expect(action).rejects.toMatchObject({
-    response: expect.objectContaining({ code }),
+    response: { code },
   });
 };
 
@@ -122,7 +126,7 @@ test('mixed grammar/vocabulary concurrent admissions grant exactly five; sixth i
   );
   expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(5);
   for (const r of results.filter((r) => r.status === 'rejected'))
-    expect((r as PromiseRejectedResult).reason).toMatchObject({
+    expect(r.reason).toMatchObject({
       response: { code: 'DAILY_TASK_LIMIT' },
     });
   expect((await quota.summary(u.id)).quota).toMatchObject({

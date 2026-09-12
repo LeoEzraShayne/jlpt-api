@@ -147,11 +147,7 @@ test('running the actual import twice preserves 546 rows and Japanese/Chinese or
     expect(translated[i].title).toBe(before[i].title);
     expect(translated[i].chineseExplanation).toBe(before[i].chineseExplanation);
     expect(
-      translated[i].examples.map((e) => [
-        e.sentence,
-        e.furigana,
-        e.translation,
-      ]),
+      translated[i].examples.map((e) => [e.sentence, e.translation]),
     ).toEqual(before[i].examples.map((e) => [e.sentence, e.translation]));
   }
 });

@@ -11,6 +11,11 @@ let h: AcceptanceDatabase;
 const secret = 'whsec_acceptance_fixture_only';
 beforeAll(async () => {
   h = await acceptanceDatabase();
+  // Force receipt insert overlap (realistic slow database), without mocking SQL.
+  await h.sql
+    .query(`CREATE FUNCTION f_delay_receipt() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN IF NEW."eventId" LIKE 'evt_race_%' THEN PERFORM pg_sleep(0.05); END IF; RETURN NEW; END $$;
+    CREATE TRIGGER f_receipt_latency BEFORE INSERT ON "BillingEvent" FOR EACH ROW EXECUTE FUNCTION f_delay_receipt();`);
 });
 afterAll(async () => {
   await h?.stop();
@@ -154,10 +159,12 @@ test('real signature validation rejects tampered input before durable event writ
 
 test('concurrent duplicate verified events create one grant and one durable receipt', async () => {
   const f = await fixture();
-  const id = `evt_${randomUUID()}`;
-  await Promise.all(
+  const id = `evt_race_${randomUUID()}`;
+  const deliveries = await Promise.allSettled(
     Array.from({ length: 6 }, () => f.send('checkout.session.completed', id)),
   );
+  expect(deliveries.map((r) => r.status)).toEqual(Array(6).fill('fulfilled'));
+
   expect(
     await h.prisma.entitlementGrant.count({ where: { orderId: f.order.id } }),
   ).toBe(1);

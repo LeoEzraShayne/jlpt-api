@@ -21,10 +21,20 @@ For content-only verification before A integration:
 ACCEPTANCE_STATIC_SNAPSHOT=/absolute/path/to/public-static-content.json npx jest --config test/sentence-lab/jest.json --runInBand --runTestsByPath test/sentence-lab/content.acceptance-spec.ts
 ```
 
+For a full typecheck of these tests and imported services:
+
+```sh
+npx tsc --project test/sentence-lab/tsconfig.json
+npx eslint test/sentence-lab --no-fix
+```
+
+The Stripe duplicate-receipt test installs a 50 ms insert-delay trigger only in its disposable database for event IDs prefixed `evt_race_`. This makes the real PostgreSQL concurrent-insert race reproducible. It is removed with that database.
+
 ## Coverage and limits
 
 - Quota: five/six mixed grammar+vocabulary task boundary, concurrent reservations, three/four successful+in-flight submission boundary, repeated request/completion/failure, payload conflict, account ownership, failed slot release and retry, timezone edits/concurrent rollover/skipped days, member expiration, historical exemption, restored tasks, free-before-reward accounting.
 - Entitlements: exactly 24 hours and 365 days, exclusive expiration, concurrent renewals, duplicate grants, refund preserving another source, dispute suspended time/restoration, 90-day exclusive launch price boundary, USD/JPY units, fixed/idempotent gift with no order/admin mutation, live/test segregation.
+- Checkout: server-owned USD/JPY pricing, concurrent idempotency, fixed return URLs, one-time purchase mode, no entitlement from checkout creation, and immutable 30-minute launch quotes across the 90-day cutoff.
 - Stripe: real signature verification, concurrent duplicate event receipt, refund before completion, stale failed event, partial refund, dispute/won, provider outage/retry, authoritative owner/amount/environment mismatch, private order reads/cursors.
 - Content: 223 grammar + 223 examples + 6 relation groups + 94 scenarios = 546; exact current source hashes; actual idempotent import; preserved Japanese/Chinese fields; hidden reference redaction and explicit reveal; stale Japanese example and Chinese explanation rejection.
 - Memory evidence: actual HTTP admission and worker persistence, three vocabulary answers with immutable first evidence/FSRS, three grammar assessments followed by concurrent completion and exactly one first-attempt event.

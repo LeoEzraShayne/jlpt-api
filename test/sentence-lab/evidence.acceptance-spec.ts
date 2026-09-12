@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- Supertest responses are independently checked against persisted records. */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access -- Supertest responses are independently checked against persisted records. */
 import { randomUUID } from 'node:crypto';
 import { startHarness, type Harness } from '../learning-v2/harness';
 import {
@@ -160,7 +160,7 @@ test('grammar corrections and repeated completion create one first-attempt memor
     is_correct: false,
     used_target_grammar: true,
     target_grammar_correct: false,
-    result_level: 'NEEDS_WORK',
+    result_level: 'NEEDS_REVISION',
     error_spans: [],
     corrected_sentence: '音楽を聞きながら歩きます。',
     corrected_sentence_furigana:
@@ -170,12 +170,10 @@ test('grammar corrections and repeated completion create one first-attempt memor
     encouragement: '继续练习。',
     scenario_task_completed: true,
   };
-  const review = jest
-    .fn()
-    .mockResolvedValue({
-      provider: 'GEMINI',
-      response: { result, model: 'f-fixture', latencyMs: 1, usage: {} },
-    });
+  const review = jest.fn().mockResolvedValue({
+    provider: 'GEMINI',
+    response: { result, model: 'f-fixture', latencyMs: 1, usage: {} },
+  });
   const worker = new AiWorkerService(
     h.prisma,
     { review } as never,
@@ -196,6 +194,10 @@ test('grammar corrections and repeated completion create one first-attempt memor
     lastId = response.body.data.reviewId as string;
     if (i === 0) firstId = lastId;
     await worker.poll();
+    expect(
+      (await h.prisma.aiReviewJob.findUniqueOrThrow({ where: { id: lastId } }))
+        .status,
+    ).toBe('COMPLETED');
     review.mockResolvedValue({
       provider: 'GEMINI',
       response: {
