@@ -321,4 +321,35 @@ describe('vocabulary AI schemas', () => {
       }).success,
     ).toBe(true);
   });
+
+  it.each([
+    'usedTarget=false,targetCorrect,meaningCorrect',
+    'readingCorrect=null',
+    'used_target=false',
+    'ｕｓｅｄＴａｒｇｅｔ',
+    'used\u200bTarget',
+    'UNVERIFIED',
+    'INCORRECT',
+    'INDEPENDENT',
+    'PROMPTED',
+    'total_score=100',
+    'grammar_score=30',
+    'FSRS',
+  ])(
+    'rejects implementation leakage in learner-facing fields: %s',
+    (technical) => {
+      const feedback = `这句话的判定是 ${technical}。`;
+      for (const field of ['explanationZh', 'correctedTranslationZh'])
+        expect(
+          wordAssessmentSchema.safeParse({ ...assessment, [field]: feedback })
+            .success,
+        ).toBe(false);
+      expect(
+        wordAssessmentSchema.safeParse({
+          ...assessment,
+          corrections: [{ text: 'が', replacement: 'を', reason: feedback }],
+        }).success,
+      ).toBe(false);
+    },
+  );
 });

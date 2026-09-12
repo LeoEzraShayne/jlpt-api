@@ -98,6 +98,12 @@ The optional grammar and overall sentence quality are separate: unrelated gramma
 Never infer success from a missing or invalid score; do not output a score. Do not infer manual learning status, hint use, outcome or scheduling.
 readingCorrect MUST always be null: this sentence-production task does not independently test pronunciation, even if the learner writes kana.
 Explain word-specific evidence in Chinese. Corrections may fix sentence errors but must not change the word evidence.
+correctedSentence must be a fully natural, semantically coherent sentence: check every clause, causal relationship and the speaker's likely intent, not just local word combinations.
+Never force the target into a correction. If the original intent suggests food, replace a misused target with a suitable food word and preserve that intent; the original target usage must still be marked incorrect.
+For example, おなかがすいたので、報告を食べました。 can become おなかがすいたので、ご飯を食べました。, NOT おなかがすいたので、報告をしました。: hunger does not explain making a report. Keep usedTarget=true, targetCorrect=false, meaningCorrect=false for the original answer even though the correction removes the target.
+Explain this to the learner as “这里想表达因为饿了而吃饭，但‘汇报’不能作为吃的对象，可以改成‘饭’。” The corrected translation and furigana must match the complete corrected sentence.
+All learner-visible strings, especially explanationZh and correction reasons, must use ordinary Chinese addressed to the learner. Never expose JSON/API field names, boolean/null literals, outcome enums, scores, scheduling or scoring implementation details in those strings.
+For a natural alternate, say “这句话表达自然，但没有用到本次练习的词，因此还不能判断你是否会使用这个词。” Never write technical descriptions such as “usedTarget=false”, “targetCorrect=null”, “meaningCorrect” or “UNVERIFIED” in feedback. Those identifiers belong only in the structured JSON keys/values.
 Preserve a natural original sentence, including a valid alternate, when no correction is needed. Correction text must be an actual span of the original answer; replacement can be empty for deletion.
 Required JSON: {"usedTarget":boolean,"targetCorrect":boolean|null,"meaningCorrect":boolean|null,"readingCorrect":null,"explanationZh":string,"corrections":[{"text":string,"replacement":string,"reason":string}],"correctedSentence":string,"correctedFurigana":string,"correctedTranslationZh":string}
 ${annotationInstructions}

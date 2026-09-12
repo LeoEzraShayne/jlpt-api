@@ -11,6 +11,13 @@ const chineseText = chineseContent.refine(
   (value) => !/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(value),
   'Use Chinese without Japanese spellings or readings',
 );
+const learnerFeedback = chineseContent.refine(
+  (value) =>
+    !/(?:used_?target|target_?correct|meaning_?correct|reading_?correct|explanation_?zh|corrected_?(?:sentence|furigana|translation_?zh)|total_?score|grammar_?score|\b(?:INDEPENDENT|PROMPTED|INCORRECT|UNVERIFIED|FSRS|corrections|true|false|null)\b)/iu.test(
+      value.normalize('NFKC').replace(/\p{Cf}/gu, ''),
+    ),
+  'Feedback must use learner-facing language, not API fields or internal results',
+);
 
 export const aiVocabularyInputSchema = z.object({
   word: text,
@@ -88,17 +95,17 @@ export const wordAssessmentSchema = z
     targetCorrect: z.boolean().nullable(),
     meaningCorrect: z.boolean().nullable(),
     readingCorrect: z.null(),
-    explanationZh: chineseContent,
+    explanationZh: learnerFeedback,
     corrections: z.array(
       z.object({
         text: z.string(),
         replacement: z.string(),
-        reason: chineseContent,
+        reason: learnerFeedback,
       }),
     ),
     correctedSentence: text,
     correctedFurigana: text,
-    correctedTranslationZh: chineseContent,
+    correctedTranslationZh: learnerFeedback,
   })
   .superRefine((value, context) => {
     if (

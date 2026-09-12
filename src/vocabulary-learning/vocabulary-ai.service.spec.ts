@@ -323,6 +323,10 @@ describe('VocabularyAiService (mocked HTTP only)', () => {
     { correctedFurigana: '友達の誘いを断った。' },
     { explanationZh: 'Correct target usage.' },
     {
+      explanationZh:
+        '表达自然，usedTarget=false,targetCorrect,meaningCorrect。',
+    },
+    {
       corrections: [
         { text: '存在しない', replacement: '修正', reason: '修改' },
       ],
@@ -437,19 +441,43 @@ describe('VocabularyAiService (mocked HTTP only)', () => {
             : item.targetCorrect === false
               ? '不能把汇报作为吃的对象。'
               : '表达自然，但未使用目标词，无法验证掌握情况。',
-        corrections: [],
-        correctedSentence: item.usedTarget
-          ? reportChallenge.referenceSentence
-          : item.sentence,
-        correctedFurigana: item.usedTarget
-          ? reportChallenge.referenceFurigana
-          : '調査[ちょうさ]が終[お]わったので、結果[けっか]を伝[つた]えます。',
-        correctedTranslationZh: reportChallenge.referenceTranslationZh,
+        corrections:
+          item.targetCorrect === false
+            ? [
+                {
+                  text: '報告',
+                  replacement: 'ご飯',
+                  reason: '因为饿了而吃饭，不能把汇报作为吃的对象。',
+                },
+              ]
+            : [],
+        correctedSentence:
+          item.targetCorrect === false
+            ? 'おなかがすいたので、ご飯を食べました。'
+            : item.usedTarget
+              ? reportChallenge.referenceSentence
+              : item.sentence,
+        correctedFurigana:
+          item.targetCorrect === false
+            ? 'おなかがすいたので、ご飯[はん]を食[た]べました。'
+            : item.usedTarget
+              ? reportChallenge.referenceFurigana
+              : '調査[ちょうさ]が終[お]わったので、結果[けっか]を伝[つた]えます。',
+        correctedTranslationZh:
+          item.targetCorrect === false
+            ? '因为肚子饿了，所以吃了饭。'
+            : reportChallenge.referenceTranslationZh,
       };
       gemini(result);
       await expect(
         ai.assess(reportInput, reportChallenge, item.sentence),
       ).resolves.toEqual(result);
+      const prompt = bodyAt(request.mock.calls.length - 1).contents![0].parts[0]
+        .text;
+      expect(prompt).toContain('check every clause, causal relationship');
+      expect(prompt).toContain('Never force the target into a correction');
+      expect(prompt).toContain('NOT おなかがすいたので、報告をしました。');
+      expect(prompt).toContain('Never expose JSON/API field names');
     }
     expect(request).toHaveBeenCalledTimes(4);
   });
