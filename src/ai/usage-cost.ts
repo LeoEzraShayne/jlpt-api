@@ -1,5 +1,5 @@
 /** Text-only standard paid pricing, verified 2026-09-13. Never assumes free quota. */
-export const PRICING_VERSION = '2026-09-13-standard-text-v1';
+export const PRICING_VERSION = '2026-09-13-standard-text-v2';
 export type UsageProvider = 'GEMINI' | 'DEEPSEEK';
 export interface FullUsage {
   inputTokens: number | null;
@@ -86,7 +86,12 @@ export function paidCost(
     const peak =
       peakOverride ?? (weekday && ((h >= 1 && h < 4) || (h >= 6 && h < 10)));
     rates = peak ? [0.3, 0.006, 1.2] : [0.15, 0.003, 0.6];
-  } else if (provider === 'GEMINI' && model === 'gemini-3.5-flash')
+  } else if (provider === 'GEMINI' && model === 'gemini-3.8-flash')
+    rates =
+      at < new Date('2027-01-01T00:00:00Z')
+        ? [0.75, 0.075, 3.75]
+        : [1.5, 0.15, 7.5];
+  else if (provider === 'GEMINI' && model === 'gemini-3.5-flash')
     rates = [1.5, 0.15, 9];
   else if (provider === 'GEMINI' && model === 'gemini-2.5-flash-lite')
     rates = [0.1, 0.01, 0.4];

@@ -29,6 +29,10 @@ export class ProviderError extends Error {
     readonly retryable: boolean,
     readonly status?: number,
     readonly validationFeedback?: string,
+    readonly providerHint?: {
+      quota: 'day' | 'minute' | 'unknown';
+      retryAfterMs?: number;
+    },
   ) {
     super(message);
   }

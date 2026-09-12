@@ -1,7 +1,5 @@
-import {
-  boundedAiAttempts,
-  withValidationFeedback,
-} from '../ai/bounded-ai-attempts';
+import { routeAi } from '../ai/ai-routing';
+import { withValidationFeedback } from '../ai/bounded-ai-attempts';
 import { validationFeedback } from '../ai/validation-feedback';
 import { Injectable, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -135,9 +133,9 @@ INPUT_JSON=${JSON.stringify({ vocabulary: validated, challenge: checkedChallenge
     const configured = providers.filter((provider) =>
       this.config.get<string>(`${provider}_API_KEY`),
     );
-    const reviewed = await boundedAiAttempts(
-      configured,
-      async (provider, index, feedback) => {
+    const reviewed = await routeAi(
+      configured.map((name) => ({ name })),
+      async ({ name: provider }, index, feedback) => {
         const response = await new MeteredAiClient(
           this.config,
           this.prisma,
@@ -163,6 +161,8 @@ INPUT_JSON=${JSON.stringify({ vocabulary: validated, challenge: checkedChallenge
         );
         return response.result;
       },
+      this.config,
+      this.prisma,
     );
     return reviewed.response;
   }

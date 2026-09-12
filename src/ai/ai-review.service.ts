@@ -1,4 +1,5 @@
-import { boundedAiAttempts } from './bounded-ai-attempts';
+import { routeAi } from './ai-routing';
+import { PrismaService } from '../database/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { Injectable, Optional } from '@nestjs/common';
 import { AiProvider } from '@prisma/client';
@@ -15,6 +16,7 @@ export class AiReviewService {
     private readonly gemini: GeminiReviewProvider,
     private readonly deepseek: DeepSeekReviewProvider,
     @Optional() private readonly config?: ConfigService,
+    @Optional() private readonly prisma?: PrismaService,
   ) {}
 
   async review(
@@ -33,7 +35,7 @@ export class AiReviewService {
     const configured = this.config
       ? ordered.filter((p) => this.config!.get<string>(`${p.name}_API_KEY`))
       : ordered;
-    const reviewed = await boundedAiAttempts(
+    const reviewed = await routeAi(
       configured,
       async (provider, index, feedback) => {
         const response = await provider.client.review({
@@ -47,6 +49,8 @@ export class AiReviewService {
         this.assertSuggestions(input.grammarTitle, response);
         return response;
       },
+      this.config,
+      this.prisma,
     );
     return { provider: reviewed.provider.name, response: reviewed.response };
   }

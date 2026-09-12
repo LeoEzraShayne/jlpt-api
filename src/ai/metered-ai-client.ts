@@ -1,3 +1,4 @@
+import { geminiHttpFailure } from './gemini-failure';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import type { ConfigService } from '@nestjs/config';
@@ -134,6 +135,8 @@ export class MeteredAiClient {
         /* Still record HTTP failure without exposing its body. */
       }
       rawUsage = safeUsage(provider, envelope);
+      if (gemini && !response.ok)
+        throw geminiHttpFailure(response.status, envelope);
       assertResponse(response, body);
       // Keep configured pricing identity when Gemini reports a dated version.
       const parsed = envelopeSchema.parse(envelope);

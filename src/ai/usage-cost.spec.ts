@@ -107,3 +107,18 @@ it('rejects impossible DeepSeek reasoning greater than inclusive completion tota
   expect(u.usageComplete).toBe(false);
   expect(paidCost('DEEPSEEK', 'deepseek-flash', u)).toBeNull();
 });
+
+it('estimates Gemini 3.8 standard paid prices by the published promotion boundary, never zero free usage', () => {
+  const u = normalizeUsage('GEMINI', {
+    promptTokenCount: 1000,
+    candidatesTokenCount: 100,
+    thoughtsTokenCount: 100,
+    totalTokenCount: 1200,
+  });
+  expect(
+    paidCost('GEMINI', 'gemini-3.8-flash', u, new Date('2026-09-13T00:00:00Z')),
+  ).toBeCloseTo(0.0015, 10);
+  expect(
+    paidCost('GEMINI', 'gemini-3.8-flash', u, new Date('2027-01-01T00:00:00Z')),
+  ).toBeCloseTo(0.003, 10);
+});
