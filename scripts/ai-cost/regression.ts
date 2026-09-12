@@ -53,7 +53,11 @@ const models = selectedModel
 const effort = process.argv.find((a) => a.startsWith('--thinking='))?.slice(11);
 if (effort && !['low', 'high', 'max'].includes(effort))
   throw Error('Invalid thinking effort');
+const mixed = process.argv.includes('--mixed');
+if (mixed && !effort)
+  throw Error('Mixed policy requires an explicit thinking effort');
 const policy = {
+  scope: mixed ? 'grammar' : 'all',
   thinking: effort ?? 'disabled',
   maxOutputTokens: effort ? 4096 : null,
   callsPerOperation: 2,
@@ -193,6 +197,7 @@ async function run(model: string) {
     GEMINI_MODEL: model,
     DEEPSEEK_MODEL: model,
     DEEPSEEK_THINKING_EFFORT: effort,
+    DEEPSEEK_THINKING_SCOPE: mixed ? 'grammar' : 'all',
   });
   const provider = new AiReviewService(
     new GeminiReviewProvider(config, db),

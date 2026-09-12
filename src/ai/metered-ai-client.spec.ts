@@ -9,7 +9,7 @@ jest.mock('./provider-utils', () => ({
   fetchWithTimeout: jest.fn(),
 }));
 const network = jest.mocked(fetchWithTimeout);
-function fixture(effort?: string) {
+function fixture(effort?: string, scope?: string) {
   const db = {
     aiUsageRecord: {
       create: jest.fn().mockResolvedValue({}),
@@ -21,6 +21,7 @@ function fixture(effort?: string) {
       DEEPSEEK_API_KEY: 'mock-secret',
       DEEPSEEK_MODEL: 'deepseek-flash',
       DEEPSEEK_THINKING_EFFORT: effort,
+      DEEPSEEK_THINKING_SCOPE: scope,
     }),
     db as unknown as PrismaService,
   );
@@ -181,4 +182,24 @@ it('enables only explicitly selected supported thinking effort, retaining an out
   });
   expect(body).not.toHaveProperty('temperature');
   expect(db.aiUsageRecord.update).toHaveBeenCalledTimes(1);
+});
+
+it('routes only grammar to thinking under the explicit mixed candidate scope', async () => {
+  const { client } = fixture('low', 'grammar');
+  for (const purpose of [
+    'GRAMMAR_REVIEW',
+    'VOCABULARY_GENERATE',
+    'VOCABULARY_ASSESS',
+  ]) {
+    network.mockResolvedValueOnce(response());
+    await client.request('DEEPSEEK', 'synthetic', purpose, {}, () => true);
+  }
+  const bodies = network.mock.calls.map(
+    (c) => JSON.parse(c[1].body as string) as { thinking: { type: string } },
+  );
+  expect(bodies.map((b) => b.thinking.type)).toEqual([
+    'enabled',
+    'disabled',
+    'disabled',
+  ]);
 });

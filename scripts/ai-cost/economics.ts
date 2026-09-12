@@ -19,16 +19,33 @@ const selectedTag = process.argv
   ?.slice(10);
 if (selectedTag && !/^[a-z0-9-]+$/.test(selectedTag))
   throw Error('Invalid run tag');
-const files = selectedTag
-  ? [`usage-${selectedTag}.json`]
+const mixed = process.argv.includes('--mixed');
+if (mixed && selectedTag)
+  throw Error('Use either a measured run or mixed historical projection');
+const sourceTags = mixed
+  ? ['thinking-low-v1', 'bounded-repair-v6']
+  : selectedTag
+    ? [selectedTag]
+    : [];
+const files = sourceTags.length
+  ? sourceTags.map((t) => `usage-${t}.json`)
   : [
       'usage-initial.json',
       'usage-gemini-server-initial.json',
       'usage-gemini31-v2.json',
     ];
-const all = files.flatMap(
-  (f) => JSON.parse(readFileSync(`scripts/ai-cost/${f}`, 'utf8')) as Usage[],
-);
+const all = files.flatMap((f, index) => {
+  const rows = JSON.parse(
+    readFileSync(`scripts/ai-cost/${f}`, 'utf8'),
+  ) as Usage[];
+  return mixed
+    ? rows.filter((u) =>
+        index === 0
+          ? u.purpose === 'GRAMMAR_REVIEW'
+          : u.purpose !== 'GRAMMAR_REVIEW',
+      )
+    : rows;
+});
 const currencies = { USD: 1, JPY: 150, CNY: 7.2 }; // Scenario inputs, not live market quotes.
 const fees = { stripeJapanCard: 0.036, climate: 0.01, fxConversion: 0.02 };
 const serverMonthlyCny = 40;
@@ -55,34 +72,35 @@ const products = [
 ];
 // First DeepSeek corpus: 2 grammar false positives and English-answer task are
 // rejected even though JSON schema passed. This is still not expert certification.
-const humanAccepted: Record<string, number> = selectedTag
+const humanAccepted: Record<string, number> = sourceTags.length
   ? {}
   : {
       'deepseek-flash:GRAMMAR_REVIEW': 10,
       'deepseek-flash:VOCABULARY_GENERATE': 2,
     };
-if (selectedTag) {
-  const result = JSON.parse(
-    readFileSync(`scripts/ai-cost/results-${selectedTag}.json`, 'utf8'),
-  ) as {
-    rows: Array<{
-      model: string;
-      id: string;
-      locale: string;
-      result?: { passed?: boolean };
-    }>;
-  };
+if (sourceTags.length) {
   for (const row of all) humanAccepted[`${row.model}:${row.purpose}`] = 0;
-  for (const row of result.rows) {
-    if (row.result?.passed !== true) continue;
-    const purpose = all.find(
-      (u) =>
-        u.model === row.model &&
-        (u as Usage & { taskKey: string }).taskKey.endsWith(
-          `:${row.locale}:${row.id}`,
-        ),
-    )?.purpose;
-    if (purpose) humanAccepted[`${row.model}:${purpose}`]++;
+  for (const tag of sourceTags) {
+    const result = JSON.parse(
+      readFileSync(`scripts/ai-cost/results-${tag}.json`, 'utf8'),
+    ) as {
+      runId: string;
+      rows: Array<{
+        model: string;
+        id: string;
+        locale: string;
+        result?: { passed?: boolean };
+      }>;
+    };
+    for (const row of result.rows) {
+      if (row.result?.passed !== true) continue;
+      const purpose = all.find(
+        (u) =>
+          (u as Usage & { taskKey: string }).taskKey ===
+          `${result.runId}:${row.model}:${row.locale}:${row.id}`,
+      )?.purpose;
+      if (purpose) humanAccepted[`${row.model}:${purpose}`]++;
+    }
   }
 }
 function stats(
@@ -211,9 +229,13 @@ const output = {
   inputs: {
     files,
     selectedTag,
-    successBasis: selectedTag
-      ? 'Final operation expected assertions, all failed/repair attempt costs retained; independent semantic review pending'
-      : 'Initial run plus documented human rejections',
+    mixedHistoricalProjection: mixed,
+    sourceTags,
+    successBasis: mixed
+      ? 'Historical composition: thinking grammar plus disabled vocabulary; all selected failed/repair calls retained, not a new measured mixed run or qualification'
+      : selectedTag
+        ? 'Final operation expected assertions, all failed/repair attempt costs retained; independent semantic review pending'
+        : 'Initial run plus documented human rejections',
     currencies,
     fees,
     serverMonthlyCny,
@@ -240,7 +262,7 @@ const output = {
   scenarios,
 };
 writeFileSync(
-  `scripts/ai-cost/economics${selectedTag ? '-' + selectedTag : ''}.json`,
+  `scripts/ai-cost/economics${mixed ? '-mixed-history-v1' : selectedTag ? '-' + selectedTag : ''}.json`,
   JSON.stringify(output, null, 2),
 );
 console.log(

@@ -35,7 +35,10 @@ export class MeteredAiClient {
       provider === 'GEMINI' ? 'gemini-3.5-flash' : 'deepseek-chat',
     );
     const effort = this.config.get<string>('DEEPSEEK_THINKING_EFFORT');
-    const thinking = ['low', 'high', 'max'].includes(effort ?? '');
+    const thinking =
+      ['low', 'high', 'max'].includes(effort ?? '') &&
+      (this.config.get<string>('DEEPSEEK_THINKING_SCOPE') !== 'grammar' ||
+        purpose === 'GRAMMAR_REVIEW');
     const key = this.config.get<string>(`${provider}_API_KEY`);
     if (!key)
       throw new ProviderError(
