@@ -70,6 +70,7 @@ export function makePractice(
 ): PracticeRecord {
   return {
     id: 'practice',
+    explanationLocale: 'zh',
     userId: 'owner',
     vocabularyId: 'sense-arrival',
     learningId: 'learning',

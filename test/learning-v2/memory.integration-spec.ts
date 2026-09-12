@@ -6,7 +6,10 @@ import {
   reviewSession,
   freezeDate,
 } from './review-fixtures';
-import { localDateKey } from '../../src/review/adaptive-review';
+import {
+  addCalendarDays,
+  localDateKey,
+} from '../../src/review/adaptive-review';
 let h: Harness;
 beforeAll(async () => {
   h = await startHarness();
@@ -107,9 +110,11 @@ test.each([
       expect(schedule.stability).toBe(progress.schedule!.stability);
       expect(schedule.nextReviewOn).toEqual(progress.schedule!.nextReviewOn);
     } else if (effective === 'FORGOT' || effective === 'FUZZY') {
-      expect(schedule.nextReviewOn!.getTime()).toBeLessThanOrEqual(
-        Date.now() + 86400000,
-      );
+      // nextReviewOn is a calendar DATE represented at UTC midnight, not an elapsed-time instant.
+      expect(
+        schedule.nextReviewOn!.toISOString().slice(0, 10) <=
+          addCalendarDays(localDateKey(user.timezone, new Date()), 1),
+      ).toBe(true);
     } else
       expect(schedule.nextReviewOn!.getTime()).toBeGreaterThan(
         Date.now() + 30 * 86400000,
