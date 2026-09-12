@@ -1,3 +1,5 @@
+import { ContentLocalizationService } from '../content-localization/content-localization.service';
+import { scenarioSource } from '../content-localization/content-source';
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma, type JlptLevel } from '@prisma/client';
 import { ContentSelectionService } from '../content/content-selection.service';
@@ -10,13 +12,17 @@ import {
   chooseScenario,
   chooseTrainingMode,
   instructions,
+  instructionsEn,
 } from './scenario-selection';
 import { readTrainingContext, type TrainingContext } from './training-context';
 
 @Injectable()
 export class SceneService {
   private readonly logger = new Logger(SceneService.name);
-  constructor(private readonly content: ContentSelectionService) {}
+  constructor(
+    private readonly content: ContentSelectionService,
+    private readonly localization: ContentLocalizationService,
+  ) {}
 
   async assign(
     tx: Prisma.TransactionClient,
@@ -29,6 +35,7 @@ export class SceneService {
       chineseExplanation: string;
       usageScene?: string | null;
     },
+    explanationLocale: 'zh' | 'en' = 'zh',
   ) {
     const history = await tx.studySession.findMany({
       where: { userId, grammarId: grammar.id, status: 'COMPLETED' },
@@ -66,7 +73,25 @@ export class SceneService {
     const task = profile?.tasks.find(
       (task) => task.objective === selected?.objective,
     );
+    const localized = selected
+      ? (
+          await this.localization.resolveMany(
+            [scenarioSource(selected)],
+            explanationLocale,
+            tx,
+          )
+        ).get(`SCENARIO:${selected.id}`)
+      : undefined;
     const context: TrainingContext = {
+      explanationLocale,
+      instruction:
+        explanationLocale === 'en'
+          ? selected
+            ? instructionsEn[mode]
+            : 'Use the target grammar to describe something real or familiar to you. Focus on expressing a natural meaning.'
+          : selected
+            ? instructions[mode]
+            : '请用目标语法表达一件真实或熟悉的事情，优先保证意思自然。',
       version: 'training-v1',
       selectionVersion: PRACTICE_SELECTION_VERSION,
       instructionZh: selected
@@ -83,6 +108,7 @@ export class SceneService {
             objective: selected.objective,
             register: selected.register,
             promptZh: selected.promptZh,
+            localized,
           }
         : null,
       words: [],

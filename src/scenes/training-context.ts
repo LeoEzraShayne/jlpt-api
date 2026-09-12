@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+const localizedSchema = z.object({
+  requestedLocale: z.enum(['zh', 'en']),
+  resolvedLocale: z.enum(['zh', 'en']).nullable(),
+  status: z.enum(['ORIGINAL', 'VALIDATED', 'MISSING', 'STALE']),
+  sourceHash: z.string(),
+  fields: z.record(z.string(), z.string().nullable()).nullable(),
+});
+
 export const scenarioSchema = z.object({
   version: z.literal('scenario-v1'),
   id: z.string(),
@@ -10,6 +18,7 @@ export const scenarioSchema = z.object({
   objective: z.string(),
   register: z.string(),
   promptZh: z.string(),
+  localized: localizedSchema.optional(),
 });
 const wordSchema = z.object({
   id: z.string(),
@@ -38,6 +47,8 @@ export const trainingContextSchema = z.object({
   version: z.literal('training-v1'),
   selectionVersion: z.string().optional(),
   instructionZh: z.string(),
+  instruction: z.string().optional(),
+  explanationLocale: z.enum(['zh', 'en']).optional(),
   scenario: scenarioSchema.nullable(),
   words: z.array(wordSchema).max(2),
   supportingGrammar: z
@@ -94,6 +105,7 @@ export function presentGrammar<T extends object>(grammar: T, hidden: boolean) {
     ...grammar,
     examples: [],
     chineseExplanation: '',
+    localized: null,
     connectionRule: null,
     usageScene: null,
     commonErrors: null,

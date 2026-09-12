@@ -154,6 +154,7 @@ describe('server scene training', () => {
           examples: [{ sentence: '不泄露例句' }],
           chineseExplanation: '不泄露解释',
           connectionRule: '不泄露接续',
+          localized: { fields: { explanation: '不泄露英文' } },
         },
       };
       const serialized = JSON.stringify(presentSession(session));
@@ -176,7 +177,7 @@ describe('server scene training', () => {
   });
   it('tracks only actually selected observed auxiliary words/grammar, without score writes', async () => {
     const recordExposure = jest.fn().mockResolvedValue({});
-    const service = new SceneService({ recordExposure } as never);
+    const service = new SceneService({ recordExposure } as never, {} as never);
     await service.recordUsed(
       'u1',
       's1',
@@ -212,7 +213,7 @@ describe('server scene training', () => {
   });
   it('never counts hidden reference text as exposure until explicitly revealed', async () => {
     const recordExposure = jest.fn().mockResolvedValue({});
-    const service = new SceneService({ recordExposure } as never);
+    const service = new SceneService({ recordExposure } as never, {} as never);
     await service.recordShown('u1', 's1', context(), false);
     expect(recordExposure).not.toHaveBeenCalledWith(
       'u1',
@@ -231,9 +232,12 @@ describe('server scene training', () => {
     );
   });
   it('keeps the task when supplementary selection fails', async () => {
-    const service = new SceneService({
-      selectForPractice: jest.fn().mockRejectedValue(new Error('offline')),
-    } as never);
+    const service = new SceneService(
+      {
+        selectForPractice: jest.fn().mockRejectedValue(new Error('offline')),
+      } as never,
+      { resolveMany: jest.fn().mockResolvedValue(new Map()) } as never,
+    );
     const tx = {
       studySession: {
         findMany: jest.fn().mockResolvedValue([]),

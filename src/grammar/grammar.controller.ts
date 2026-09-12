@@ -13,6 +13,7 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
+  IsIn,
   IsOptional,
   IsString,
   Max,
@@ -24,6 +25,7 @@ import { GrammarService } from './grammar.service';
 import { SessionGuard } from '../auth/session.guard';
 
 class GrammarQueryDto {
+  @IsOptional() @IsIn(['zh', 'en']) locale?: 'zh' | 'en';
   @IsOptional() @IsEnum(JlptLevel) level?: JlptLevel;
   @IsOptional() @IsEnum(ContentStatus) status?: ContentStatus;
   @IsOptional() @IsString() query?: string;
@@ -43,7 +45,12 @@ export class GrammarController {
   @Get('grammar-points')
   async findAll(@Req() request: Request, @Query() query: GrammarQueryDto) {
     const result = await this.grammar.findAll(
-      query,
+      {
+        ...query,
+        locale:
+          query.locale ??
+          (request.currentUser!.explanationLocale === 'en' ? 'en' : 'zh'),
+      },
       request.currentUser!.id,
       request.currentUser!.timezone,
     );
@@ -51,12 +58,18 @@ export class GrammarController {
   }
 
   @Get('grammar-points/:id')
-  async findOne(@Req() request: Request, @Param('id') id: string) {
+  async findOne(
+    @Req() request: Request,
+    @Param('id') id: string,
+    @Query() query: GrammarQueryDto,
+  ) {
     return {
       data: await this.grammar.findOne(
         id,
         request.currentUser!.id,
         request.currentUser!.timezone,
+        query.locale ??
+          (request.currentUser!.explanationLocale === 'en' ? 'en' : 'zh'),
       ),
     };
   }

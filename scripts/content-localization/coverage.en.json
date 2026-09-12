@@ -1,0 +1,37 @@
+{
+  "qualityVersion": "static-en-v1",
+  "total": 546,
+  "validated": 546,
+  "complete": true,
+  "entities": {
+    "GRAMMAR": {
+      "total": 223,
+      "validated": 223,
+      "missing": 0,
+      "stale": 0,
+      "invalid": 0
+    },
+    "EXAMPLE": {
+      "total": 223,
+      "validated": 223,
+      "missing": 0,
+      "stale": 0,
+      "invalid": 0
+    },
+    "RELATION": {
+      "total": 6,
+      "validated": 6,
+      "missing": 0,
+      "stale": 0,
+      "invalid": 0
+    },
+    "SCENARIO": {
+      "total": 94,
+      "validated": 94,
+      "missing": 0,
+      "stale": 0,
+      "invalid": 0
+    }
+  },
+  "gaps": []
+}

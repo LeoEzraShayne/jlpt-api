@@ -56,3 +56,15 @@ export function chooseScenario(
     candidates[history.length % candidates.length]
   );
 }
+
+// English companion to the existing Chinese instruction; Japanese source stays unchanged.
+export const instructionsEn: Record<TrainingMode, string> = {
+  UNDERSTAND:
+    'Understand the reference expression, then use the target grammar to say something about your own life.',
+  SUBSTITUTE:
+    'Keep the familiar sentence structure and change the people, content, or time while keeping the meaning natural.',
+  COMBINE:
+    'Combine a familiar expression with another expression you have learned to complete the task. There is no need to make a long sentence.',
+  TRANSFER:
+    'Complete the new task independently with the target grammar before looking at the reference. Changing only the nouns does not count as transfer.',
+};

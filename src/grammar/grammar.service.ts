@@ -1,3 +1,7 @@
+import {
+  ContentLocalizationService,
+  contentLocale,
+} from '../content-localization/content-localization.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ContentStatus, JlptLevel } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
@@ -7,6 +11,7 @@ import {
 } from '../review/adaptive-review';
 
 export interface GrammarQuery {
+  locale?: 'zh' | 'en';
   level?: JlptLevel;
   status?: ContentStatus;
   query?: string;
@@ -16,7 +21,10 @@ export interface GrammarQuery {
 
 @Injectable()
 export class GrammarService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly localization: ContentLocalizationService,
+  ) {}
 
   async findAll(input: GrammarQuery, userId: string, timezone: string) {
     const limit = Math.min(input.limit ?? 30, 100);
@@ -54,12 +62,20 @@ export class GrammarService {
     const hasMore = items.length > limit;
     if (hasMore) items.pop();
     return {
-      items: items.map((item) => this.withLearningState(item, timezone)),
+      items: await this.localization.grammar(
+        items.map((item) => this.withLearningState(item, timezone)),
+        contentLocale(input.locale),
+      ),
       nextCursor: hasMore ? items.at(-1)?.id : null,
     };
   }
 
-  async findOne(id: string, userId: string, timezone: string) {
+  async findOne(
+    id: string,
+    userId: string,
+    timezone: string,
+    locale?: 'zh' | 'en',
+  ) {
     const item = await this.prisma.grammarPoint.findUnique({
       where: { id },
       include: {
@@ -93,7 +109,12 @@ export class GrammarService {
         code: 'GRAMMAR_NOT_FOUND',
         message: 'Grammar point not found',
       });
-    return this.withLearningState(item, timezone);
+    return (
+      await this.localization.grammar(
+        [this.withLearningState(item, timezone)],
+        contentLocale(locale),
+      )
+    )[0];
   }
 
   async markNeedsWork(grammarId: string, userId: string, needsWork: boolean) {
