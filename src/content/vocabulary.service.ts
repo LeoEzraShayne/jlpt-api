@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import type { VocabularyLearning } from '@prisma/client';
 import type { ContentQueryDto } from './content.dto';
 
 @Injectable()
@@ -10,6 +11,9 @@ export class VocabularyService {
       validationStatus: 'VALIDATED',
       OR: [{ ownerId: null }, { ownerId: userId }],
     };
+  }
+  private present<T extends { learning: VocabularyLearning[] }>(entry: T) {
+    return { ...entry, learning: entry.learning[0] ?? null };
   }
   async search(userId: string, query: ContentQueryDto) {
     const limit = query.limit ?? 30;
@@ -49,16 +53,21 @@ export class VocabularyService {
       },
       orderBy: { id: 'asc' },
       take: limit + 1,
+      include: { learning: { where: { userId } } },
     });
     const nextCursor = items.length > limit ? items[limit - 1].id : null;
-    return { items: items.slice(0, limit), nextCursor };
+    return {
+      items: items.slice(0, limit).map((entry) => this.present(entry)),
+      nextCursor,
+    };
   }
   async get(userId: string, id: string) {
     const entry = await this.prisma.vocabularyEntry.findFirst({
       where: { id, ...this.visible(userId) },
+      include: { learning: { where: { userId } } },
     });
     if (!entry) throw new NotFoundException('Vocabulary entry not found');
-    return entry;
+    return this.present(entry);
   }
   async bookmark(userId: string, vocabularyId: string, note?: string) {
     await this.get(userId, vocabularyId);
@@ -80,13 +89,16 @@ export class VocabularyService {
         id: { in: rows.slice(0, limit).map((row) => row.vocabularyId) },
         ...this.visible(userId),
       },
+      include: { learning: { where: { userId } } },
     });
     return {
       items: rows.slice(0, limit).flatMap((row) => {
         const vocabulary = entries.find(
           (entry) => entry.id === row.vocabularyId,
         );
-        return vocabulary ? [{ ...row, vocabulary }] : [];
+        return vocabulary
+          ? [{ ...row, vocabulary: this.present(vocabulary) }]
+          : [];
       }),
       nextCursor: rows.length > limit ? rows[limit - 1].id : null,
     };

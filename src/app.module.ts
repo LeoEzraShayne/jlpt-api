@@ -1,3 +1,4 @@
+import { VocabularyLearningModule } from './vocabulary-learning/vocabulary-learning.module';
 import { ContentModule } from './content/content.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -31,6 +32,7 @@ import { HistoryModule } from './history/history.module';
     AdminModule,
     ImportsModule,
     ContentModule,
+    VocabularyLearningModule,
     UsersModule,
     GrammarModule,
     DashboardModule,

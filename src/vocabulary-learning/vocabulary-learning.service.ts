@@ -49,7 +49,7 @@ export class VocabularyLearningService {
       if (['UNKNOWN', 'PRACTICE', 'REMEMBERED'].includes(action)) {
         // Serialize first-time upserts too: Prisma may implement an empty-update
         // upsert as read/create, before a learning row exists to lock.
-        await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${userId}:${vocabularyId}`}, 0))`;
+        await tx.$queryRaw`SELECT 1 AS locked FROM pg_advisory_xact_lock(hashtextextended(${`${userId}:${vocabularyId}`}, 0))`;
         await tx.vocabularyLearning.upsert({
           where: { userId_vocabularyId: { userId, vocabularyId } },
           create: { userId, vocabularyId, nextReviewAt: now },
@@ -91,9 +91,17 @@ export class VocabularyLearningService {
 
   async list(userId: string, query: LearningQueryDto) {
     const limit = query.limit ?? 30;
+    const now = new Date();
+    const user =
+      query.list === 'DUE'
+        ? await this.prisma.user.findUniqueOrThrow({
+            where: { id: userId },
+            select: { timezone: true },
+          })
+        : null;
     const filter: Prisma.VocabularyLearningWhereInput =
       query.list === 'DUE'
-        ? dueLearning()
+        ? dueLearning(now, localDayBounds(user!.timezone, now))
         : query.list === 'PRACTICE'
           ? { practiceEnabled: true }
           : query.list === 'REMEMBERED'
@@ -162,7 +170,10 @@ export class VocabularyLearningService {
         where: { ...where, knowledge: 'REMEMBERED' },
       }),
       this.prisma.vocabularyLearning.count({
-        where: { ...where, ...dueLearning(now) },
+        where: {
+          ...where,
+          ...dueLearning(now, localDayBounds(user.timezone, now)),
+        },
       }),
       this.prisma.vocabularyPractice.count({
         where: {

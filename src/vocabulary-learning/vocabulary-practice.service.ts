@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { localDayBounds } from './vocabulary-learning.service';
 import { isUUID } from 'class-validator';
 import { PrismaService } from '../database/prisma.service';
 import { lockLearning, requireVocabulary } from './vocabulary-learning.db';
@@ -29,11 +30,18 @@ export class VocabularyPracticeService {
 
   async start(userId: string, input: StartVocabularyPracticeDto) {
     let vocabularyId = input.vocabularyId;
+    let automaticDay: { gte: Date; lt: Date } | undefined;
     if (!vocabularyId) {
+      const user = await this.prisma.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { timezone: true },
+      });
+      const now = new Date();
+      automaticDay = localDayBounds(user.timezone, now);
       const due = await this.prisma.vocabularyLearning.findFirst({
         where: {
           userId,
-          ...dueLearning(),
+          ...dueLearning(now, automaticDay),
           vocabulary: visibleVocabulary(userId),
         },
         orderBy: [{ nextReviewAt: 'asc' }, { id: 'asc' }],
@@ -76,6 +84,13 @@ export class VocabularyPracticeService {
       });
       if (existing) return presentPractice(existing);
       const now = new Date();
+      if (
+        automaticDay &&
+        !(await tx.vocabularyLearning.findFirst({
+          where: { id: learning.id, ...dueLearning(now, automaticDay) },
+        }))
+      )
+        throw new ConflictException('复习清单已更新，请重新选择下一个词。');
       const practice = await tx.vocabularyPractice.create({
         data: {
           userId,

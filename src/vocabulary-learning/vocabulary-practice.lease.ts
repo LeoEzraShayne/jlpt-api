@@ -9,7 +9,9 @@ export interface VocabularyLease {
   attempts: number;
 }
 
-export async function claimVocabularyPractice(prisma: PrismaService) {
+export async function claimVocabularyPractice(
+  prisma: Pick<PrismaService, '$queryRaw' | '$executeRaw'>,
+) {
   // DateTime columns contain UTC without a timezone. Match the existing provider worker.
   const now = Prisma.sql`date_trunc('milliseconds', NOW() AT TIME ZONE 'UTC')`;
   const expired = Prisma.sql`("lockedAt" IS NULL OR "lockedAt" < ${now} - interval '2 minutes'

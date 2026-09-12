@@ -98,3 +98,28 @@ test('wrong reading or unrecognized sense is omitted; no cross-account fallback 
     ).words,
   ).toEqual([]);
 });
+
+test('personal due senses rank within the natural task pool without enrolling unrelated words', async () => {
+  const f = await fixture('personal-due-pool', [
+    ['報告', 'ほうこく', 'report'],
+    ['挨拶', 'あいさつ', 'greeting'],
+    ['損失', 'そんしつ', 'loss'],
+  ]);
+  await h.prisma.vocabularyLearning.createMany({
+    data: [1, 2].map((i) => ({
+      userId: f.user.id,
+      vocabularyId: f.entries[i].id,
+      knowledge: 'KNOWN',
+      practiceEnabled: true,
+      nextReviewAt: new Date(0),
+    })),
+  });
+  const { words } = await f.select();
+  expect(words.map((word) => word.word)).toEqual(['挨拶', '報告']);
+  expect(
+    await h.prisma.vocabularyPractice.count({ where: { userId: f.user.id } }),
+  ).toBe(0);
+  expect(
+    await h.prisma.vocabularyLearning.count({ where: { userId: f.user.id } }),
+  ).toBe(2);
+});

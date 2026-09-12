@@ -25,6 +25,7 @@ describe('vocabulary ownership and bookmark identity', () => {
       service.bookmark('other', 'private-word'),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(prisma.vocabularyEntry.findFirst).toHaveBeenCalledWith({
+      include: { learning: { where: { userId: 'other' } } },
       where: {
         id: 'private-word',
         validationStatus: 'VALIDATED',
@@ -35,7 +36,10 @@ describe('vocabulary ownership and bookmark identity', () => {
   });
   it('repeated bookmark operations use owner+vocabulary unique identity', async () => {
     const { prisma, service } = setup();
-    prisma.vocabularyEntry.findFirst.mockResolvedValue({ id: 'v' });
+    prisma.vocabularyEntry.findFirst.mockResolvedValue({
+      id: 'v',
+      learning: [],
+    });
     await service.bookmark('u', 'v');
     expect(prisma.vocabularyBookmark.upsert).toHaveBeenCalledWith({
       where: { userId_vocabularyId: { userId: 'u', vocabularyId: 'v' } },

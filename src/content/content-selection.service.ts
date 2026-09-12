@@ -58,11 +58,27 @@ export class ContentSelectionService {
             word: { in: task.words },
           },
           orderBy: { id: 'asc' },
+          include: { learning: { where: { userId } } },
         })
       : [];
+    const dueIds = new Set(
+      candidates
+        .filter((entry) =>
+          entry.learning.some(
+            (state) =>
+              !state.paused &&
+              (state.knowledge === 'UNKNOWN' || state.practiceEnabled) &&
+              state.nextReviewAt &&
+              state.nextReviewAt <= new Date(),
+          ),
+        )
+        .map((entry) => entry.id),
+    );
     // Personal priority only ranks already relevant words; it never widens the pool.
+    // Visible supporting words are exposure only, never independent recall evidence.
     const ranked = candidates
-      .flatMap((entry) => {
+      .flatMap(({ learning: _learning, ...entry }) => {
+        void _learning;
         const meaning = practiceMeaning(entry);
         return meaning
           ? [
@@ -76,6 +92,7 @@ export class ContentSelectionService {
       })
       .sort(
         (a, b) =>
+          Number(dueIds.has(b.id)) - Number(dueIds.has(a.id)) ||
           Number(recentIds.has(a.id)) - Number(recentIds.has(b.id)) ||
           Number(bookmarkIds.has(b.id)) - Number(bookmarkIds.has(a.id)) ||
           task!.words.indexOf(a.word) - task!.words.indexOf(b.word),

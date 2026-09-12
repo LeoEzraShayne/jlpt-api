@@ -36,3 +36,6 @@ A: src/vocabulary-learning except vocabulary-ai.*; independent tests and new mod
 D: only vocabulary-ai.schema.ts/vocabulary-ai.service.ts/their specs. No core AI worker or shared schema edits.
 E: frontend new vocabulary components/routes and WordCard/Library/Today/optional StudyWorkspace link; tests. New frontend types in separate vocabulary-learning/types.ts; existing api/types.ts main adds optional learning structural type.
 All agents isolated worktrees, no pushes/deploy or editing shared node_modules/Prisma generation. Deliver commits and exact tests/issues. Main integrates.
+
+## Integration refinements
+Submitted failed attempts retain their hint influence and consume the same local day's evidence opportunity, just like completed due attempts. Automatic selection, the due list and the due summary skip those consumed entries for that day without moving the stored due date. Direct extra practice remains available. The learning row is rechecked under its lock before automatic creation. Shuffle ordering is independent of the reference order, including two-chunk scaffolds.

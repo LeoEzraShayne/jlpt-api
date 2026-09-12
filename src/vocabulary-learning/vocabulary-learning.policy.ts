@@ -15,8 +15,24 @@ export function enabledLearning() {
   return { OR: [{ knowledge: 'UNKNOWN' }, { practiceEnabled: true }] };
 }
 
-export function dueLearning(now = new Date()) {
-  return { ...enabledLearning(), paused: false, nextReviewAt: { lte: now } };
+export function dueLearning(now = new Date(), day?: { gte: Date; lt: Date }) {
+  return {
+    ...enabledLearning(),
+    paused: false,
+    nextReviewAt: { lte: now },
+    ...(day
+      ? {
+          practices: {
+            none: {
+              status: { in: ['COMPLETED', 'FAILED'] },
+              answer: { not: null },
+              dueAtStart: true,
+              OR: [{ createdAt: day }, { completedAt: day }],
+            },
+          },
+        }
+      : {}),
+  };
 }
 
 export function isEnabled(learning: VocabularyLearning) {

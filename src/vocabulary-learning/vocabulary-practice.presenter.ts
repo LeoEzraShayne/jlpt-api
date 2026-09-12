@@ -44,8 +44,6 @@ export function shuffledChunks(id: string, chunks: string[]) {
     };
   });
   result.sort((a, b) => a.id.localeCompare(b.id));
-  if (result.length > 1 && result.every((chunk, i) => chunk.text === chunks[i]))
-    result.push(result.shift()!);
   return result;
 }
 

@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { VocabularyLearningModule } from '../../src/vocabulary-learning/vocabulary-learning.module';
 import { randomBytes } from 'node:crypto';
 import { userInfo } from 'node:os';
 import { readdir, readFile } from 'node:fs/promises';
@@ -108,6 +109,7 @@ export async function startHarness(legacySeed?: (db: Client) => Promise<void>) {
         DashboardModule,
         StudySessionsModule,
         ContentModule,
+        VocabularyLearningModule,
         GrammarModule,
         UsersModule,
         ReviewModule,

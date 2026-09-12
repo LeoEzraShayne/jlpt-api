@@ -140,7 +140,8 @@ export class VocabularyPracticeWorker {
         where: {
           learningId: learning.id,
           id: { not: job.id },
-          status: 'COMPLETED',
+          status: { in: ['COMPLETED', 'FAILED'] },
+          answer: { not: null },
           dueAtStart: true,
           // An unverified due attempt also consumes its evidence opportunity. Later
           // repetitions cannot cherry-pick a success to inflate the day's interval.
@@ -149,11 +150,21 @@ export class VocabularyPracticeWorker {
             { createdAt: localDayBounds(user.timezone, job.createdAt) },
           ],
         },
-        select: { id: true },
+        orderBy: [{ hintLevel: 'desc' }, { unknownAtStart: 'desc' }],
+        select: { id: true, hintLevel: true, unknownAtStart: true },
       });
+      // Failed submitted attempts retain their hint exposure across replacement jobs.
+      const effectivePractice = {
+        ...job,
+        hintLevel: Math.max(
+          job.hintLevel,
+          earlier?.hintLevel ?? 0,
+          earlier?.unknownAtStart ? 3 : 0,
+        ),
+      };
       const result = scheduleWord({
         learning,
-        practice: job,
+        practice: effectivePractice,
         assessment,
         now,
         timezone: user.timezone,
@@ -166,6 +177,7 @@ export class VocabularyPracticeWorker {
           completedAt: now,
           assessment,
           counted: result.counted,
+          hintLevel: effectivePractice.hintLevel,
           lockedAt: null,
           errorCode: null,
         },
