@@ -91,10 +91,13 @@ test('checkout snapshots server price, fixed return URLs and one-time mode; para
   });
   expect(order).toMatchObject({
     amount: 6400,
-    currency: 'JPY',
+    currency: 'USD',
     durationSeconds: 365 * 86400,
-    launchPrice: false,
-    snapshot: { paymentMethodPolicy: 'CARD_ONLY_V1' },
+    launchPrice: true,
+    snapshot: {
+      paymentMethodPolicy: 'CARD_ONLY_V1',
+      currencyPolicy: 'USD_FIXED_V1',
+    },
   });
   expect(
     await h.prisma.entitlementGrant.count({ where: { userId: f.user.id } }),
@@ -103,6 +106,7 @@ test('checkout snapshots server price, fixed return URLs and one-time mode; para
     expect(params).toMatchObject({
       mode: 'payment',
       payment_method_types: ['card'],
+      adaptive_pricing: { enabled: false },
       locale: 'en',
       client_reference_id: f.user.id,
       success_url: `https://example.test/membership/return?orderId=${order.id}`,
@@ -115,7 +119,7 @@ test('checkout snapshots server price, fixed return URLs and one-time mode; para
   ).rejects.toMatchObject({ response: { code: 'IDEMPOTENCY_CONFLICT' } });
 });
 
-test('quote made before 90-day cutoff keeps USD64 for 30 minutes while new quotes cost USD99.99', async () => {
+test('quote made before 90-day cutoff keeps USD64 for 30 minutes while new quotes cost USD99', async () => {
   const f = await fixture();
   const launchAt = new Date('2026-06-01T00:00:00Z');
   const cutoff = new Date(launchAt.getTime() + 90 * day);
@@ -149,7 +153,7 @@ test('quote made before 90-day cutoff keeps USD64 for 30 minutes while new quote
         where: { id: newQuote.orderId },
       })
     ).amount,
-  ).toBe(9999);
+  ).toBe(9900);
   expect(
     await h.prisma.paymentOrder.findUniqueOrThrow({
       where: { id: quote.orderId },
@@ -208,6 +212,7 @@ test.each([undefined, 'CARD_ONLY_V1'])(
     expect(f.create.mock.calls).toHaveLength(2);
     expect(f.create.mock.calls[1]).toEqual(f.create.mock.calls[0]);
     const [params, options] = f.create.mock.calls[1];
+    expect(params).not.toHaveProperty('adaptive_pricing');
     expect(options.idempotencyKey).toBe(`checkout:${order.id}`);
     if (paymentMethodPolicy)
       expect(params.payment_method_types).toEqual(['card']);

@@ -131,7 +131,7 @@ test('dispute suspension preserves remaining source time; won event restores onc
   ).toBe(1);
 });
 
-test('launch catalog 90-day cutoff is exclusive; USD and JPY have fixed correct units', async () => {
+test('launch catalog 90-day cutoff is exclusive; legacy JP requests use global USD prices', async () => {
   const config = await h.prisma.billingConfig.upsert({
     where: { id: 'default' },
     create: { id: 'default', launchAt: now, salesEnabled: true },
@@ -145,15 +145,15 @@ test('launch catalog 90-day cutoff is exclusive; USD and JPY have fixed correct 
   ).toEqual([99, 6400]);
   expect(
     catalogFor(config, 'GLOBAL', cutoff).products.map((p) => p.amount),
-  ).toEqual([99, 9999]);
+  ).toEqual([99, 9900]);
   expect(
     catalogFor(config, 'JP', cutoff).products.map((p) => [
       p.currency,
       p.amount,
     ]),
   ).toEqual([
-    ['JPY', 100],
-    ['JPY', 6400],
+    ['USD', 99],
+    ['USD', 9900],
   ]);
 });
 

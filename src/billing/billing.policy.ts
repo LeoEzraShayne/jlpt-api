@@ -25,17 +25,17 @@ export function catalogFor(
     products: [
       {
         productCode: 'DAY_PASS',
-        currency: market === 'JP' ? 'JPY' : 'USD',
-        amount: market === 'JP' ? 100 : 99,
+        currency: 'USD',
+        amount: 99,
         durationSeconds: DAY_SECONDS,
         launchPrice: false,
       },
       {
         productCode: 'YEAR_PASS',
-        currency: market === 'JP' ? 'JPY' : 'USD',
-        amount: market === 'JP' ? 6400 : launch ? 6400 : 9999,
+        currency: 'USD',
+        amount: launch ? 6400 : 9900,
         durationSeconds: 365 * DAY_SECONDS,
-        launchPrice: market !== 'JP' && launch,
+        launchPrice: launch,
       },
     ],
   };

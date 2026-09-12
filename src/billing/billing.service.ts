@@ -129,6 +129,7 @@ export class BillingService {
             market: input.market,
             locale: input.locale,
             paymentMethodPolicy: 'CARD_ONLY_V1',
+            currencyPolicy: 'USD_FIXED_V1',
             launchAt: catalog.launchAt,
             launchEndsAt: catalog.launchEndsAt,
             stripePriceId:
@@ -171,6 +172,10 @@ export class BillingService {
       const session = await stripe.checkout.sessions.create(
         {
           mode: 'payment',
+          ...((order.snapshot as { currencyPolicy?: string }).currencyPolicy ===
+          'USD_FIXED_V1'
+            ? { adaptive_pricing: { enabled: false } }
+            : {}),
           // Legacy quotes omit this parameter exactly as their original request did.
           ...((order.snapshot as { paymentMethodPolicy?: string })
             .paymentMethodPolicy === 'CARD_ONLY_V1'

@@ -320,7 +320,7 @@ test('gift is one fixed launch year, never an order or role change, and test pay
   ).toBe(false);
 });
 
-test('USD/JPY quotes and exclusive 90-day launch boundary are exact', async () => {
+test('global USD quotes and exclusive 90-day launch boundary are exact', async () => {
   const config = await h.prisma.billingConfig.findUniqueOrThrow({
     where: { id: 'default' },
   });
@@ -332,9 +332,9 @@ test('USD/JPY quotes and exclusive 90-day launch boundary are exact', async () =
   ).toEqual([99, 6400]);
   expect(
     catalogFor(config, 'GLOBAL', end).products.map((p) => p.amount),
-  ).toEqual([99, 9999]);
+  ).toEqual([99, 9900]);
   expect(catalogFor(config, 'JP', end).products.map((p) => p.amount)).toEqual([
-    100, 6400,
+    99, 9900,
   ]);
 });
 
