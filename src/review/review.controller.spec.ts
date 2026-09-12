@@ -1,4 +1,5 @@
 import { ReviewController } from './review.controller';
+import { ContentLocalizationService } from '../content-localization/content-localization.service';
 
 function fixture(levels: string[]) {
   const findMany = jest.fn().mockResolvedValue([]);
@@ -8,7 +9,13 @@ function fixture(levels: string[]) {
     },
     reviewSchedule: { findMany },
   };
-  return { prisma, controller: new ReviewController(prisma as never) };
+  return {
+    prisma,
+    controller: new ReviewController(
+      prisma as never,
+      new ContentLocalizationService(prisma as never),
+    ),
+  };
 }
 const request = { currentUser: { id: 'u', timezone: 'Asia/Tokyo' } };
 

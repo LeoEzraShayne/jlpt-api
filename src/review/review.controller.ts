@@ -25,6 +25,10 @@ import {
   sortReviewCandidates,
 } from '../dashboard/task-planning';
 import { PrismaService } from '../database/prisma.service';
+import {
+  ContentLocalizationService,
+  contentLocale,
+} from '../content-localization/content-localization.service';
 
 class ReviewQueueQueryDto {
   @IsOptional() @IsEnum(JlptLevel) level?: JlptLevel;
@@ -42,7 +46,10 @@ class ReviewQueueQueryDto {
 @Controller('review-queue')
 @UseGuards(SessionGuard)
 export class ReviewController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly localization: ContentLocalizationService,
+  ) {}
 
   @Get()
   async getQueue(@Req() request: Request, @Query() query: ReviewQueueQueryDto) {
@@ -103,6 +110,11 @@ export class ReviewController {
     ]);
     const hasMore = items.length > query.limit;
     if (hasMore) items.pop();
+    const grammars = await this.localization.grammar(
+      items.map((item) => item.progress.grammar),
+      contentLocale(user.explanationLocale),
+    );
+    const byId = new Map(grammars.map((grammar) => [grammar.id, grammar]));
     const sorted = sortReviewCandidates(
       items.map((item) => ({
         item,
@@ -132,6 +144,10 @@ export class ReviewController {
               : 'UPCOMING';
         return {
           ...item,
+          progress: {
+            ...item.progress,
+            grammar: byId.get(item.progress.grammarId)!,
+          },
           nextReviewOn: dueKey,
           estimatedRetrievability: candidate.estimatedRetrievability,
           isEstimate: true,
