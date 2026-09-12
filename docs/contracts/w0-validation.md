@@ -17,3 +17,13 @@
 - https://stripe.com/jp/pricing standard cards 3.6%, +2% where currency conversion is required. Other payment methods differ, including digital-content PayPay and convenience-store minimum fees. Cost acceptance must reflect enabled checkout methods.
 
 This is baseline verification, not W1/W2 acceptance or production release.
+
+## W1 integration progress (before independent acceptance)
+
+- C integrated as 0d9cb67: 546 translations cover production static corpus plus all currently generatable scenarios; original Japanese/Chinese retained. 92 translation/review provider calls preserved in usage audit; one-time cost estimate $0.06569925. Independent language validation pending.
+- B initial Web delivery integrated as 25c40eb; browser found and routed onboarding-vs-membership redirect, partial English labels, and mobile header crowding for correction.
+- Main operated real Stripe **Sandbox** hosted Checkout with published synthetic test card: USD 99 cents DAY_PASS -> signed webhook -> PAID with one 86,400-second grant. A subsequently tested repeated callbacks, partial and full sandbox refund. Full Stripe checkout URL including hash fragment is required; early shortened test URL was invalid and corrected before payment.
+- Test catalog has two products and five immutable one-time prices; protected test configuration and CLI signature listener are isolated from production. No live charge or live sales enablement.
+- Desktop and 390x844 phone browser showed server-backed paid return, membership expiry, order history, and USD/JPY market selection. Local synthetic browser session is temporary and must be revoked at completion.
+- Stripe Checkout displayed a **1% Climate contribution** for this merchant. Include this account-level cost alongside processing and applicable currency conversion when evaluating membership margins; do not silently disable the user's existing contribution setting.
+- Production aggregate pre-metering records: DeepSeek/deepseek-chat 142 calls, average 752 input / 440 visible output; Gemini/gemini-3.5-flash 160 calls, 794 input / 579 visible output. These older rows omit complete thinking/cache/failure/retry cost and cannot certify member economics.
