@@ -79,7 +79,12 @@ export class VocabularyPracticeWorker {
       }
       if (job.answer === null) {
         const input = await vocabularyInput(this.prisma, job);
-        const challenge = await this.ai.generate(input);
+        const challenge = await this.ai.generate(input, {
+          userId: job.userId,
+          taskKind: 'VOCABULARY',
+          taskKey: job.id,
+          attempt: Math.max(0, job.attempts - 1) * 2 + 1,
+        });
         if (
           challenge.grammarId !== null &&
           !input.grammars.some((g) => g.id === challenge.grammarId)
@@ -110,6 +115,12 @@ export class VocabularyPracticeWorker {
           input,
           challenge,
           attempt?.answer ?? job.answer,
+          {
+            userId: job.userId,
+            taskKind: 'VOCABULARY',
+            taskKey: job.id,
+            attempt: Math.max(0, job.attempts - 1) * 2 + 1,
+          },
         );
         await this.complete(lease, job, assessment, attempt?.id);
       }

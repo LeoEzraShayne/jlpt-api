@@ -1,0 +1,379 @@
+[
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"total_score\": 55,\n  \"grammar_score\": 25,\n  \"connection_score\": 10,\n  \"completeness_score\": 10,\n  \"naturalness_score\": 5,\n  \"vocabulary_score\": 5,\n  \"is_correct\": false,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": false,\n  \"result_level\": \"NEEDS_REVISION\",\n  \"error_spans\": [\n    {\n      \"text\": \"働くたい\",\n      \"start\": 3,\n      \"end\": 7,\n      \"reason\": \"「～たい」的接续应为动词ます形去ます，働く的ます形是働きます，应去掉ます接たい。\",\n      \"replacement\": \"働きたい\"\n    }\n  ],\n  \"corrected_sentence\": \"日本で働きたいです。\",\n  \"corrected_sentence_furigana\": \"日本[にほん]で働[はたら]きたいです。\",\n  \"corrected_sentence_translation_zh\": \"我想在日本工作。\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"「～たい」的接续规则是动词ます形去掉ます，因此「働く」应变为「働きたい」。\",\n  \"encouragement\": \"加油，掌握好动词变形规则就能表达得更准确了！\",\n  \"scenario_task_completed\": false\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 640,
+      "candidatesTokenCount": 341,
+      "totalTokenCount": 981,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 640
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"total_score\": 100,\n  \"grammar_score\": 30,\n  \"connection_score\": 20,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"is_correct\": true,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": true,\n  \"result_level\": \"CORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"音楽を聞きながら料理をします。\",\n  \"corrected_sentence_furigana\": \"音楽[おんがく]を聞[き]きながら料理[りょうり]をします。\",\n  \"corrected_sentence_translation_zh\": \"一边听音乐一边做饭。\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"句子语法完全正确，目标语法「～ながら」的接续与用法均符合规范。\",\n  \"encouragement\": \"非常棒，句子表达得既准确又地道！\",\n  \"scenario_task_completed\": false\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 644,
+      "candidatesTokenCount": 265,
+      "totalTokenCount": 909,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 644
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"total_score\": 55,\n  \"grammar_score\": 25,\n  \"connection_score\": 10,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 0,\n  \"vocabulary_score\": 10,\n  \"is_correct\": false,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": false,\n  \"result_level\": \"NEEDS_REVISION\",\n  \"error_spans\": [\n    {\n      \"text\": \"聞くながら\",\n      \"start\": 3,\n      \"end\": 8,\n      \"reason\": \"「～ながら」的前接动词应使用「ます形」去掉「ます」，「聞く」是辞书形，应改为「聞き」。\",\n      \"replacement\": \"聞きながら\"\n    }\n  ],\n  \"corrected_sentence\": \"音楽を聞きながら料理をします。\",\n  \"corrected_sentence_furigana\": \"音楽[おんがく]を聴[き]きながら料理[りょうり]をします。\",\n  \"corrected_sentence_translation_zh\": \"一边听音乐一边做饭。\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"「～ながら」的前面需要接动词的「ます形」去掉「ます」，因此「聞く」应改为「聞き」。\",\n  \"encouragement\": \"接续规则掌握得不错，注意动词变形即可。\",\n  \"scenario_task_completed\": false\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 644,
+      "candidatesTokenCount": 360,
+      "totalTokenCount": 1004,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 644
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"total_score\": 100,\n  \"grammar_score\": 30,\n  \"connection_score\": 20,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"is_correct\": true,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": true,\n  \"result_level\": \"CORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"彼は料理の材料から盛り付けに至るまで気を配っている。\",\n  \"corrected_sentence_furigana\": \"彼[かれ]は料理[りょうり]の材料[ざいりょう]から盛[も]り付[つ]けに至[いた]るまで気[き]を配[くば]っている。\",\n  \"corrected_sentence_translation_zh\": \"他从料理的食材到摆盘都非常用心。\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"句子语法结构完全正确，目标语法「～に至るまで」的使用也非常自然，准确表达了范围之广。\",\n  \"encouragement\": \"非常棒，句子表达得既地道又准确！\",\n  \"scenario_task_completed\": false\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 649,
+      "candidatesTokenCount": 307,
+      "totalTokenCount": 956,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 649
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"promptZh\": \"你在公司里，上司刚从外面回来，你想向他说明一下今天上午客户会议的进展情况。请用日语向他提出汇报的请求。\",\n  \"meaningHintZh\": \"指向上级或相关人员说明工作进展或调查结果。\",\n  \"grammarId\": null,\n  \"referenceSentence\": \"部長、今朝の会議について報告してもよろしいでしょうか。\",\n  \"referenceFurigana\": \"部長[ぶちょう]、今朝[けさ]の会議[かいぎ]について報告[ほうこく]してもよろしいでしょうか。\",\n  \"referenceTranslationZh\": \"部长，关于今天早上的会议，我可以向您汇报吗？\",\n  \"chunks\": [\n    \"部長、\",\n    \"今朝の会議について\",\n    \"報告しても\",\n    \"よろしいでしょうか。\"\n  ]\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 537,
+      "candidatesTokenCount": 196,
+      "totalTokenCount": 733,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 537
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"usedTarget\": true,\n  \"targetCorrect\": true,\n  \"meaningCorrect\": true,\n  \"readingCorrect\": null,\n  \"explanationZh\": \"你准确地使用了“报告”一词，句子表达自然且符合语境。\",\n  \"corrections\": [],\n  \"correctedSentence\": \"会議で調査の結果を報告しました。\",\n  \"correctedFurigana\": \"会議[かいぎ]で調査[ちょうさ]の結果[けっか]を報告[ほうこく]しました。\",\n  \"correctedTranslationZh\": \"我在会议上汇报了调查结果。\"\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 1122,
+      "candidatesTokenCount": 133,
+      "totalTokenCount": 1255,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 1122
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"usedTarget\": true,\n  \"targetCorrect\": false,\n  \"meaningCorrect\": false,\n  \"readingCorrect\": null,\n  \"explanationZh\": \"这里想表达因为饿了而吃饭，但“报告”不能作为吃的对象，可以改成“饭”。\",\n  \"corrections\": [\n    {\n      \"text\": \"報告\",\n      \"replacement\": \"ご飯\",\n      \"reason\": \"“报告”是抽象名词，不能作为“吃”的对象，这里应该使用表示食物的词汇。\"\n    }\n  ],\n  \"correctedSentence\": \"おなかがすいたので、ご飯を食べました。\",\n  \"correctedFurigana\": \"おなかがすいたので、ご飯[ごはん]を食[た]べました。\",\n  \"correctedTranslationZh\": \"因为饿了，所以吃了饭。\"\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 1125,
+      "candidatesTokenCount": 189,
+      "totalTokenCount": 1314,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 1125
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"usedTarget\": false,\n  \"targetCorrect\": null,\n  \"meaningCorrect\": null,\n  \"readingCorrect\": null,\n  \"explanationZh\": \"这句话表达自然，但没有用到本次练习的词“报告”，因此还不能判断你是否会使用这个词。\",\n  \"corrections\": [],\n  \"correctedSentence\": \"おなかがすいたので、ご飯を食べました。\",\n  \"correctedFurigana\": \"おなかがすいたので、ご飯[ごはん]を食[た]べました。\",\n  \"correctedTranslationZh\": \"因为饿了，所以吃了饭。\"\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 1125,
+      "candidatesTokenCount": 136,
+      "totalTokenCount": 1261,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 1125
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"total_score\": 50,\n  \"grammar_score\": 15,\n  \"connection_score\": 10,\n  \"completeness_score\": 15,\n  \"naturalness_score\": 5,\n  \"vocabulary_score\": 5,\n  \"is_correct\": false,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": false,\n  \"result_level\": \"NEEDS_REVISION\",\n  \"error_spans\": [\n    {\n      \"text\": \"働く\",\n      \"start\": 4,\n      \"end\": 6,\n      \"reason\": \"The verb must be in the masu-stem form before attaching tai.\",\n      \"replacement\": \"働き\"\n    }\n  ],\n  \"corrected_sentence\": \"日本で働きたいです。\",\n  \"corrected_sentence_furigana\": \"日本[にほん]で働[はたら]きたいです。\",\n  \"corrected_sentence_translation_zh\": \"I want to work in Japan.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"You must use the masu-stem form of the verb (働きます -> 働き) before adding tai. The form 働くたい is grammatically incorrect.\",\n  \"encouragement\": \"Keep practicing your verb conjugations!\",\n  \"scenario_task_completed\": false\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 619,
+      "candidatesTokenCount": 322,
+      "totalTokenCount": 941,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 619
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"total_score\": 100,\n  \"grammar_score\": 30,\n  \"connection_score\": 20,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"is_correct\": true,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": true,\n  \"result_level\": \"CORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"音楽を聞きながら料理をします。\",\n  \"corrected_sentence_furigana\": \"音楽[おんがく]を聴[き]きながら料理[りょうり]をします。\",\n  \"corrected_sentence_translation_zh\": \"I cook while listening to music.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"Your sentence correctly uses the ～ながら structure to describe two simultaneous actions performed by the same subject.\",\n  \"encouragement\": \"Excellent work, your sentence is perfectly natural.\",\n  \"scenario_task_completed\": true\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 623,
+      "candidatesTokenCount": 261,
+      "totalTokenCount": 884,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 623
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"total_score\": 50,\n  \"grammar_score\": 15,\n  \"connection_score\": 5,\n  \"completeness_score\": 15,\n  \"naturalness_score\": 10,\n  \"vocabulary_score\": 5,\n  \"is_correct\": false,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": false,\n  \"result_level\": \"NEEDS_REVISION\",\n  \"error_spans\": [\n    {\n      \"text\": \"聞くながら\",\n      \"start\": 4,\n      \"end\": 9,\n      \"reason\": \"The verb before ながら must be in the masu-stem form, not the dictionary form.\",\n      \"replacement\": \"聞きながら\"\n    }\n  ],\n  \"corrected_sentence\": \"音楽を聴きながら料理をします。\",\n  \"corrected_sentence_furigana\": \"音楽[おんがく]を聴[き]きながら料理[りょうり]をします。\",\n  \"corrected_sentence_translation_zh\": \"I cook while listening to music.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"When using the grammar pattern ～ながら, you must attach it to the masu-stem of the verb (e.g., 聞き) rather than the dictionary form (聞く).\",\n  \"encouragement\": \"You are very close, just remember to use the masu-stem form!\",\n  \"scenario_task_completed\": true\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 623,
+      "candidatesTokenCount": 355,
+      "totalTokenCount": 978,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 623
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"total_score\": 100,\n  \"grammar_score\": 30,\n  \"connection_score\": 20,\n  \"completeness_score\": 20,\n  \"naturalness_score\": 20,\n  \"vocabulary_score\": 10,\n  \"is_correct\": true,\n  \"used_target_grammar\": true,\n  \"target_grammar_correct\": true,\n  \"result_level\": \"CORRECT\",\n  \"error_spans\": [],\n  \"corrected_sentence\": \"彼は料理の材料から盛り付けに至るまで気を配っている。\",\n  \"corrected_sentence_furigana\": \"彼[かれ]は料理[りょうり]の材料[ざいりょう]から盛[も]り付[つ]けに至[いた]るまで気[き]を配[くば]っている。\",\n  \"corrected_sentence_translation_zh\": \"He pays attention to everything from the ingredients of the dish to the presentation.\",\n  \"corrected_sentence_uses_target_grammar\": true,\n  \"explanation_zh\": \"Your usage of the grammar structure ～に至るまで is perfectly correct and natural in this context.\",\n  \"encouragement\": \"Excellent work, your sentence is grammatically flawless.\",\n  \"scenario_task_completed\": true\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 628,
+      "candidatesTokenCount": 301,
+      "totalTokenCount": 929,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 628
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  },
+  {
+    "model": "gemini-3.1-flash-lite",
+    "candidates": [
+      {
+        "content": {
+          "parts": [
+            {
+              "text": "{\n  \"promptZh\": \"You are a junior employee at a company. Your manager just walked by your desk and asked for an update on the project you have been working on all morning. Tell your manager that you will submit the report by the end of the day.\",\n  \"meaningHintZh\": \"This refers to the act of giving an account or a formal statement of facts or findings regarding a specific task or situation.\",\n  \"grammarId\": null,\n  \"referenceSentence\": \"今日中に報告を提出します。\",\n  \"referenceFurigana\": \"今日[きょう]中[じゅう]に報告[ほうこく]を提出[ていしゅつ]します。\",\n  \"referenceTranslationZh\": \"I will submit the report by the end of the day.\",\n  \"chunks\": [\n    \"今日中に\",\n    \"報告を\",\n    \"提出します\"\n  ]\n}"
+            }
+          ],
+          "role": "model"
+        },
+        "finishReason": "STOP",
+        "index": 0
+      }
+    ],
+    "usageMetadata": {
+      "promptTokenCount": 621,
+      "candidatesTokenCount": 196,
+      "totalTokenCount": 817,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 621
+        }
+      ],
+      "serviceTier": "standard"
+    }
+  }
+]

@@ -1,0 +1,166 @@
+{
+  "runId": "2026-09-12T15:48:11.780Z",
+  "rows": [
+    {
+      "model": "deepseek-flash",
+      "id": "n4-connection",
+      "locale": "zh",
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "音楽を聞きながら料理をします。",
+          "corrected_sentence_furigana": "音楽[おんがく]を聞[き]きながら料理[りょうり]をします。",
+          "corrected_sentence_translation_zh": "一边听音乐一边做饭。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "「聞く」的ます形是「聞きます」，去掉ます后接「ながら」，接续正确，整句自然。",
+          "encouragement": "接续准确，句子自然，继续保持！",
+          "scenario_task_completed": false
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 631,
+          "outputTokens": 245
+        },
+        "latencyMs": 1623,
+        "sentence": "音楽を聞くながら料理をします。",
+        "passed": false
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "report-generate",
+      "locale": "zh",
+      "result": {
+        "challenge": {
+          "promptZh": "你是公司项目组的成员，刚完成一项市场调研。部门主管在会议上问你调研结果如何，你需要用日语向他说明你调查到的情况和结论。",
+          "meaningHintZh": "把调查、研究或工作结果向上级或相关人员说明、汇报。",
+          "grammarId": null,
+          "referenceSentence": "調査結果を部長に報告します。",
+          "referenceFurigana": "調査[ちょうさ]結果[けっか]を部長[ぶちょう]に報告[ほうこく]します。",
+          "referenceTranslationZh": "向部长汇报调查结果。",
+          "chunks": [
+            "調査結果を",
+            "部長に",
+            "報告します。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "refuse-generate",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "refuse-wrong",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "n4-connection",
+      "locale": "en",
+      "result": {
+        "result": {
+          "total_score": 30,
+          "grammar_score": 10,
+          "connection_score": 0,
+          "completeness_score": 10,
+          "naturalness_score": 5,
+          "vocabulary_score": 5,
+          "is_correct": false,
+          "used_target_grammar": true,
+          "target_grammar_correct": false,
+          "result_level": "INCORRECT",
+          "error_spans": [
+            {
+              "text": "聞くながら",
+              "start": 3,
+              "end": 8,
+              "reason": "The target grammar ～ながら must attach to the ます-stem of a verb, not the dictionary form. 聞く is the dictionary form; the correct stem is 聞き.",
+              "replacement": "聞きながら"
+            }
+          ],
+          "corrected_sentence": "音楽を聞きながら料理をします。",
+          "corrected_sentence_furigana": "音楽[おんがく]を聞[き]きながら料理[りょうり]をします。",
+          "corrected_sentence_translation_zh": "I listen to music while cooking.",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "You used ～ながら with the dictionary form 聞く, but this grammar point requires the ます-stem, so it should be 聞きながら. The rest of the sentence is fine.",
+          "encouragement": "You're close—just remember to use the ます-stem before ながら.",
+          "scenario_task_completed": false
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 628,
+          "outputTokens": 291
+        },
+        "latencyMs": 1945,
+        "sentence": "音楽を聞くながら料理をします。",
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "report-generate",
+      "locale": "en",
+      "result": {
+        "challenge": {
+          "promptZh": "You are a team member at a company. Your manager asks you to give an update on the project's progress. You need to tell your manager that you will submit a written update about the project's status by the end of the day. What do you say?",
+          "meaningHintZh": "The act of giving a formal account or update about something, such as a project's progress, to someone like a manager.",
+          "grammarId": null,
+          "referenceSentence": "今日の終わりまでにプロジェクトの状況を報告します。",
+          "referenceFurigana": "今日[きょう]の終[お]わりまでにプロジェクトの状況[じょうきょう]を報告[ほうこく]します。",
+          "referenceTranslationZh": "I will report the project's status by the end of today.",
+          "chunks": [
+            "今日の終わりまでに",
+            "プロジェクトの状況を",
+            "報告します。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "refuse-generate",
+      "locale": "en",
+      "result": {
+        "challenge": {
+          "promptZh": "You are at work and a colleague asks you to take over their weekend shift, but you already have firm plans and cannot do it. You want to give a clear, polite refusal to their request. Say this in Japanese.",
+          "meaningHintZh": "To say no to a request someone has made of you.",
+          "grammarId": null,
+          "referenceSentence": "週末のシフトを代わってほしいと頼まれたが、予定があるので断った。",
+          "referenceFurigana": "週末[しゅうまつ]のシフトを代[か]わってほしいと頼[たの]まれたが、予定[よてい]があるので断[ことわ]った。",
+          "referenceTranslationZh": "I was asked to cover the weekend shift, but I refused because I have plans.",
+          "chunks": [
+            "週末のシフトを",
+            "代わってほしいと",
+            "頼まれたが、",
+            "予定があるので",
+            "断った。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "refuse-wrong",
+      "locale": "en",
+      "error": "AI_NOT_CONFIGURED"
+    }
+  ]
+}

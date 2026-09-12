@@ -18,6 +18,14 @@ export type ReviewJob = Prisma.AiReviewJobGetPayload<{
 }>;
 export function jobInput(job: ReviewJob): ReviewProviderInput {
   return {
+    explanationLocale:
+      job.attempt.studySession.explanationLocale === 'en' ? 'en' : 'zh',
+    usageContext: {
+      userId: job.attempt.userId,
+      taskKind: 'GRAMMAR',
+      taskKey: job.attempt.studySessionId,
+      attempt: job.retryCount * 2 + 1,
+    },
     grammarLevel: job.attempt.grammar.level,
     grammarTitle: job.attempt.grammar.title,
     explanation: job.attempt.grammar.chineseExplanation,

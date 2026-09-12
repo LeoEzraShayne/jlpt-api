@@ -30,6 +30,7 @@ export async function vocabularyInput(
     take: 5,
   });
   return {
+    explanationLocale: job.explanationLocale === 'en' ? 'en' : 'zh',
     word: job.vocabulary.word,
     reading: job.vocabulary.reading,
     chineseGloss: job.vocabulary.chineseGloss ?? '',
@@ -65,5 +66,8 @@ export function storedVocabularyInput(
     !Array.isArray(input.grammars)
   )
     return null;
-  return input as unknown as AiVocabularyInput;
+  return {
+    ...(input as unknown as AiVocabularyInput),
+    explanationLocale: job.explanationLocale === 'en' ? 'en' : 'zh',
+  };
 }

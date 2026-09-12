@@ -81,6 +81,15 @@ export class AiWorkerService {
             provider: reviewed.provider,
             model: reviewed.response.model,
             promptVersion: PROMPT_VERSION,
+            explanationLocale:
+              job.attempt.studySession.explanationLocale ?? 'zh',
+            localizedFeedback: {
+              explanation: result.explanation_zh,
+              correctedSentenceTranslation:
+                result.corrected_sentence_translation_zh,
+              encouragement: result.encouragement,
+              errorSpans: result.error_spans,
+            },
             rawTotalScore: result.total_score,
             totalScore: cappedTotal,
             grammarScore: result.grammar_score,

@@ -22,15 +22,21 @@ export class AiReviewService {
   async review(
     input: ReviewProviderInput,
   ): Promise<{ provider: AiProvider; response: ProviderResponse }> {
-    return this.withFallback(async (provider) => {
-      const response = await provider.review(input);
+    return this.withFallback(async (provider, index) => {
+      const response = await provider.review({
+        ...input,
+        usageContext: {
+          ...input.usageContext,
+          attempt: (input.usageContext?.attempt ?? 1) + index,
+        },
+      });
       this.assertSuggestions(input.grammarTitle, response);
       return response;
     });
   }
 
   private async withFallback<T>(
-    operation: (provider: AiGrammarReviewProvider) => Promise<T>,
+    operation: (provider: AiGrammarReviewProvider, index: number) => Promise<T>,
   ) {
     const preferDeepSeek =
       this.config?.get<string>('AI_PRIMARY_PROVIDER') === 'DEEPSEEK';
@@ -44,7 +50,7 @@ export class AiReviewService {
             providers[index] === this.gemini
               ? AiProvider.GEMINI
               : AiProvider.DEEPSEEK,
-          response: await operation(providers[index]),
+          response: await operation(providers[index], index),
         };
       } catch (error) {
         if (

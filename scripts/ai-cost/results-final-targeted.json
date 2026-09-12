@@ -1,0 +1,175 @@
+{
+  "runId": "2026-09-12T15:57:24.536Z",
+  "rows": [
+    {
+      "model": "deepseek-flash",
+      "id": "n4-connection",
+      "locale": "zh",
+      "error": "AI_INCONSISTENT_EVIDENCE"
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "report-generate",
+      "locale": "zh",
+      "result": {
+        "challenge": {
+          "promptZh": "你是公司项目组的成员，刚完成一项市场调研。部门主管要求你在明天的例会上口头说明调研结果和进展。你需要用日语向主管汇报这项工作。",
+          "meaningHintZh": "向上级或相关人员说明、陈述某项工作或情况的结果与进展。",
+          "grammarId": null,
+          "referenceSentence": "明日の会議で市場調査の結果を報告します。",
+          "referenceFurigana": "明日[あした]の会議[かいぎ]で市場[しじょう]調査[ちょうさ]の結果[けっか]を報告[ほうこく]します。",
+          "referenceTranslationZh": "我将在明天的会议上汇报市场调查的结果。",
+          "chunks": [
+            "明日の会議で",
+            "市場調査の結果を",
+            "報告します。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "refuse-generate",
+      "locale": "zh",
+      "result": {
+        "challenge": {
+          "promptZh": "你在日本留学，室友想借你刚买的新相机去旅行。你不太愿意，因为相机很贵，而且他平时不太爱惜东西。你想礼貌但明确地告诉他你不能答应这个请求。请用日语说出你的回答。",
+          "meaningHintZh": "表示不接受对方的请求或要求。",
+          "grammarId": null,
+          "referenceSentence": "ごめん、そのカメラは貸せないんだ。旅行に持って行くのは断るよ。",
+          "referenceFurigana": "ごめん、そのカメラは貸[か]せないんだ。旅行[りょこう]に持[も]って行[い]くのは断[ことわ]るよ。",
+          "referenceTranslationZh": "抱歉，那台相机我不能借。带去旅行这件事我拒绝。",
+          "chunks": [
+            "ごめん、",
+            "そのカメラは",
+            "貸せないんだ。",
+            "旅行に",
+            "持って行くのは",
+            "断るよ。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "refuse-wrong",
+      "locale": "zh",
+      "error": "AI_INVALID_RESPONSE"
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "n4-connection",
+      "locale": "en",
+      "result": {
+        "result": {
+          "total_score": 30,
+          "grammar_score": 10,
+          "connection_score": 5,
+          "completeness_score": 10,
+          "naturalness_score": 5,
+          "vocabulary_score": 0,
+          "is_correct": false,
+          "used_target_grammar": true,
+          "target_grammar_correct": false,
+          "result_level": "INCORRECT",
+          "error_spans": [
+            {
+              "text": "聞くながら",
+              "start": 3,
+              "end": 8,
+              "reason": "The target grammar ～ながら must attach to the verb stem (ます形 without ます), not the dictionary form. 聞く should become 聞き, so the correct form is 聞きながら.",
+              "replacement": "聞きながら"
+            }
+          ],
+          "corrected_sentence": "音楽を聞きながら料理をします。",
+          "corrected_sentence_furigana": "音楽[おんがく]を聞[き]きながら料理[りょうり]をします。",
+          "corrected_sentence_translation_zh": "I listen to music while cooking.",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "The connection is wrong: ～ながら follows the verb stem (ます形 without ます), so 聞く must change to 聞き. The corrected sentence is 音楽を聞きながら料理をします。",
+          "encouragement": "You used the right idea; just remember to attach ～ながら to the stem form next time.",
+          "scenario_task_completed": false
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "inputTokens": 628,
+          "outputTokens": 367
+        },
+        "latencyMs": 1869,
+        "sentence": "音楽を聞くながら料理をします。",
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "report-generate",
+      "locale": "en",
+      "result": {
+        "challenge": {
+          "promptZh": "You are a team leader at a small software company. Your manager asked you to look into why a client's app keeps crashing and to come back with what you found. You have finished your investigation and now want to tell your manager the findings clearly and formally. Say that you will give your manager a report on the results of the investigation.",
+          "meaningHintZh": "To give someone an account of findings or results, typically in a formal or work setting.",
+          "grammarId": null,
+          "referenceSentence": "調査の結果を上司に報告します。",
+          "referenceFurigana": "調査[ちょうさ]の結果[けっか]を上司[じょうし]に報告[ほうこく]します。",
+          "referenceTranslationZh": "I will report the results of the investigation to my manager.",
+          "chunks": [
+            "調査の結果を",
+            "上司に",
+            "報告します。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "refuse-generate",
+      "locale": "en",
+      "result": {
+        "challenge": {
+          "promptZh": "You are at work and a colleague asks you to take over their weekend shift, but you already have plans and cannot help. You want to clearly turn down their request while staying polite. Say this to your colleague in Japanese.",
+          "meaningHintZh": "To say no to a request someone has made of you.",
+          "grammarId": null,
+          "referenceSentence": "週末のシフトを代わってほしいと頼まれたが、予定があるので断った。",
+          "referenceFurigana": "週末[しゅうまつ]のシフトを代[か]わってほしいと頼[たの]まれたが、予定[よてい]があるので断[ことわ]った。",
+          "referenceTranslationZh": "I was asked to cover the weekend shift, but since I have plans, I turned it down.",
+          "chunks": [
+            "週末のシフトを",
+            "代わってほしいと",
+            "頼まれたが、",
+            "予定があるので",
+            "断った。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "deepseek-flash",
+      "id": "refuse-wrong",
+      "locale": "en",
+      "result": {
+        "sentence": "おなかがすいたので、パンを断って食べました。",
+        "assessment": {
+          "usedTarget": true,
+          "targetCorrect": false,
+          "meaningCorrect": false,
+          "readingCorrect": null,
+          "explanationZh": "You used 断る, but here it means “refuse/decline,” and it cannot take food as its object. The sentence says you were hungry, so the natural action is eating bread, not refusing it. To keep your intended meaning, replace 断って with もらって (received) or simply 食べました.",
+          "corrections": [
+            {
+              "text": "断って",
+              "replacement": "もらって",
+              "reason": "断る means “refuse/decline,” which does not fit eating bread when you are hungry. もらって expresses receiving the bread and then eating it."
+            }
+          ],
+          "correctedSentence": "おなかがすいたので、パンをもらって食べました。",
+          "correctedFurigana": "おなかがすいたので、パンをもらって食[た]べました。",
+          "correctedTranslationZh": "I was hungry, so I received some bread and ate it."
+        },
+        "passed": true
+      }
+    }
+  ]
+}

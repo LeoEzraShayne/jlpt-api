@@ -1,0 +1,50 @@
+[
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"total_score\": 100, \"grammar_score\": 30, \"connection_score\": 20, \"completeness_score\": 20, \"naturalness_score\": 20, \"vocabulary_score\": 10, \"is_correct\": true, \"used_target_grammar\": true, \"target_grammar_correct\": true, \"result_level\": \"CORRECT\", \"error_spans\": [], \"corrected_sentence\": \"日本で働きたいです。\", \"corrected_sentence_furigana\": \"日本[にほん]で働[はたら]きたいです。\", \"corrected_sentence_translation_zh\": \"我想在日本工作。\", \"corrected_sentence_uses_target_grammar\": true, \"explanation_zh\": \"「働く」的ます形是「働きます」，去掉ます后接「たい」构成「働きたいです」，接续和用法都正确。\", \"encouragement\": \"句子准确自然，继续加油！\", \"scenario_task_completed\": false}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 624,
+      "completion_tokens": 221,
+      "total_tokens": 845,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 624
+    }
+  },
+  {
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"total_score\":100,\"grammar_score\":30,\"connection_score\":20,\"completeness_score\":20,\"naturalness_score\":20,\"vocabulary_score\":10,\"is_correct\":true,\"used_target_grammar\":true,\"target_grammar_correct\":true,\"result_level\":\"CORRECT\",\"error_spans\":[],\"corrected_sentence\":\"日本で働きたいです。\",\"corrected_sentence_furigana\":\"日本[にほん]で働[はたら]きたいです。\",\"corrected_sentence_translation_zh\":\"I want to work in Japan.\",\"corrected_sentence_uses_target_grammar\":true,\"explanation_zh\":\"You correctly formed the desire form by taking the masu-stem of 働きます (働き) and adding たい. The sentence is natural and complete.\",\"encouragement\":\"Great job—your sentence is correct and natural!\",\"scenario_task_completed\":true}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 621,
+      "completion_tokens": 200,
+      "total_tokens": 821,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      },
+      "prompt_cache_hit_tokens": 128,
+      "prompt_cache_miss_tokens": 493
+    }
+  }
+]

@@ -1,5 +1,7 @@
 /** Small synthetic live regression. No personal learning records or credentials are logged. */
 import 'dotenv/config';
+import { PrismaService } from '../src/database/prisma.service';
+let metering: PrismaService | undefined;
 import { ConfigService } from '@nestjs/config';
 import { VocabularyAiService } from '../src/vocabulary-learning/vocabulary-ai.service';
 import type { AiVocabularyInput } from '../src/vocabulary-learning/vocabulary-ai.schema';
@@ -7,7 +9,9 @@ import type { AiVocabularyInput } from '../src/vocabulary-learning/vocabulary-ai
 async function main() {
   if (!process.argv.includes('--run'))
     throw new Error('Pass --run for four configured-provider requests');
-  const ai = new VocabularyAiService(new ConfigService(process.env));
+  const config = new ConfigService(process.env);
+  metering = new PrismaService(config);
+  const ai = new VocabularyAiService(config, metering);
   const input: AiVocabularyInput = {
     word: '報告',
     reading: 'ほうこく',
@@ -71,11 +75,13 @@ async function main() {
     if (!passed) process.exitCode = 1;
   }
 }
-void main().catch((error: unknown) => {
-  const code =
-    error && typeof error === 'object' && 'code' in error
-      ? String(error.code)
-      : 'SMOKE_FAILED';
-  console.error(JSON.stringify({ passed: false, code }));
-  process.exitCode = 1;
-});
+void main()
+  .finally(() => metering?.$disconnect())
+  .catch((error: unknown) => {
+    const code =
+      error && typeof error === 'object' && 'code' in error
+        ? String(error.code)
+        : 'SMOKE_FAILED';
+    console.error(JSON.stringify({ passed: false, code }));
+    process.exitCode = 1;
+  });

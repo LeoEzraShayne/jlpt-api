@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment -- Jest asymmetric matchers are typed any. */
 import { AiWorkerService } from './ai-worker.service';
 
 const scenario = {
@@ -20,7 +21,11 @@ const trainingContext = {
   expressions: [],
   phrases: [],
 };
-function setup(context: unknown, sceneId: string | null = 'work') {
+function setup(
+  context: unknown,
+  sceneId: string | null = 'work',
+  explanationLocale = 'zh',
+) {
   const job = {
     id: 'job1',
     retryCount: 0,
@@ -31,6 +36,7 @@ function setup(context: unknown, sceneId: string | null = 'work') {
       scene: '用户自由文字',
       studySession: {
         trainingContext: context,
+        explanationLocale,
         scenarioId: sceneId,
         trainingMode: 'TRANSFER',
       },
@@ -136,4 +142,49 @@ describe('AI worker scenario persistence', () => {
     )[0].data;
     expect(data.scenarioTaskCompleted).toBeNull();
   });
+});
+
+it('persists the immutable English session locale and localized feedback', async () => {
+  const { worker, prisma, reviews } = setup(trainingContext, 'work', 'en');
+  reviews.review.mockResolvedValueOnce({
+    provider: 'DEEPSEEK',
+    response: {
+      model: 'fixture',
+      latencyMs: 1,
+      usage: {},
+      result: {
+        total_score: 100,
+        used_target_grammar: true,
+        target_grammar_correct: true,
+        explanation_zh: 'This is a polite request.',
+        encouragement: 'Keep practicing.',
+        corrected_sentence_translation_zh: 'Could you help me?',
+        error_spans: [],
+      },
+    },
+  });
+  await worker.poll();
+  expect(reviews.review).toHaveBeenCalledWith(
+    expect.objectContaining({
+      explanationLocale: 'en',
+      usageContext: expect.objectContaining({
+        userId: 'u1',
+        taskKind: 'GRAMMAR',
+        taskKey: 's1',
+      }),
+    }),
+  );
+  expect(prisma.aiReviewResult.create).toHaveBeenCalledWith(
+    expect.objectContaining({
+      data: expect.objectContaining({
+        explanationLocale: 'en',
+        localizedFeedback: {
+          explanation: 'This is a polite request.',
+          encouragement: 'Keep practicing.',
+          correctedSentenceTranslation: 'Could you help me?',
+          errorSpans: [],
+        },
+      }),
+    }),
+  );
 });

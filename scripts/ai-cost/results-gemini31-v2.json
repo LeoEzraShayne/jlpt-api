@@ -1,0 +1,366 @@
+{
+  "runId": "2026-09-12T15:51:13.296Z",
+  "rows": [
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "n5-connection",
+      "locale": "zh",
+      "result": {
+        "result": {
+          "total_score": 55,
+          "grammar_score": 25,
+          "connection_score": 10,
+          "completeness_score": 10,
+          "naturalness_score": 5,
+          "vocabulary_score": 5,
+          "is_correct": false,
+          "used_target_grammar": true,
+          "target_grammar_correct": false,
+          "result_level": "NEEDS_REVISION",
+          "error_spans": [
+            {
+              "text": "働くたい",
+              "start": 3,
+              "end": 7,
+              "reason": "「～たい」的接续应为动词ます形去ます，働く的ます形是働きます，应去掉ます接たい。",
+              "replacement": "働きたい"
+            }
+          ],
+          "corrected_sentence": "日本で働きたいです。",
+          "corrected_sentence_furigana": "日本[にほん]で働[はたら]きたいです。",
+          "corrected_sentence_translation_zh": "我想在日本工作。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "「～たい」的接续规则是动词ます形去掉ます，因此「働く」应变为「働きたい」。",
+          "encouragement": "加油，掌握好动词变形规则就能表达得更准确了！",
+          "scenario_task_completed": false
+        },
+        "model": "gemini-3.1-flash-lite",
+        "usage": {
+          "inputTokens": 640,
+          "outputTokens": 341
+        },
+        "latencyMs": 2356,
+        "sentence": "日本で働くたいです。",
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "n4-correct",
+      "locale": "zh",
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "音楽を聞きながら料理をします。",
+          "corrected_sentence_furigana": "音楽[おんがく]を聞[き]きながら料理[りょうり]をします。",
+          "corrected_sentence_translation_zh": "一边听音乐一边做饭。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "句子语法完全正确，目标语法「～ながら」的接续与用法均符合规范。",
+          "encouragement": "非常棒，句子表达得既准确又地道！",
+          "scenario_task_completed": false
+        },
+        "model": "gemini-3.1-flash-lite",
+        "usage": {
+          "inputTokens": 644,
+          "outputTokens": 265
+        },
+        "latencyMs": 1750,
+        "sentence": "音楽を聞きながら料理をします。",
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "n4-connection",
+      "locale": "zh",
+      "error": "AI_INVALID_RESPONSE"
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "n1-correct",
+      "locale": "zh",
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "彼は料理の材料から盛り付けに至るまで気を配っている。",
+          "corrected_sentence_furigana": "彼[かれ]は料理[りょうり]の材料[ざいりょう]から盛[も]り付[つ]けに至[いた]るまで気[き]を配[くば]っている。",
+          "corrected_sentence_translation_zh": "他从料理的食材到摆盘都非常用心。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "句子语法结构完全正确，目标语法「～に至るまで」的使用也非常自然，准确表达了范围之广。",
+          "encouragement": "非常棒，句子表达得既地道又准确！",
+          "scenario_task_completed": false
+        },
+        "model": "gemini-3.1-flash-lite",
+        "usage": {
+          "inputTokens": 649,
+          "outputTokens": 307
+        },
+        "latencyMs": 2407,
+        "sentence": "彼は料理の材料から盛り付けに至るまで気を配っている。",
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "report-generate",
+      "locale": "zh",
+      "result": {
+        "challenge": {
+          "promptZh": "你在公司里，上司刚从外面回来，你想向他说明一下今天上午客户会议的进展情况。请用日语向他提出汇报的请求。",
+          "meaningHintZh": "指向上级或相关人员说明工作进展或调查结果。",
+          "grammarId": null,
+          "referenceSentence": "部長、今朝の会議について報告してもよろしいでしょうか。",
+          "referenceFurigana": "部長[ぶちょう]、今朝[けさ]の会議[かいぎ]について報告[ほうこく]してもよろしいでしょうか。",
+          "referenceTranslationZh": "部长，关于今天早上的会议，我可以向您汇报吗？",
+          "chunks": [
+            "部長、",
+            "今朝の会議について",
+            "報告しても",
+            "よろしいでしょうか。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "report-correct",
+      "locale": "zh",
+      "result": {
+        "sentence": "会議で調査の結果を報告しました。",
+        "assessment": {
+          "usedTarget": true,
+          "targetCorrect": true,
+          "meaningCorrect": true,
+          "readingCorrect": null,
+          "explanationZh": "你准确地使用了“报告”一词，句子表达自然且符合语境。",
+          "corrections": [],
+          "correctedSentence": "会議で調査の結果を報告しました。",
+          "correctedFurigana": "会議[かいぎ]で調査[ちょうさ]の結果[けっか]を報告[ほうこく]しました。",
+          "correctedTranslationZh": "我在会议上汇报了调查结果。"
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "report-wrong",
+      "locale": "zh",
+      "result": {
+        "sentence": "おなかがすいたので、報告を食べました。",
+        "assessment": {
+          "usedTarget": true,
+          "targetCorrect": false,
+          "meaningCorrect": false,
+          "readingCorrect": null,
+          "explanationZh": "这里想表达因为饿了而吃饭，但“报告”不能作为吃的对象，可以改成“饭”。",
+          "corrections": [
+            {
+              "text": "報告",
+              "replacement": "ご飯",
+              "reason": "“报告”是抽象名词，不能作为“吃”的对象，这里应该使用表示食物的词汇。"
+            }
+          ],
+          "correctedSentence": "おなかがすいたので、ご飯を食べました。",
+          "correctedFurigana": "おなかがすいたので、ご飯[ごはん]を食[た]べました。",
+          "correctedTranslationZh": "因为饿了，所以吃了饭。"
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "report-alternate",
+      "locale": "zh",
+      "result": {
+        "sentence": "おなかがすいたので、ご飯を食べました。",
+        "assessment": {
+          "usedTarget": false,
+          "targetCorrect": null,
+          "meaningCorrect": null,
+          "readingCorrect": null,
+          "explanationZh": "这句话表达自然，但没有用到本次练习的词“报告”，因此还不能判断你是否会使用这个词。",
+          "corrections": [],
+          "correctedSentence": "おなかがすいたので、ご飯を食べました。",
+          "correctedFurigana": "おなかがすいたので、ご飯[ごはん]を食[た]べました。",
+          "correctedTranslationZh": "因为饿了，所以吃了饭。"
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "n5-connection",
+      "locale": "en",
+      "result": {
+        "result": {
+          "total_score": 50,
+          "grammar_score": 15,
+          "connection_score": 10,
+          "completeness_score": 15,
+          "naturalness_score": 5,
+          "vocabulary_score": 5,
+          "is_correct": false,
+          "used_target_grammar": true,
+          "target_grammar_correct": false,
+          "result_level": "NEEDS_REVISION",
+          "error_spans": [
+            {
+              "text": "働く",
+              "start": 4,
+              "end": 6,
+              "reason": "The verb must be in the masu-stem form before attaching tai.",
+              "replacement": "働き"
+            }
+          ],
+          "corrected_sentence": "日本で働きたいです。",
+          "corrected_sentence_furigana": "日本[にほん]で働[はたら]きたいです。",
+          "corrected_sentence_translation_zh": "I want to work in Japan.",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "You must use the masu-stem form of the verb (働きます -> 働き) before adding tai. The form 働くたい is grammatically incorrect.",
+          "encouragement": "Keep practicing your verb conjugations!",
+          "scenario_task_completed": false
+        },
+        "model": "gemini-3.1-flash-lite",
+        "usage": {
+          "inputTokens": 619,
+          "outputTokens": 322
+        },
+        "latencyMs": 3490,
+        "sentence": "日本で働くたいです。",
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "n4-correct",
+      "locale": "en",
+      "error": "AI_INVALID_RESPONSE"
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "n4-connection",
+      "locale": "en",
+      "result": {
+        "result": {
+          "total_score": 50,
+          "grammar_score": 15,
+          "connection_score": 5,
+          "completeness_score": 15,
+          "naturalness_score": 10,
+          "vocabulary_score": 5,
+          "is_correct": false,
+          "used_target_grammar": true,
+          "target_grammar_correct": false,
+          "result_level": "NEEDS_REVISION",
+          "error_spans": [
+            {
+              "text": "聞くながら",
+              "start": 4,
+              "end": 9,
+              "reason": "The verb before ながら must be in the masu-stem form, not the dictionary form.",
+              "replacement": "聞きながら"
+            }
+          ],
+          "corrected_sentence": "音楽を聴きながら料理をします。",
+          "corrected_sentence_furigana": "音楽[おんがく]を聴[き]きながら料理[りょうり]をします。",
+          "corrected_sentence_translation_zh": "I cook while listening to music.",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "When using the grammar pattern ～ながら, you must attach it to the masu-stem of the verb (e.g., 聞き) rather than the dictionary form (聞く).",
+          "encouragement": "You are very close, just remember to use the masu-stem form!",
+          "scenario_task_completed": true
+        },
+        "model": "gemini-3.1-flash-lite",
+        "usage": {
+          "inputTokens": 623,
+          "outputTokens": 355
+        },
+        "latencyMs": 1734,
+        "sentence": "音楽を聞くながら料理をします。",
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "n1-correct",
+      "locale": "en",
+      "result": {
+        "result": {
+          "total_score": 100,
+          "grammar_score": 30,
+          "connection_score": 20,
+          "completeness_score": 20,
+          "naturalness_score": 20,
+          "vocabulary_score": 10,
+          "is_correct": true,
+          "used_target_grammar": true,
+          "target_grammar_correct": true,
+          "result_level": "CORRECT",
+          "error_spans": [],
+          "corrected_sentence": "彼は料理の材料から盛り付けに至るまで気を配っている。",
+          "corrected_sentence_furigana": "彼[かれ]は料理[りょうり]の材料[ざいりょう]から盛[も]り付[つ]けに至[いた]るまで気[き]を配[くば]っている。",
+          "corrected_sentence_translation_zh": "He pays attention to everything from the ingredients of the dish to the presentation.",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "Your usage of the grammar structure ～に至るまで is perfectly correct and natural in this context.",
+          "encouragement": "Excellent work, your sentence is grammatically flawless.",
+          "scenario_task_completed": true
+        },
+        "model": "gemini-3.1-flash-lite",
+        "usage": {
+          "inputTokens": 628,
+          "outputTokens": 301
+        },
+        "latencyMs": 1518,
+        "sentence": "彼は料理の材料から盛り付けに至るまで気を配っている。",
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "report-generate",
+      "locale": "en",
+      "result": {
+        "challenge": {
+          "promptZh": "You are a junior employee at a company. Your manager just walked by your desk and asked for an update on the project you have been working on all morning. Tell your manager that you will submit the report by the end of the day.",
+          "meaningHintZh": "This refers to the act of giving an account or a formal statement of facts or findings regarding a specific task or situation.",
+          "grammarId": null,
+          "referenceSentence": "今日中に報告を提出します。",
+          "referenceFurigana": "今日[きょう]中[じゅう]に報告[ほうこく]を提出[ていしゅつ]します。",
+          "referenceTranslationZh": "I will submit the report by the end of the day.",
+          "chunks": [
+            "今日中に",
+            "報告を",
+            "提出します"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.1-flash-lite",
+      "id": "report-correct",
+      "locale": "en",
+      "error": "AI_HTTP_429"
+    }
+  ]
+}

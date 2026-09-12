@@ -1,5 +1,7 @@
 /** Synthetic latency comparison; explicit --run required, never reads learning records. */
 import 'dotenv/config';
+import { PrismaService } from '../src/database/prisma.service';
+let metering: PrismaService | undefined;
 import { ConfigService } from '@nestjs/config';
 import { AiReviewService } from '../src/ai/ai-review.service';
 import { GeminiReviewProvider } from '../src/ai/gemini.provider';
@@ -9,10 +11,11 @@ import type { ReviewProviderInput } from '../src/ai/ai-provider';
 async function main() {
   if (!process.argv.includes('--run'))
     throw new Error('Pass --run for three live API requests');
-  const config = new ConfigService();
+  const config = new ConfigService(process.env);
+  metering = new PrismaService(config);
   const service = new AiReviewService(
-    new GeminiReviewProvider(config),
-    new DeepSeekReviewProvider(config),
+    new GeminiReviewProvider(config, metering),
+    new DeepSeekReviewProvider(config, metering),
     config,
   );
   const input: ReviewProviderInput = {
@@ -58,7 +61,9 @@ async function main() {
   )
     throw new Error('Incorrect target grammar passed the live regression');
 }
-void main().catch((error) => {
-  console.error(error instanceof Error ? error.message : 'Smoke test failed');
-  process.exitCode = 1;
-});
+void main()
+  .finally(() => metering?.$disconnect())
+  .catch((error) => {
+    console.error(error instanceof Error ? error.message : 'Smoke test failed');
+    process.exitCode = 1;
+  });

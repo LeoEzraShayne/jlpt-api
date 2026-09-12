@@ -3,6 +3,8 @@ import type { ProviderResponse } from './review-schema';
 
 export interface ReviewProviderInput {
   stage?: 'CORE';
+  explanationLocale?: 'zh' | 'en';
+  usageContext?: import('./metered-ai-client').UsageContext;
   grammarLevel?: string;
   grammarTitle: string;
   explanation: string;

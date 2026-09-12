@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isEnglishFeedback } from '../ai/review-language';
 import { validFurigana } from '../ai/review-schema';
 
 const text = z.string().trim().min(1);
@@ -20,9 +21,10 @@ const learnerFeedback = chineseContent.refine(
 );
 
 export const aiVocabularyInputSchema = z.object({
+  explanationLocale: z.enum(['zh', 'en']).optional(),
   word: text,
   reading: text,
-  chineseGloss: text,
+  chineseGloss: z.string().trim(),
   senseKey: text,
   glosses: z.array(z.object({ language: text, text })),
   grammars: z
@@ -67,94 +69,118 @@ function chunkContent(value: string) {
   return value.replace(/[\p{P}\s]/gu, '');
 }
 
-export const challengeSchema = z
-  .object({
-    promptZh: chineseText,
-    meaningHintZh: chineseText,
-    grammarId: text.nullable(),
-    referenceSentence: text,
-    referenceFurigana: text,
-    referenceTranslationZh: chineseContent,
-    chunks: z
-      .array(text.refine((value) => chunkContent(value).length > 0))
-      .min(2)
-      .max(40),
-  })
-  .transform((value) => ({
-    ...value,
-    referenceFurigana: normalizeAnnotationSpacing(
-      value.referenceSentence,
-      value.referenceFurigana,
-    ),
-  }))
-  .superRefine((value, context) => {
-    if (!fullFurigana(value.referenceSentence, value.referenceFurigana))
-      context.addIssue({
-        code: 'custom',
-        path: ['referenceFurigana'],
-        message: 'Complete, matching hiragana annotations are required',
-      });
-    if (
-      chunkContent(value.chunks.join('')) !==
-      chunkContent(value.referenceSentence)
-    )
-      context.addIssue({
-        code: 'custom',
-        path: ['chunks'],
-        message:
-          'Ordered chunks must reconstruct the reference modulo punctuation and whitespace',
-      });
-  });
+export const challengeSchemaForLocale = (locale: 'zh' | 'en' = 'zh') =>
+  z
+    .object({
+      promptZh:
+        locale === 'en'
+          ? text
+              .refine(isEnglishFeedback)
+              .refine(
+                (v) => !/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(v),
+              )
+          : chineseText,
+      meaningHintZh:
+        locale === 'en'
+          ? text
+              .refine(isEnglishFeedback)
+              .refine(
+                (v) => !/[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(v),
+              )
+          : chineseText,
+      grammarId: text.nullable(),
+      referenceSentence: text,
+      referenceFurigana: text,
+      referenceTranslationZh:
+        locale === 'en' ? text.refine(isEnglishFeedback) : chineseContent,
+      chunks: z
+        .array(text.refine((value) => chunkContent(value).length > 0))
+        .min(2)
+        .max(40),
+    })
+    .transform((value) => ({
+      ...value,
+      referenceFurigana: normalizeAnnotationSpacing(
+        value.referenceSentence,
+        value.referenceFurigana,
+      ),
+    }))
+    .superRefine((value, context) => {
+      if (!fullFurigana(value.referenceSentence, value.referenceFurigana))
+        context.addIssue({
+          code: 'custom',
+          path: ['referenceFurigana'],
+          message: 'Complete, matching hiragana annotations are required',
+        });
+      if (
+        chunkContent(value.chunks.join('')) !==
+        chunkContent(value.referenceSentence)
+      )
+        context.addIssue({
+          code: 'custom',
+          path: ['chunks'],
+          message:
+            'Ordered chunks must reconstruct the reference modulo punctuation and whitespace',
+        });
+    });
 
-export const wordAssessmentSchema = z
-  .object({
-    usedTarget: z.boolean(),
-    targetCorrect: z.boolean().nullable(),
-    meaningCorrect: z.boolean().nullable(),
-    readingCorrect: z.null(),
-    explanationZh: learnerFeedback,
-    corrections: z.array(
-      z.object({
-        text: z.string(),
-        replacement: z.string(),
-        reason: learnerFeedback,
-      }),
-    ),
-    correctedSentence: text,
-    correctedFurigana: text,
-    correctedTranslationZh: learnerFeedback,
-  })
-  .transform((value) => ({
-    ...value,
-    correctedFurigana: normalizeAnnotationSpacing(
-      value.correctedSentence,
-      value.correctedFurigana,
-    ),
-  }))
-  .superRefine((value, context) => {
-    if (
-      !value.usedTarget &&
-      (value.targetCorrect !== null || value.meaningCorrect !== null)
-    )
-      context.addIssue({
-        code: 'custom',
-        path: ['usedTarget'],
-        message:
-          'Absent target gives no evidence about target correctness or meaning',
-      });
-    if (value.targetCorrect === true && value.meaningCorrect !== true)
-      context.addIssue({
-        code: 'custom',
-        path: ['targetCorrect'],
-        message: 'Target success requires verified current-sense meaning',
-      });
-    if (!fullFurigana(value.correctedSentence, value.correctedFurigana))
-      context.addIssue({
-        code: 'custom',
-        path: ['correctedFurigana'],
-        message: 'Complete, matching hiragana annotations are required',
-      });
-  });
+export const challengeSchema = challengeSchemaForLocale();
+
+export const wordAssessmentSchemaForLocale = (locale: 'zh' | 'en' = 'zh') =>
+  z
+    .object({
+      usedTarget: z.boolean(),
+      targetCorrect: z.boolean().nullable(),
+      meaningCorrect: z.boolean().nullable(),
+      readingCorrect: z.null(),
+      explanationZh:
+        locale === 'en' ? text.refine(isEnglishFeedback) : learnerFeedback,
+      corrections: z.array(
+        z.object({
+          text: z.string(),
+          replacement: z.string(),
+          reason:
+            locale === 'en' ? text.refine(isEnglishFeedback) : learnerFeedback,
+        }),
+      ),
+      correctedSentence: text,
+      correctedFurigana: text,
+      correctedTranslationZh:
+        locale === 'en' ? text.refine(isEnglishFeedback) : learnerFeedback,
+    })
+    .transform((value) => ({
+      ...value,
+      correctedFurigana: normalizeAnnotationSpacing(
+        value.correctedSentence,
+        value.correctedFurigana,
+      ),
+    }))
+    .superRefine((value, context) => {
+      if (
+        !value.usedTarget &&
+        (value.targetCorrect !== null || value.meaningCorrect !== null)
+      )
+        context.addIssue({
+          code: 'custom',
+          path: ['usedTarget'],
+          message:
+            'Absent target gives no evidence about target correctness or meaning',
+        });
+      if (value.targetCorrect === true && value.meaningCorrect !== true)
+        context.addIssue({
+          code: 'custom',
+          path: ['targetCorrect'],
+          message: 'Target success requires verified current-sense meaning',
+        });
+      if (!fullFurigana(value.correctedSentence, value.correctedFurigana))
+        context.addIssue({
+          code: 'custom',
+          path: ['correctedFurigana'],
+          message: 'Complete, matching hiragana annotations are required',
+        });
+    });
+
+export const wordAssessmentSchema = wordAssessmentSchemaForLocale();
 
 export type Challenge = z.infer<typeof challengeSchema>;
 export type WordAssessment = z.infer<typeof wordAssessmentSchema>;
@@ -207,6 +233,22 @@ function lexicalSurfaces(value: string) {
       );
     if (word.endsWith('い')) add(stem, 'く かった ければ');
   }
+  const politeStem: Record<string, string> = {
+    う: 'い',
+    く: 'き',
+    ぐ: 'ぎ',
+    す: 'し',
+    つ: 'ち',
+    ぬ: 'に',
+    ぶ: 'び',
+    む: 'み',
+    る: 'り',
+  };
+  const ending = politeStem[word.slice(-1)];
+  if (ending)
+    add('お' + stem + ending, 'します しました いたします いたしました');
+  if (word.endsWith('る'))
+    add('お' + stem, 'します しました いたします いたしました');
   if (word.endsWith('する'))
     add(
       word.slice(0, -2),
@@ -224,52 +266,65 @@ function lexicalSurfaces(value: string) {
 
 /** Validation tied to the particular sense and allowed grammar candidates. */
 export function challengeSchemaFor(input: AiVocabularyInput) {
-  return challengeSchema.superRefine((value, context) => {
-    const reference = normalizeJapanese(value.referenceSentence);
-    if (
-      ![input.word, input.reading]
-        .flatMap(lexicalSurfaces)
-        .some((surface) => reference.includes(surface))
-    )
-      context.addIssue({
-        code: 'custom',
-        path: ['referenceSentence'],
-        message:
-          'Reference must contain the target spelling, reading or a recognizable conjugation',
-      });
-    for (const field of ['promptZh', 'meaningHintZh'] as const) {
-      const visible = concealedText(value[field]);
+  return challengeSchemaForLocale(input.explanationLocale).superRefine(
+    (value, context) => {
       if (
-        [input.word, input.reading].some((target) => {
-          const hidden = concealedText(target);
-          return hidden.length > 0 && visible.includes(hidden);
-        })
+        /\b(?:answer|respond|say|write|speak)\b.{0,40}\bin (?:English|Chinese)\b|\bin (?:English|Chinese)\b.{0,25}\b(?:answer|respond|say|write|speak)\b|用(?:英语|英文|汉语|中文)(?:回答|作答|造句|说|写)/iu.test(
+          value.promptZh,
+        )
       )
         context.addIssue({
           code: 'custom',
-          path: [field],
+          path: ['promptZh'],
           message:
-            'Prompt and first hint must conceal the target word and reading',
+            'The learner must answer in Japanese, independent of explanation locale',
         });
-    }
-    if (
-      value.grammarId !== null &&
-      !input.grammars.some((grammar) => grammar.id === value.grammarId)
-    )
-      context.addIssue({
-        code: 'custom',
-        path: ['grammarId'],
-        message: 'Only supplied grammar candidates may be selected',
-      });
-    if (
-      input.previousPrompts.some(
-        (prompt) => concealedText(prompt) === concealedText(value.promptZh),
+      const reference = normalizeJapanese(value.referenceSentence);
+      if (
+        ![input.word, input.reading]
+          .flatMap(lexicalSurfaces)
+          .some((surface) => reference.includes(surface))
       )
-    )
-      context.addIssue({
-        code: 'custom',
-        path: ['promptZh'],
-        message: 'Use a new scenario',
-      });
-  });
+        context.addIssue({
+          code: 'custom',
+          path: ['referenceSentence'],
+          message:
+            'Reference must contain the target spelling, reading or a recognizable conjugation',
+        });
+      for (const field of ['promptZh', 'meaningHintZh'] as const) {
+        const visible = concealedText(value[field]);
+        if (
+          [input.word, input.reading].some((target) => {
+            const hidden = concealedText(target);
+            return hidden.length > 0 && visible.includes(hidden);
+          })
+        )
+          context.addIssue({
+            code: 'custom',
+            path: [field],
+            message:
+              'Prompt and first hint must conceal the target word and reading',
+          });
+      }
+      if (
+        value.grammarId !== null &&
+        !input.grammars.some((grammar) => grammar.id === value.grammarId)
+      )
+        context.addIssue({
+          code: 'custom',
+          path: ['grammarId'],
+          message: 'Only supplied grammar candidates may be selected',
+        });
+      if (
+        input.previousPrompts.some(
+          (prompt) => concealedText(prompt) === concealedText(value.promptZh),
+        )
+      )
+        context.addIssue({
+          code: 'custom',
+          path: ['promptZh'],
+          message: 'Use a new scenario',
+        });
+    },
+  );
 }

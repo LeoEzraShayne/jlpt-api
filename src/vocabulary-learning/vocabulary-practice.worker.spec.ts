@@ -159,6 +159,7 @@ describe('durable vocabulary worker', () => {
       contains({ word: '着く', senseKey: 'arrival' }),
       contains({ promptZh: challenge.promptZh }),
       'saved answer',
+      contains({ taskKind: 'VOCABULARY', taskKey: row.id }),
     );
   });
   it('rejects AI choosing a grammar outside the bounded candidate list', async () => {

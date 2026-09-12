@@ -122,3 +122,48 @@ describe('public practice secrecy', () => {
     expect(shuffled).not.toEqual(shuffledChunks('other-practice', chunks));
   });
 });
+
+it('English aliases obey the exact same hint/reference gates and retain the snapshot', () => {
+  const englishChallenge = {
+    ...challenge,
+    promptZh: 'Explain when you arrived.',
+    meaningHintZh: 'Reach your destination.',
+    referenceTranslationZh: 'I arrived at the station.',
+  };
+  for (const hintLevel of [0, 1, 2, 3, 4]) {
+    const value = presentPractice(
+      makePractice({
+        explanationLocale: 'en',
+        challenge: englishChallenge,
+        hintLevel,
+      }),
+    );
+    expect(value).toHaveProperty('explanationLocale', 'en');
+    expect(value).toHaveProperty('localized.prompt', englishChallenge.promptZh);
+    expect(value).not.toHaveProperty('localized.referenceTranslation');
+    expect('localized' in value && 'meaningHint' in value.localized).toBe(
+      hintLevel >= 1,
+    );
+  }
+  const done = presentPractice(
+    makePractice({
+      explanationLocale: 'en',
+      challenge: englishChallenge,
+      status: 'COMPLETED',
+      assessment: {
+        ...assessment,
+        explanationZh: 'The word fits this context.',
+        correctedTranslationZh: 'I arrived at the station.',
+      },
+    }),
+  );
+  expect(done).toHaveProperty('result.localizedFeedback.locale', 'en');
+  expect(done).toHaveProperty(
+    'reference.translationZh',
+    englishChallenge.referenceTranslationZh,
+  );
+  expect(done).toHaveProperty(
+    'localized.referenceTranslation',
+    englishChallenge.referenceTranslationZh,
+  );
+});

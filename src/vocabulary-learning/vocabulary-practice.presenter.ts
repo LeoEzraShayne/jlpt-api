@@ -58,6 +58,7 @@ export function presentPractice(row: PracticeRecord) {
   // Never spread database JSON into a response, including completed assessments.
   const publicRow = {
     id: row.id,
+    explanationLocale: row.explanationLocale ?? 'zh',
     status: row.status,
     vocabularyId: row.vocabularyId,
     grammarId: row.grammarId,
@@ -86,12 +87,28 @@ export function presentPractice(row: PracticeRecord) {
   const instruction = {
     ...publicRow,
     promptZh: challenge.promptZh,
+    localized: {
+      locale: row.explanationLocale ?? 'zh',
+      prompt: challenge.promptZh,
+      ...(row.hintLevel >= 1 ? { meaningHint: challenge.meaningHintZh } : {}),
+      ...(row.status === 'COMPLETED'
+        ? { referenceTranslation: challenge.referenceTranslationZh }
+        : {}),
+    },
     ...(row.grammar
       ? { grammar: { id: row.grammar.id, title: row.grammar.title } }
       : {}),
     ...(row.unknownAtStart
       ? {
           learningPreview: {
+            localized: {
+              locale: row.explanationLocale ?? 'zh',
+              meaning:
+                row.explanationLocale === 'en'
+                  ? englishGloss(row.vocabulary.glosses)
+                  : row.vocabulary.chineseGloss,
+              exampleTranslation: challenge.referenceTranslationZh,
+            },
             word: row.vocabulary.word,
             reading: row.vocabulary.reading,
             chineseGloss: row.vocabulary.chineseGloss,
@@ -114,6 +131,16 @@ export function presentPractice(row: PracticeRecord) {
       meaningCorrect: a.meaningCorrect ?? null,
       // Sentence production provides no observation of pronunciation.
       readingCorrect: null,
+      localizedFeedback: {
+        locale: row.explanationLocale ?? 'zh',
+        explanation: a.explanationZh,
+        correctedTranslation: a.correctedTranslationZh,
+        corrections: a.corrections.map(({ text, replacement, reason }) => ({
+          text,
+          replacement,
+          reason,
+        })),
+      },
       explanationZh: a.explanationZh,
       corrections: a.corrections.map(({ text, replacement, reason }) => ({
         text,
@@ -131,4 +158,22 @@ export function presentPractice(row: PracticeRecord) {
     },
     nextReviewAt: row.learning.nextReviewAt,
   };
+}
+
+function englishGloss(value: Prisma.JsonValue) {
+  if (!Array.isArray(value)) return null;
+  return (
+    value
+      .flatMap((g) =>
+        g &&
+        typeof g === 'object' &&
+        !Array.isArray(g) &&
+        typeof g.language === 'string' &&
+        ['eng', 'en', 'English'].includes(g.language) &&
+        typeof g.text === 'string'
+          ? [g.text]
+          : [],
+      )
+      .join('; ') || null
+  );
 }

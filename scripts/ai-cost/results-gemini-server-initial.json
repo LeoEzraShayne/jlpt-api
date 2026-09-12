@@ -1,0 +1,395 @@
+{
+  "runId": "2026-09-12T15:44:19.059Z",
+  "rows": [
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n5-correct",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n5-correct",
+      "locale": "zh",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n5-connection",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n4-correct",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n5-connection",
+      "locale": "zh",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n4-connection",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n4-correct",
+      "locale": "zh",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n1-correct",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "missing-target",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "report-generate",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "report-correct",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "report-wrong",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "report-alternate",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "refuse-generate",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "refuse-correct",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "refuse-wrong",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "refuse-alternate",
+      "locale": "zh",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n5-correct",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n4-connection",
+      "locale": "zh",
+      "error": "AI_INVALID_RESPONSE"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n5-connection",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n1-correct",
+      "locale": "zh",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n4-correct",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n4-connection",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "n1-correct",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "missing-target",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "report-generate",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "report-correct",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "report-wrong",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "report-alternate",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "refuse-generate",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "refuse-correct",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "refuse-wrong",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-2.5-flash-lite",
+      "id": "refuse-alternate",
+      "locale": "en",
+      "error": "AI_HTTP_404"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "missing-target",
+      "locale": "zh",
+      "result": {
+        "result": {
+          "total_score": 30,
+          "grammar_score": 10,
+          "connection_score": 0,
+          "completeness_score": 10,
+          "naturalness_score": 10,
+          "vocabulary_score": 0,
+          "is_correct": false,
+          "used_target_grammar": false,
+          "target_grammar_correct": false,
+          "result_level": "NEEDS_REVISION",
+          "error_spans": [
+            {
+              "text": "毎日、日本語を勉強しています。",
+              "start": 0,
+              "end": 15,
+              "reason": "原句没有使用目标语法「～ながら」（表示同一主体同时进行两个动作）。",
+              "replacement": "音楽を聴きながら、毎日日本語を勉強しています。"
+            }
+          ],
+          "corrected_sentence": "音楽を聴きながら、毎日日本語を勉強しています。",
+          "corrected_sentence_furigana": "音楽[おんがく]を聴[き]きながら、毎日[まいにち]日本語[にほんご]を勉強[べんきょう]しています。",
+          "corrected_sentence_translation_zh": "我每天一边听音乐一边学习日语。",
+          "corrected_sentence_uses_target_grammar": true,
+          "explanation_zh": "原句虽然语法正确，但没有使用指定的语法「～ながら」。该语法用于表示两个动作同时进行，接在动词ます形去掉ます的后面。",
+          "encouragement": "原句表达很通顺，下次请尝试结合「～ながら」来表达两个同时进行的动作吧！",
+          "scenario_task_completed": false
+        },
+        "model": "gemini-3.5-flash",
+        "usage": {
+          "inputTokens": 580,
+          "outputTokens": 394
+        },
+        "latencyMs": 2393,
+        "sentence": "毎日、日本語を勉強しています。",
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "report-generate",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "report-correct",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "report-wrong",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "report-alternate",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "refuse-generate",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "refuse-correct",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "refuse-wrong",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "refuse-alternate",
+      "locale": "zh",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n5-correct",
+      "locale": "en",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n5-connection",
+      "locale": "en",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n4-correct",
+      "locale": "en",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n4-connection",
+      "locale": "en",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "n1-correct",
+      "locale": "en",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "missing-target",
+      "locale": "en",
+      "error": "AI_HTTP_429"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "report-generate",
+      "locale": "en",
+      "result": {
+        "challenge": {
+          "promptZh": "You are a project manager. Your team member just finished an important meeting with a client. Ask them to report the results of today's meeting by the end of the day.",
+          "meaningHintZh": "To report or submit a report on something.",
+          "grammarId": null,
+          "referenceSentence": "今日の会議の結果を、今日中に報告してください。",
+          "referenceFurigana": "今日[きょう]の会議[かいぎ]の結果[けっか]を、今日中[きょうじゅう]に報告[ほうこく]してください。",
+          "referenceTranslationZh": "Please report the results of today's meeting by the end of the day.",
+          "chunks": [
+            "今日の",
+            "会議の",
+            "結果を、",
+            "今日中に",
+            "報告してください。"
+          ]
+        },
+        "passed": true
+      }
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "report-correct",
+      "locale": "en",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "report-wrong",
+      "locale": "en",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "report-alternate",
+      "locale": "en",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "refuse-generate",
+      "locale": "en",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "refuse-correct",
+      "locale": "en",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "refuse-wrong",
+      "locale": "en",
+      "error": "AI_NOT_CONFIGURED"
+    },
+    {
+      "model": "gemini-3.5-flash",
+      "id": "refuse-alternate",
+      "locale": "en",
+      "error": "AI_NOT_CONFIGURED"
+    }
+  ]
+}

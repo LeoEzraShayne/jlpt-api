@@ -94,7 +94,7 @@ export function assertResponse(
   const retryable =
     providerUnavailable || response.status === 429 || response.status >= 500;
   throw new ProviderError(
-    `AI provider returned HTTP ${response.status}: ${body.slice(0, 200)}`,
+    `AI provider returned HTTP ${response.status}`,
     `AI_HTTP_${response.status}`,
     retryable,
     response.status,

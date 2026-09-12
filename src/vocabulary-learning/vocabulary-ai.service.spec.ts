@@ -1,3 +1,4 @@
+import type { PrismaService } from '../database/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { ProviderError } from '../ai/ai-provider';
 import { fetchWithTimeout } from '../ai/provider-utils';
@@ -58,9 +59,17 @@ function service(overrides: Record<string, string | undefined> = {}) {
     DEEPSEEK_API_KEY: 'mock-deepseek',
     ...overrides,
   };
-  return new VocabularyAiService({
-    get: (key: string, fallback?: string) => values[key] ?? fallback,
-  } as ConfigService);
+  return new VocabularyAiService(
+    {
+      get: (key: string, fallback?: string) => values[key] ?? fallback,
+    } as ConfigService,
+    {
+      aiUsageRecord: {
+        create: jest.fn().mockResolvedValue({}),
+        update: jest.fn().mockResolvedValue({}),
+      },
+    } as unknown as PrismaService,
+  );
 }
 function respond(body: unknown, status = 200) {
   request.mockResolvedValueOnce({

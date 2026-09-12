@@ -1,5 +1,7 @@
 /** Small, explicit paid-provider smoke test using synthetic sentences only. */
 import 'dotenv/config';
+import { PrismaService } from '../src/database/prisma.service';
+let metering: PrismaService | undefined;
 import { writeFile } from 'node:fs/promises';
 import { ConfigService } from '@nestjs/config';
 import { AiReviewService } from '../src/ai/ai-review.service';
@@ -103,9 +105,10 @@ async function main() {
       'Pass --run to authorize the four configured-provider requests',
     );
   const config = new ConfigService(process.env);
+  metering = new PrismaService(config);
   const service = new AiReviewService(
-    new GeminiReviewProvider(config),
-    new DeepSeekReviewProvider(config),
+    new GeminiReviewProvider(config, metering),
+    new DeepSeekReviewProvider(config, metering),
     config,
   );
   const results = [];
@@ -150,7 +153,9 @@ async function main() {
     await writeFile(process.argv[flag + 1], JSON.stringify(results, null, 2));
   if (results.some((r) => !r.passed)) process.exitCode = 1;
 }
-void main().catch((error) => {
-  console.error(error.message);
-  process.exitCode = 1;
-});
+void main()
+  .finally(() => metering?.$disconnect())
+  .catch((error) => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
