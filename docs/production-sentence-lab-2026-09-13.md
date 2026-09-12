@@ -1,6 +1,6 @@
 # Sentence Lab feature deployment — 2026-09-13 JST
 
-The bilingual Web features, compatible shared backend, content translations and qualified bounded AI route are deployed at https://jlpt.meritledger.org. **This is a feature release, not completion of W3 commercial activation or the Android stage.** Sales, task-limit enforcement and rewards remain false. `launchAt` and `enforcementAt` remain null. The 90-day offer and designated 365-day gift have not started. No live Stripe products/webhook configuration or real purchase was performed for this release.
+The bilingual Web features, compatible shared backend, content translations and qualified bounded AI route are deployed at https://jlpt.meritledger.org. **This is a feature release, not completion of W3 commercial activation or the Android stage.** Sales, task-limit enforcement and rewards remain false. `launchAt` and `enforcementAt` remain null. The 90-day offer and designated 365-day gift have not started. No live Stripe products/webhook configuration or real purchase was performed for this release. The later owner-confirmed global USD revision supersedes the pricing-decision status and runtime version below; see [USD pricing and fees](contracts/usd-pricing-and-fees.md). Earlier deployment evidence remains chronological.
 
 ## Versions and service checks
 

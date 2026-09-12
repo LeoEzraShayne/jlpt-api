@@ -34,3 +34,11 @@ The dollar amount is the base input to Google price conversion. Google uses its 
 - [Google buyer and payout currencies](https://support.google.com/googleplay/android-developer/answer/1169947): buyers use supported local currency; payout follows the payments profile.
 - [Google base-price conversion](https://support.google.com/googleplay/android-developer/answer/6334373): FX, tax and local pricing patterns; local currency is fixed by country.
 - [Qualified AI audit](../../test/sentence-lab/ai-audit/route-held-out/MIXED-REVIEW.md): actual sample receipts and historical higher-cost comparison. Older historical reports retain their original price assumptions rather than being rewritten.
+
+## API deployment evidence
+
+API runtime `a9a064a0c45bc9b8dde64ae92e3fca3214222ba8` is deployed in `/var/www/jlpt-releases/a9a064a0c45b`, retaining the previous `c56194b1bb26` release. No schema migration was needed. The release has independent npm dependencies and Prisma generation; its archive SHA-256 is `608523ab7af1a909862183e86426dd2ba2584ac461161a9e53ac69eaa510a3f9`. Fresh protected database backup `/var/www/jlpt-backups/before-usd-pricing-a9a064a.dump` passed archive inspection, SHA-256 `a8d7ba751d651b3602d45d6d02376287a74f291c19e117c14a1c33410c371800`; a protected PM2 backup is retained alongside it. The first directory-creation attempt lacked permission and stopped before modifying the running release; the retry created only the new release with the expected owner.
+
+Twelve checkout/entitlement acceptance checks and nine billing integration checks passed, along with build, TypeScript, lint, line checks and [API CI](https://github.com/LeoEzraShayne/jlpt-api/actions/runs/34723500989). Existing quotes omit the new Adaptive Pricing parameter, preserving provider idempotency.
+
+After the guarded symlink switch and PM2 reload/save, health passed at `2026-09-12T22:46:08.226Z`. The legacy `market=JP` catalog returned USD99 cents / USD9900 cents, with `salesEnabled:false`, `launchAt:null`, `launchEndsAt:null`. This confirms global pricing without starting the offer or gift clocks. The grammar-thinking DeepSeek route and existing protected environment were retained. Gemini-first deployment remains separate pending its required validation.
