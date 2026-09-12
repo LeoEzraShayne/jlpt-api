@@ -42,3 +42,7 @@ API runtime `a9a064a0c45bc9b8dde64ae92e3fca3214222ba8` is deployed in `/var/www/
 Twelve checkout/entitlement acceptance checks and nine billing integration checks passed, along with build, TypeScript, lint, line checks and [API CI](https://github.com/LeoEzraShayne/jlpt-api/actions/runs/34723500989). Existing quotes omit the new Adaptive Pricing parameter, preserving provider idempotency.
 
 After the guarded symlink switch and PM2 reload/save, health passed at `2026-09-12T22:46:08.226Z`. The legacy `market=JP` catalog returned USD99 cents / USD9900 cents, with `salesEnabled:false`, `launchAt:null`, `launchEndsAt:null`. This confirms global pricing without starting the offer or gift clocks. The grammar-thinking DeepSeek route and existing protected environment were retained. Gemini-first deployment remains separate pending its required validation.
+
+## Web deployment evidence
+
+Web commit `05faa3ecfe8741e6a55c2cd50801ddbf5322f3dc` is deployed as Cloudflare Worker version `46a81ff6-1608-43c7-b1d3-4471e1b0eda1`. TypeScript, eight membership checks and the production OpenNext build passed locally; the web agent also passed all 66 Web tests. The production membership page visibly shows USD $0.99 / $99, the global USD payment explanation, no market selector, and disabled purchase buttons with the sales-not-open notice. The Chinese brand and document title remain localized. The standard year is shown while launch is unset; $64 activates with the actual launch timestamp. No Google Play product was created or changed by this Web/API release.

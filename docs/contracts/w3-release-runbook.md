@@ -1,6 +1,6 @@
 # W3 release runbook
 
-Feature deployment and the compatible migration were executed on 2026-09-13 JST with sales, enforcement and rewards disabled. See [the production record](../production-sentence-lab-2026-09-13.md) for actual versions and evidence. Live Stripe configuration and the activation section below remain unexecuted pending the owner's pricing/subsidy decision. This procedure does not authorize bypassing that gate or repeating activation/migration blindly.
+Feature deployment and the compatible migration were executed on 2026-09-13 JST with sales, enforcement and rewards disabled. See [the production record](../production-sentence-lab-2026-09-13.md) for actual versions and evidence. The owner has resolved the pricing decision: global USD $0.99 day pass, $64 launch year, $99 standard year, with Google Play local-currency conversion; see [approved pricing and fees](usd-pricing-and-fees.md). Live Stripe configuration and the activation section below remain unexecuted, with durable live credentials and the requested Gemini-first route validation still outstanding. This procedure does not authorize repeating activation/migration blindly.
 
 ## Freeze the release candidate
 
