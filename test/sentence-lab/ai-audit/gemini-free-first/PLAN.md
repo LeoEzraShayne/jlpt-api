@@ -8,7 +8,7 @@ Only the main agent executes the real provider run from the authorized server IP
 
 The main agent privately injects GEMINI_API_KEY, DEEPSEEK_API_KEY and the approved candidate's GEMINI_MODEL, GEMINI_FREE_FIRST=true, DEEPSEEK_MODEL=deepseek-flash, DEEPSEEK_THINKING_EFFORT=low, DEEPSEEK_THINKING_SCOPE=grammar. Set F_CANDIDATE_COMMIT to the full implementation hash and F_OUTPUT_DIR to a new protected absolute directory. The runner refuses an existing output directory, records final text and numeric usage only, and omits thought content, credentials, request URLs and provider error bodies. Maximum 24 actual network calls, 12 Gemini calls and two calls per operation. It performs no worker retry loop.
 
-Candidate constructor wiring must be updated before running if the shared circuit requires explicit Prisma injection into AiReviewService. A run lacking that dependency is not valid route acceptance. Never simulate quota responses in this real-quality batch; separate deterministic transport tests cover quota/network behavior.
+The runner now explicitly injects Prisma as the fourth AiReviewService parameter for D candidate 05c0179. A run lacking that dependency is not valid route acceptance. Never simulate quota responses in this real-quality batch; separate deterministic transport tests cover quota/network behavior.
 
 ## Independent decision criteria
 
@@ -25,3 +25,5 @@ Inspect final outputs and every rejected raw candidate, linked to unique AIUsage
 At base `55365d5` all 49 existing independent real-Postgres tests passed with the previously captured public source snapshots. The initial no-snapshot invocation had six fixture-configuration failures; all six passed once explicit source paths were provided. Four added launch tests pass: no launch creates no gift/offer, future launch grants nothing early, eight simultaneous owner reads create one fixed 365-day gift, and later sales shutdown/config changes do not move that existing gift. No fake payment order or admin role is created.
 
 The current entitlement code makes an already-created gift immutable, but BillingConfig itself has no immutable-timestamp guard. Main must activate with a single guarded transaction that rejects conflicting non-null launchAt/enforcementAt values and preserves original times on repeat. The new negative test deliberately mutates config only inside a throwaway database; it is not authorization to reset production timestamps. No live checkout, live webhook completion, production launch or Gemini quality pass is claimed by these local results.
+
+Implementation and local verification have progressed since this pre-run plan: see [LOCAL-ACCEPTANCE.md](LOCAL-ACCEPTANCE.md). The actual activation command now has a tested transaction advisory lock and immutable repeat behavior; it has not been executed by F.
