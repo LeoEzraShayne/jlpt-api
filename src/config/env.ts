@@ -22,6 +22,10 @@ const envSchema = z.object({
   GOOGLE_CALLBACK_URL: z.string().url(),
   AI_PRIMARY_PROVIDER: z.enum(['GEMINI', 'DEEPSEEK']).default('GEMINI'),
   GEMINI_API_KEY: z.string().optional(),
+  GEMINI_FREE_FIRST: z
+    .string()
+    .default('false')
+    .transform((value) => value === 'true'),
   GEMINI_MODEL: z.string().default('gemini-3.5-flash'),
   DEEPSEEK_API_KEY: z.string().optional(),
   DEEPSEEK_MODEL: z.string().default('deepseek-chat'),

@@ -773,6 +773,16 @@ model VocabularyPractice {
 }
 
 // Financial/source IDs intentionally retained independently of learning rows.
+// Shared across workers; key is a one-way provider credential fingerprint + model.
+model AiProviderCircuit {
+  key          String    @id
+  blockedUntil DateTime?
+  leaseToken   String?
+  leaseUntil   DateTime?
+  reason       String?
+  updatedAt    DateTime  @updatedAt
+}
+
 model BillingConfig {
   enforcementAt      DateTime?
   id                 String    @id @default("default")
