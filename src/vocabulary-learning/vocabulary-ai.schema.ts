@@ -53,6 +53,16 @@ function fullFurigana(sentence: string, annotated: string) {
   );
 }
 
+// Providers sometimes insert visual separators between ruby groups. Repair only
+// whitespace when every actual sentence character already matches exactly.
+function normalizeAnnotationSpacing(sentence: string, annotated: string) {
+  if (/\s/u.test(sentence)) return annotated;
+  const plain = annotated.replace(/\[[^\]]+\]/g, '');
+  return plain.replace(/\s/gu, '') === sentence
+    ? annotated.replace(/\s/gu, '')
+    : annotated;
+}
+
 function chunkContent(value: string) {
   return value.replace(/[\p{P}\s]/gu, '');
 }
@@ -70,6 +80,13 @@ export const challengeSchema = z
       .min(2)
       .max(40),
   })
+  .transform((value) => ({
+    ...value,
+    referenceFurigana: normalizeAnnotationSpacing(
+      value.referenceSentence,
+      value.referenceFurigana,
+    ),
+  }))
   .superRefine((value, context) => {
     if (!fullFurigana(value.referenceSentence, value.referenceFurigana))
       context.addIssue({
@@ -107,6 +124,13 @@ export const wordAssessmentSchema = z
     correctedFurigana: text,
     correctedTranslationZh: learnerFeedback,
   })
+  .transform((value) => ({
+    ...value,
+    correctedFurigana: normalizeAnnotationSpacing(
+      value.correctedSentence,
+      value.correctedFurigana,
+    ),
+  }))
   .superRefine((value, context) => {
     if (
       !value.usedTarget &&

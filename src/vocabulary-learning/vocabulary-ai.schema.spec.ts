@@ -353,3 +353,28 @@ describe('vocabulary AI schemas', () => {
     },
   );
 });
+
+describe('provider ruby spacing compatibility', () => {
+  it('repairs separator spaces only when the underlying Japanese characters match', () => {
+    const parsed = challengeSchema.parse({
+      ...challenge,
+      referenceFurigana: '友達[ともだち]の 誘[さそ]いを 断[ことわ]った。',
+    });
+    expect(parsed.referenceFurigana).toBe(challenge.referenceFurigana);
+    expect(
+      challengeSchema.safeParse({
+        ...challenge,
+        referenceFurigana: '友達[ともだち]の 誘[さそ]いを 受[う]けた。',
+      }).success,
+    ).toBe(false);
+  });
+  it('repairs assessment ruby spacing without changing the correction text', () => {
+    const parsed = wordAssessmentSchema.parse({
+      ...assessment,
+      correctedSentence: challenge.referenceSentence,
+      correctedFurigana: '友達[ともだち]の 誘[さそ]いを 断[ことわ]った。',
+    });
+    expect(parsed.correctedSentence).toBe(challenge.referenceSentence);
+    expect(parsed.correctedFurigana).toBe(challenge.referenceFurigana);
+  });
+});
