@@ -1,6 +1,6 @@
 # W2 integration evidence — 2026-09-13
 
-This is an in-progress acceptance record. Production sales and quota enforcement remain disabled; no production schema migration has been applied.
+This is a chronological acceptance record; earlier statuses and cost estimates below describe their respective checkpoints. Final bounded AI acceptance is in [F's mixed-route review](../../test/sentence-lab/ai-audit/route-held-out/MIXED-REVIEW.md). The compatible production migration and feature deployment subsequently completed with charging disabled; see [the production record](../production-sentence-lab-2026-09-13.md). The final pricing question supersedes the earlier non-thinking-route question. Commercial activation remains pending.
 
 ## Independent regression
 

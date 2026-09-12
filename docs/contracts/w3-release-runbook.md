@@ -1,6 +1,6 @@
-# W3 release runbook (prepared, not executed)
+# W3 release runbook
 
-The production application remains on the pre-Sentence-Lab release. Follow `w2-validation.md` for completed rehearsals and open quality/pricing gates. This document does not authorize bypassing those gates.
+Feature deployment and the compatible migration were executed on 2026-09-13 JST with sales, enforcement and rewards disabled. See [the production record](../production-sentence-lab-2026-09-13.md) for actual versions and evidence. Live Stripe configuration and the activation section below remain unexecuted pending the owner's pricing/subsidy decision. This procedure does not authorize bypassing that gate or repeating activation/migration blindly.
 
 ## Freeze the release candidate
 
