@@ -37,6 +37,9 @@ The Stripe duplicate-receipt test installs a 50 ms insert-delay trigger only in 
 - Checkout: server-owned USD/JPY pricing, concurrent idempotency, fixed return URLs, one-time purchase mode, no entitlement from checkout creation, and immutable 30-minute launch quotes across the 90-day cutoff.
 - Stripe: real signature verification, concurrent duplicate event receipt, refund before completion, stale failed event, partial refund, dispute/won, provider outage/retry, authoritative owner/amount/environment mismatch, private order reads/cursors.
 - Content: 223 grammar + 223 examples + 6 relation groups + 94 scenarios = 546; exact current source hashes; actual idempotent import; preserved Japanese/Chinese fields; hidden reference redaction and explicit reveal; stale Japanese example and Chinese explanation rejection.
+- HTTP: production OriginGuard and session enforcement, exact raw-body Stripe signatures, account-private orders, and immutable grammar/vocabulary locale snapshots after preference changes.
 - Memory evidence: actual HTTP admission and worker persistence, three vocabulary answers with immutable first evidence/FSRS, three grammar assessments followed by concurrent completion and exactly one first-attempt event.
+
+Independent purposive semantic source/translation judgments are recorded under `language-review/`; they are separate from automated structural checks and do not claim human linguistic certification.
 
 Remaining release gates are recorded in `RESULTS.md`. Passing these tests alone does not authorize opening real sales. No Android, AdMob SSV, real-device, live-runtime AI, payment-fee or server-cost conclusion is made by these suites.

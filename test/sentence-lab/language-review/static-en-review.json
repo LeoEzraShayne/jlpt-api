@@ -1,0 +1,1039 @@
+{
+  "reviewer": "F independent Codex model review; not a human linguist certification",
+  "reviewedAt": "2026-09-13",
+  "method": "Purposive stratified inspection of N1/N2/N3/N4 grammar connection/negation/register, each corresponding Japanese example, all relation groups and 8 varied scenario prompts. F read and judged actual source/translation pairs separately from C provider review. No external translation model calls were made.",
+  "scope": "62 of 546 artifact records; not statistical or exhaustive linguistic certification",
+  "sourceSnapshotSha256": "cc3752f3f15ca06bd3afe28d4052c4488cfd6297047ebee6f94c4bc800640efd",
+  "artifactSha256": "7b87f7aaef7bf33192ae142f4abc395c09391316c7f3829262eb4efafa664947",
+  "counts": {
+    "PASS": 57,
+    "FAIL": 4,
+    "ADVISORY": 1
+  },
+  "strata": {
+    "GRAMMAR": 24,
+    "EXAMPLE": 24,
+    "RELATION": 6,
+    "SCENARIO": 8
+  },
+  "records": [
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdja0003y1vb0f6qh6vd",
+      "level": "N1",
+      "title": "～べく",
+      "sourceHash": "0c83007bfaed975dcee85d2a304b320ef063fa03d7f0d72053569397fb8d9f03",
+      "source": {
+        "explanation": "为了……；以便……。是「～ために」的正式书面表达。",
+        "connectionRule": "动词辞书形＋べく；する→すべく／するべく"
+      },
+      "english": {
+        "explanation": "In order to...; so that.... A formal written expression of 「～ために」.",
+        "connectionRule": "Dictionary form verb + べく; する→すべく／するべく",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Purpose and formal written register retained; すべく example aligns."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdjf0004y1vbiu3r0u9b",
+      "level": "N1",
+      "grammarId": "cmsldfdja0003y1vb0f6qh6vd",
+      "sourceHash": "5f018593c15911f2351e7e6ec4bcc0bb44a71977edcd5a8de9e55262b03df482",
+      "japanese": "問題を解決すべく、専門家による調査が始まった。",
+      "chinese": "为了解决问题，专家开始了调查。",
+      "english": "In order to solve the problem, an investigation by experts began.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdka000jy1vb9tfjza4o",
+      "level": "N1",
+      "title": "～が早いか",
+      "sourceHash": "ca3c5e70690122eba3d6ba01eacbd55423c867d16ce1c27d23597d26932f4b56",
+      "source": {
+        "explanation": "刚一……就……；前项刚发生，后项几乎同时发生。",
+        "connectionRule": "动词辞书形＋が早いか"
+      },
+      "english": {
+        "explanation": "As soon as...; the moment the first action occurred, the second occurred almost simultaneously.",
+        "connectionRule": "Dictionary form verb + が早いか",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Near-simultaneous sequence preserved; example is an observed past event."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdkc000ky1vbzxsbf40q",
+      "level": "N1",
+      "grammarId": "cmsldfdka000jy1vb9tfjza4o",
+      "sourceHash": "613b8c967c890bd62e7767a2a9a6e242bc7a484e95f20798013b52be01de640d",
+      "japanese": "ベルが鳴るが早いか、学生たちは教室を飛び出した。",
+      "chinese": "铃声刚响，学生们就冲出了教室。",
+      "english": "As soon as the bell rang, the students rushed out of the classroom.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdko000ty1vbwbjpk57w",
+      "level": "N1",
+      "title": "～がてら",
+      "sourceHash": "2f78c0830c1c4182986c71ef1b1cbf64d9658b6b0ca5f58efdeb23af9b2aac07",
+      "source": {
+        "explanation": "顺便……；在做主要事情的同时顺便做另一件事。",
+        "connectionRule": "动词ます形（去ます）／动作性名词＋がてら"
+      },
+      "english": {
+        "explanation": "While...; on the occasion of...; do one thing while doing another as one's main activity.",
+        "connectionRule": "Verb masu-stem (drop ます) / action noun + がてら",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Main activity versus incidental stop is preserved in the example and main-activity explanation."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdkr000uy1vbebessspf",
+      "level": "N1",
+      "grammarId": "cmsldfdko000ty1vbwbjpk57w",
+      "sourceHash": "48576d9b886b0ae894f33088a61fa8559f2ff2086d6cb5676fd833d097afb01a",
+      "japanese": "散歩がてら、コンビニへ行ってきます。",
+      "chinese": "我去散步，顺便去一趟便利店。",
+      "english": "I'm going for a walk, and I'll stop by the convenience store on the way.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdkw000xy1vb7uruajgq",
+      "level": "N1",
+      "title": "～かたがた",
+      "sourceHash": "d43434bfa34f858d9177057c9d861d924ad4da64577be22e8f4dd8801572f9cc",
+      "source": {
+        "explanation": "兼……；顺便……。常用于拜访、问候等正式场合。",
+        "connectionRule": "动作性名词＋かたがた"
+      },
+      "english": {
+        "explanation": "Serving as both...; while also.... Often used for formal occasions such as visits and greetings.",
+        "connectionRule": "Action noun + かたがた",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Dual-purpose formal visit/greeting retained; polite Japanese reference not rewritten."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdky000yy1vbdhqd61fq",
+      "level": "N1",
+      "grammarId": "cmsldfdkw000xy1vb7uruajgq",
+      "sourceHash": "798035fafb6da9af2416eeb08d8353d13e4f05f3106c7229773523a43538f4d3",
+      "japanese": "帰国のご報告かたがた、ご挨拶に伺いました。",
+      "chinese": "我来向您问候，也顺便报告回国的事情。",
+      "english": "I came to greet you and also to report my return to my home country.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdm1001fy1vbxkbierva",
+      "level": "N1",
+      "title": "～ないまでも",
+      "sourceHash": "167982c35ea83f02fc146e32e496a9a79cd53b492b5a9c75076d77d6ffa1301b",
+      "source": {
+        "explanation": "即使达不到……的程度，至少也……。",
+        "connectionRule": "动词ない形（去掉ない）＋ないまでも"
+      },
+      "english": {
+        "explanation": "Even if not to the extent of..., at least...",
+        "connectionRule": "Verb ない-form (drop ない) + ないまでも",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Not full extent but minimum fallback preserved; no negation inversion."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdm4001gy1vbrvb7jnrp",
+      "level": "N1",
+      "grammarId": "cmsldfdm1001fy1vbxkbierva",
+      "sourceHash": "66e052cd98e8b5ddd90de3fc5edfea39aa2e7934317b7cf3323baa31e227e177",
+      "japanese": "毎日とは言わないまでも、週に一度は運動したい。",
+      "chinese": "即使不能每天运动，至少也想每周运动一次。",
+      "english": "Even if not every day, I want to exercise at least once a week.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdnj001zy1vbc9qxkdi2",
+      "level": "N1",
+      "title": "～をものともせず（に）",
+      "sourceHash": "7277007b0d2134eabc5f24bbc67948d5a913570f49d1de1e620514897c717c14",
+      "source": {
+        "explanation": "不把……当回事；不顾……而勇敢行动。通常含有赞赏的语气。",
+        "connectionRule": "名词＋をものともせず（に）"
+      },
+      "english": {
+        "explanation": "Not letting... bother one; acting bravely without regard for... Usually carries a tone of praise.",
+        "connectionRule": "Noun + をものともせず（に）",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Action despite opposition and approving register are explicitly retained."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdnl0020y1vb2oqws5ve",
+      "level": "N1",
+      "grammarId": "cmsldfdnj001zy1vbc9qxkdi2",
+      "sourceHash": "d8f1630ce19ff01ce72581ac7cebede47ba0ffd4962f8a6a1456cb1f8a34b03d",
+      "japanese": "彼は周囲の反対をものともせず、計画を実行した。",
+      "chinese": "他不顾周围人的反对，执行了计划。",
+      "english": "He carried out the plan, disregarding the opposition of those around him.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdp5002fy1vbswuwqd7l",
+      "level": "N2",
+      "title": "～上で（目的）",
+      "sourceHash": "a74917231f6458b9b2d18852cd8b36198a67287bded155e59ec7afac04c73cfd",
+      "source": {
+        "explanation": "在做……时；在……方面。后项表示需要注意的重要事项。",
+        "connectionRule": "动词辞书形＋上で；名词＋の＋上で"
+      },
+      "english": {
+        "explanation": "When doing...; in terms of.... The second clause states an important point requiring attention.",
+        "connectionRule": "Verb dictionary form + 上で; Noun + の + 上で",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Dictionary-form purpose/context reading correctly distinguished from ta-form sequence reading."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdp9002gy1vbba3t6aw9",
+      "level": "N2",
+      "grammarId": "cmsldfdp5002fy1vbswuwqd7l",
+      "sourceHash": "963d7977b9ba60ab19d14c7fd65f7708ac82b26c583ae163dc0651fd5b14f704",
+      "japanese": "外国で生活する上で、言葉はとても重要だ。",
+      "chinese": "在国外生活时，语言非常重要。",
+      "english": "When living abroad, language is very important.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdpv002ny1vbjchudiqu",
+      "level": "N2",
+      "title": "～に際して",
+      "sourceHash": "839815537e04e25455125e8d0f90593a2339dfd128ddc52876e49b99721d2e68",
+      "source": {
+        "explanation": "在……之际；当……的时候。用于特别或正式的场合。",
+        "connectionRule": "名词＋に際して；动词辞书形＋に際して"
+      },
+      "english": {
+        "explanation": "On the occasion of...; when.... Used for special or formal situations.",
+        "connectionRule": "Noun + に際して; Verb dictionary form + に際して",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Special/formal occasion and request retained."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdq0002oy1vbcz638y8e",
+      "level": "N2",
+      "grammarId": "cmsldfdpv002ny1vbjchudiqu",
+      "sourceHash": "8be83d85efd74b7359dc9eb4141438933cce1d90ae831d7c4840cb94f2be1e2c",
+      "japanese": "入学に際して、必要な書類を提出してください。",
+      "chinese": "入学时请提交必要的材料。",
+      "english": "When enrolling, please submit the necessary documents.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdqo002xy1vb6xnleinj",
+      "level": "N2",
+      "title": "～次第",
+      "sourceHash": "105a5a7dcd8b90b88086f6c1592c3e047078945d4bbb4b674c97e428f1e9a4c5",
+      "source": {
+        "explanation": "一……就立即……。后项常表示有意识的行动。",
+        "connectionRule": "动词ます形（去掉ます）＋次第；名词＋次第"
+      },
+      "english": {
+        "explanation": "As soon as...; immediately.... The second clause often expresses a deliberate action.",
+        "connectionRule": "verb masu-form (drop masu) + 次第; noun + 次第",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Masu-stem and prompt intentional next action retained; example uses でき次第."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdqs002yy1vbdvhhoy4a",
+      "level": "N2",
+      "grammarId": "cmsldfdqo002xy1vb6xnleinj",
+      "sourceHash": "0c2696f52879cf35bf51e53ad39b743b23595fe9e7902fd46deeeacf59fd52ba",
+      "japanese": "準備ができ次第、出発します。",
+      "chinese": "准备好以后马上出发。",
+      "english": "As soon as preparations are ready, we will depart.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdqv002zy1vb6dn2trlv",
+      "level": "N2",
+      "title": "～上で（先后）",
+      "sourceHash": "ff81cf930fbbee086a2e42b86811e85e002efc52926464c4ad8bc0af670ec0f8",
+      "source": {
+        "explanation": "在做了……之后，再……。",
+        "connectionRule": "动词た形＋上で；名词＋の＋上で"
+      },
+      "english": {
+        "explanation": "After doing..., then....",
+        "connectionRule": "verb ta-form + 上で; noun + の + 上で",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Ta-form prior completed action preserved and distinguished from purpose sense."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdr20030y1vbruxth26w",
+      "level": "N2",
+      "grammarId": "cmsldfdqv002zy1vb6dn2trlv",
+      "sourceHash": "da5cdfcaa27d6b29b6d718bcd42e9e6a47b777c0ffc72d9f5e6c8f6e6b683b5e",
+      "japanese": "家族と相談した上で、返事をします。",
+      "chinese": "和家人商量之后再答复。",
+      "english": "I will reply after discussing it with my family.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdsw003py1vbmv9q923e",
+      "level": "N2",
+      "title": "～限りでは",
+      "sourceHash": "6f71750ccbe90bc12e779b671a22156b0fa0de9d418f26b8344b80a2904584ad",
+      "source": {
+        "explanation": "据……所知；在……的范围内判断。",
+        "connectionRule": "动词辞书形／た形＋限りでは；名词＋の＋限りでは"
+      },
+      "english": {
+        "explanation": "As far as... know; judging within the range of....",
+        "connectionRule": "Verb dictionary form / ta-form + 限りでは; Noun + の + 限りでは",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Evidence-limited claim and negative result preserved; English is slightly literal but clear."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdsy003qy1vbozjygixw",
+      "level": "N2",
+      "grammarId": "cmsldfdsw003py1vbmv9q923e",
+      "sourceHash": "a91b4ab8ddb0ca9b28e4aad9eb693e6a3ff3b49d5e33c62e62bd5f2a3f26fcdb",
+      "japanese": "私が調べた限りでは、問題は見つからなかった。",
+      "chinese": "据我调查，没有发现问题。",
+      "english": "As far as I investigated, no problems were found.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfdu70047y1vb3tqhdqss",
+      "level": "N2",
+      "title": "～ようか～まいか",
+      "sourceHash": "5b8097bda7dbcf70e3ade459654f1ee28711644b3512da90ac0666f5d3da18b5",
+      "source": {
+        "explanation": "是要……还是不要……；在两种选择之间犹豫。",
+        "connectionRule": "动词意志形＋か＋动词辞书形＋まいか；Ⅰ类动词（五段动词）词尾「あ段」＋まい；Ⅱ类动词（一段动词）去掉「る」＋まい；する→すまい／するまい；くる→こまい／くるまい"
+      },
+      "english": {
+        "explanation": "Whether to... or not...; hesitating between two choices.",
+        "connectionRule": "Verb volitional form + か + verb dictionary form + まいか; Group I verbs (godan verbs) stem ending in the \"a\" row + まい; Group II verbs (ichidan verbs) drop る + まい; する→すまい／するまい; くる→こまい／くるまい",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "FAIL",
+      "reviewNote": "F-L01: source and English incorrectly teach godan a-row + まい. Correct godan nonpast/dictionary form."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfdua0048y1vbozwlu5oh",
+      "level": "N2",
+      "grammarId": "cmsldfdu70047y1vb3tqhdqss",
+      "sourceHash": "e52f9c1ed38e28a8faa9f54cf7918971fe634a4e05874b3e24b54f05ac40f957",
+      "japanese": "転職しようかするまいか、迷っている。",
+      "chinese": "我正在犹豫要不要换工作。",
+      "english": "I am wondering whether or not to change jobs.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe0n005ny1vbqhv9fzju",
+      "level": "N3",
+      "title": "～てからでないと・～てからでなければ",
+      "sourceHash": "cae001949ce8e2d0ff5320af4a386d80146c1ded96c286552e92ac6eef0e45d4",
+      "source": {
+        "explanation": "如果不先……就不能……。",
+        "connectionRule": "动词て形＋からでないと；动词て形＋からでなければ"
+      },
+      "english": {
+        "explanation": "If you don't first..., you can't...",
+        "connectionRule": "verb te-form + からでないと; verb te-form + からでなければ",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Negative prerequisite correctly retained; actual item must be seen before a decision."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe0s005oy1vb4lmu0r0i",
+      "level": "N3",
+      "grammarId": "cmsldfe0n005ny1vbqhv9fzju",
+      "sourceHash": "8afce6c6099187a8cd2ab5e1cf36ca3af0f2699834dbd330a93e779947521779",
+      "japanese": "実物を見てからでないと、買うかどうか決められない。",
+      "chinese": "如果不先看到实物，就无法决定是否购买。",
+      "english": "Unless you see the actual item first, you can't decide whether to buy it.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe3x007ly1vb0jpatf6r",
+      "level": "N3",
+      "title": "～にしても～にしても",
+      "sourceHash": "38cc39e28b52daf567e18456a4fcfcc96d0fd223d29a4ff9488c57b7276d5fe0",
+      "source": {
+        "explanation": "无论……还是……；列举两种情况，结论相同。",
+        "connectionRule": "动词た形＋にしても；イ形容词＋にしても；ナ形容词＋にしても；名词＋にしても"
+      },
+      "english": {
+        "explanation": "Whether... or...; listing two cases with the same conclusion.",
+        "connectionRule": "ta-form of verb + にしても; i-adjective + にしても; na-adjective + にしても; noun + にしても",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "FAIL",
+      "reviewNote": "F-L02: only ta-form listed, contradicting this entry own 行く/行かない example. Teach plain forms."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe3y007my1vbi2db1058",
+      "level": "N3",
+      "grammarId": "cmsldfe3x007ly1vb0jpatf6r",
+      "sourceHash": "6a1a1f907e05a2362d81e40d4164be472b099c6f70b8741400aa3fab50c74ca3",
+      "japanese": "行くにしても行かないにしても、早く決めてください。",
+      "chinese": "无论去还是不去，请尽快决定。",
+      "english": "Whether you go or not, please decide quickly.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe5g008ny1vb9x5ctek9",
+      "level": "N3",
+      "title": "～わけにはいかない",
+      "sourceHash": "3c740504c4309612864540ed6ae7a004d19f806477b6817e687004621c838d6f",
+      "source": {
+        "explanation": "不能……；由于社会常识、责任或心理原因无法做。",
+        "connectionRule": "动词辞书形＋わけにはいかない；动词ない形＋わけにはいかない"
+      },
+      "english": {
+        "explanation": "Cannot...; unable to do due to social norms, responsibility, or psychological reasons.",
+        "connectionRule": "Verb dictionary form + わけにはいかない; verb nai-form + わけにはいかない",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "FAIL",
+      "reviewNote": "F-L04: nai-form listed under a cannot-do-only gloss, without explaining that it reverses obligation."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe5h008oy1vb98jn0l7z",
+      "level": "N3",
+      "grammarId": "cmsldfe5g008ny1vb9x5ctek9",
+      "sourceHash": "4cd05e153742e3e653f826cea57f86b71de93d049b154efe67b8aeb2b47c3a62",
+      "japanese": "明日は試験なので、遊んでいるわけにはいかない。",
+      "chinese": "明天有考试，所以不能一直玩。",
+      "english": "I have an exam tomorrow, so I can't just keep playing.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe5i008py1vbbm1gv6pq",
+      "level": "N3",
+      "title": "～ないわけにはいかない",
+      "sourceHash": "ee0882e6224ec7163ee28dbbcd1dc45e12b361460e2ff069dff2b3cc8dd3bf02",
+      "source": {
+        "explanation": "不能不……；由于责任或情况必须做。",
+        "connectionRule": "动词ない形＋わけにはいかない"
+      },
+      "english": {
+        "explanation": "Cannot not...; must do due to responsibility or circumstances.",
+        "connectionRule": "Verb nai-form + わけにはいかない",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Double-negative obligation explanation correctly means must do; paired example is separately failed."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe5j008qy1vbndypnc0i",
+      "level": "N3",
+      "grammarId": "cmsldfe5i008py1vbbm1gv6pq",
+      "sourceHash": "09086d98fefe61030122c53b59c7ba0b5868d9781c30803ff9403834f72e7fe9",
+      "japanese": "上司に頼まれたので、断らないわけにはいかない。",
+      "chinese": "上司拜托了，所以不能拒绝。",
+      "english": "My boss asked me, so I can't refuse.",
+      "status": "FAIL",
+      "reviewNote": "F-L03: 断らないわけにはいかない means must refuse, but both translations say cannot refuse. Polarity is reversed; source context also incoherent."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe5w008zy1vbo7wa6hhd",
+      "level": "N3",
+      "title": "～わけだ",
+      "sourceHash": "dbe4967f419bf3a2fe37fea79e919dd0a9f3559712be762cddd95eb902c8abd5",
+      "source": {
+        "explanation": "难怪……；也就是说……；理所当然会得出这一结论。",
+        "connectionRule": "动词普通形＋わけだ；イ形容词普通形＋わけだ；ナ形容词词干＋な＋わけだ；名词＋の＋わけだ"
+      },
+      "english": {
+        "explanation": "No wonder...; that is to say...; it naturally follows that....",
+        "connectionRule": "Verb plain form + わけだ; i-adjective plain form + わけだ; na-adjective stem + な + わけだ; Noun + の + わけだ",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Inference/no-wonder reading and na-adjective な connection retained."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe5y0090y1vbfxvmmicp",
+      "level": "N3",
+      "grammarId": "cmsldfe5w008zy1vbo7wa6hhd",
+      "sourceHash": "1e6d64c3e3eef7c589fcfb1725e924cb426b6718c34d56efa860492f9159111f",
+      "japanese": "彼は日本に十年住んでいる。日本語が上手なわけだ。",
+      "chinese": "他在日本住了十年，难怪日语说得好。",
+      "english": "He has lived in Japan for ten years. No wonder his Japanese is good.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe6d0099y1vbift5xgwp",
+      "level": "N3",
+      "title": "～わけ（が）ない",
+      "sourceHash": "f79af7bbeff40d92454322b120345a40ed117ea379435448a4d2d8e25997a22c",
+      "source": {
+        "explanation": "绝不可能……。表示说话人强烈否定。",
+        "connectionRule": "动词普通形＋わけがない；イ形容词普通形＋わけがない；ナ形容词词干＋な＋わけがない；名词＋の＋わけがない"
+      },
+      "english": {
+        "explanation": "Absolutely impossible that.... Expresses the speaker's strong denial.",
+        "connectionRule": "Verb plain form + わけがない; i-adjective plain form + わけがない; na-adjective stem + な + わけがない; Noun + の + わけがない",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Strong impossibility preserved; cannot finish in one day is not merely uncertainty."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe6f009ay1vbbuhmrobo",
+      "level": "N3",
+      "grammarId": "cmsldfe6d0099y1vbift5xgwp",
+      "sourceHash": "a231bbe1c30617040c117631d0c0eb9a848f27f9a0e7ca5c858f7e7378df93c9",
+      "japanese": "一日でこの仕事が終わるわけがない。",
+      "chinese": "这项工作不可能一天完成。",
+      "english": "There's no way this work will be finished in one day.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe6i009dy1vbdlkarcvl",
+      "level": "N3",
+      "title": "～とは限らない",
+      "sourceHash": "ad89bcc8ce582e515255c03e1e7561c5b43c7229a90da09ffaec9d4727ca6cf2",
+      "source": {
+        "explanation": "不一定……；不能断定全部情况都如此。",
+        "connectionRule": "动词普通形＋とは限らない；イ形容词普通形＋とは限らない；ナ形容词词干＋だとは限らない；名词＋だとは限らない"
+      },
+      "english": {
+        "explanation": "Not necessarily...; you cannot conclude that all cases are so.",
+        "connectionRule": "verb plain form + とは限らない; i-adjective plain form + とは限らない; na-adjective stem + だとは限らない; noun + だとは限らない",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Not necessarily/all-cases qualification preserved; not translated as absolute negation."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe6k009ey1vb5ukqdupc",
+      "level": "N3",
+      "grammarId": "cmsldfe6i009dy1vbdlkarcvl",
+      "sourceHash": "997f0af9279583de07216a8aa934fb3b20f8b1ae0ae8858aca5e4866cc84f3a8",
+      "japanese": "高いものが必ずしも良いとは限らない。",
+      "chinese": "贵的东西不一定就好。",
+      "english": "Expensive things are not necessarily good.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe6l009fy1vbvr7jfpxk",
+      "level": "N3",
+      "title": "～わけではない",
+      "sourceHash": "bbf730fe9730d11973e365a1701b67a740fc1cdb31935cad19387492bb364c27",
+      "source": {
+        "explanation": "并不是……；并非所有情况都如此。",
+        "connectionRule": "动词普通形＋わけではない；イ形容词普通形＋わけではない；ナ形容词词干＋な＋わけではない；名词＋の＋わけではない"
+      },
+      "english": {
+        "explanation": "It is not that...; it is not the case that all situations are so.",
+        "connectionRule": "verb plain form + わけではない; i-adjective plain form + わけではない; na-adjective stem + な + わけではない; noun + の + わけではない",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Partial negation preserved; dislike is not asserted."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe6n009gy1vbfkyxw1k6",
+      "level": "N3",
+      "grammarId": "cmsldfe6l009fy1vbvr7jfpxk",
+      "sourceHash": "ae1c1193299e6ad01f17d39bac6c80d2984507853820cfe1dca979c2ce0b650c",
+      "japanese": "甘いものが嫌いなわけではない。",
+      "chinese": "我并不是讨厌甜食。",
+      "english": "It's not that I dislike sweet things.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe7h00a3y1vbfh79jaop",
+      "level": "N4",
+      "title": "NはNではありません",
+      "sourceHash": "ae62bc91e4ac3ee5c6b589980937bfbf82cd332c7a57a28e35cd2321e16a6388",
+      "source": {
+        "explanation": "A不是B。「ではありません」是「です」的礼貌否定形式。",
+        "connectionRule": "名词＋は＋名词＋ではありません"
+      },
+      "english": {
+        "explanation": "A is not B. \"ではありません\" is the polite negative form of \"です\".",
+        "connectionRule": "Noun + は + Noun + ではありません",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Polite copular negation and non-student proposition retained."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe7j00a4y1vbyia7iibt",
+      "level": "N4",
+      "grammarId": "cmsldfe7h00a3y1vbfh79jaop",
+      "sourceHash": "735d5f6841053c1bb3a39a0f21e19229bb638c637eb21b9dfb62999d1d0b4df2",
+      "japanese": "田中さんは学生ではありません。",
+      "chinese": "田中先生不是学生。",
+      "english": "Tanaka-san is not a student.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe8j00ary1vbjf9q6oj6",
+      "level": "N4",
+      "title": "N［場所］にN［无生命］があります",
+      "sourceHash": "f4efae14413b3926be31b4620120f46ede4be1d728cb2e1ef3aba3815838f00a",
+      "source": {
+        "explanation": "某地有某个无生命物体或植物。「に」表示存在地点。",
+        "connectionRule": "名词［场所］＋に＋名词［无生命］＋があります"
+      },
+      "english": {
+        "explanation": "There is an inanimate object or plant in a certain place. 「に」 marks the place of existence.",
+        "connectionRule": "Noun [place] + に + Noun [inanimate] + があります",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Inanimate object existence and location に retained; book/desk reference matches."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe8k00asy1vbutpxrf6e",
+      "level": "N4",
+      "grammarId": "cmsldfe8j00ary1vbjf9q6oj6",
+      "sourceHash": "1e1b680d40b15015508712497c11a2435d4a7854eff3bbb3a703f1e416b01061",
+      "japanese": "机の上に本があります。",
+      "chinese": "桌子上有一本书。",
+      "english": "There is a book on the desk.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe8l00aty1vbwh7975wk",
+      "level": "N4",
+      "title": "N［場所］にN［有生命］がいます",
+      "sourceHash": "3e5a2c03d69e27bcc84c9486590f54c7d16f62797103f89c00d923dcaa049988",
+      "source": {
+        "explanation": "某地有某个人或动物。",
+        "connectionRule": "名词［场所］＋に＋名词［有生命］＋がいます"
+      },
+      "english": {
+        "explanation": "There is a certain person or animal in a certain place.",
+        "connectionRule": "Noun [place] + に + Noun [animate] + がいます",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Person/animal existence and location retained; plural children acceptable from Japanese number-neutral source."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe8m00auy1vbvbteto8e",
+      "level": "N4",
+      "grammarId": "cmsldfe8l00aty1vbwh7975wk",
+      "sourceHash": "e1e1590fd62cc95864322e25788bebccf186fe894f71b3eb621b6c9cfd4967bb",
+      "japanese": "公園に子どもがいます。",
+      "chinese": "公园里有孩子。",
+      "english": "There are children in the park.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "GRAMMAR",
+      "entityId": "cmsldfe8w00b3y1vbwr93fb13",
+      "level": "N4",
+      "title": "疑問詞＋も＋動詞（否定）",
+      "sourceHash": "65d4aee1b119b38c340bac5e75ffc885b36bc63607ea7ac89e7868c239860d1d",
+      "source": {
+        "explanation": "表示全面否定，如「何も」什么都不、「誰も」谁都不。",
+        "connectionRule": "疑问词＋も＋动词（否定形）"
+      },
+      "english": {
+        "explanation": "Expresses complete negation, e.g. 「何も」 nothing at all, 「誰も」 no one at all.",
+        "connectionRule": "Question word + も + Verb (negative form)",
+        "usageScene": null,
+        "commonErrors": null
+      },
+      "status": "PASS",
+      "reviewNote": "Interrogative + も with negative predicate retains exhaustive no-one scope."
+    },
+    {
+      "entityType": "EXAMPLE",
+      "entityId": "cmsldfe8y00b4y1vbdy2adjgo",
+      "level": "N4",
+      "grammarId": "cmsldfe8w00b3y1vbwr93fb13",
+      "sourceHash": "9e72e656eb527b0c7e7bd4251ff70a8b4b15f7932a0d8ff4917a3d6966764e14",
+      "japanese": "部屋には誰もいません。",
+      "chinese": "房间里一个人也没有。",
+      "english": "There is no one in the room.",
+      "status": "PASS",
+      "reviewNote": "Independently compared Japanese proposition, negation, temporal relationship and referents with Chinese and English; no material discrepancy found."
+    },
+    {
+      "entityType": "RELATION",
+      "entityId": "cmsldfeb100cfy1vbnazussyk",
+      "sourceHash": "5426a3e18a8b647edcdc2da0fa007326f52d031260d127c38a7e5731386ec2c9",
+      "source": {
+        "title": "～が早いか／～や否や／～なり",
+        "notes": "共同点：都表示“一……就……”，强调前后动作相隔时间很短。"
+      },
+      "english": {
+        "title": "～が早いか／～や否や／～なり",
+        "notes": "Common point: all mean \"as soon as...\", emphasizing that very little time passes between the two actions."
+      },
+      "status": "PASS",
+      "reviewNote": "Near-immediate sequence retained for three forms."
+    },
+    {
+      "entityType": "RELATION",
+      "entityId": "cmsldfeb600cgy1vbelp8d41u",
+      "sourceHash": "2c4febea1e7dc8f9dcf1d9022ff7b30e94403a46acd022c78b588cfac3f3341f",
+      "source": {
+        "title": "～そばから",
+        "notes": "重点：刚做完又出现相同情况，常表示反复发生，并带有无奈感。"
+      },
+      "english": {
+        "title": "～そばから",
+        "notes": "Key point: just after doing something, the same situation occurs again; often expresses repetition and carries a sense of helplessness."
+      },
+      "status": "PASS",
+      "reviewNote": "Repetition plus helplessness preserved, not merely a one-time temporal event."
+    },
+    {
+      "entityType": "RELATION",
+      "entityId": "cmsldfebb00chy1vbj2a7u66m",
+      "sourceHash": "c05534abc480289750179ae440415944e9b8c691382045309d0ae3880e87b890",
+      "source": {
+        "title": "～がてら／～かたわら／～かたがた",
+        "notes": "～がてら：做A的时候顺便做B。\n～かたわら：长期同时从事两项活动。\n～かたがた：正式场合中的“兼、顺便”，常用于拜访和问候。"
+      },
+      "english": {
+        "title": "～がてら／～かたわら／～かたがた",
+        "notes": "～がてら: do B while doing A.\n～かたわら: engage in two activities at the same time over the long term.\n～かたがた: \"also serving as, while also\" in formal situations, often used for visits and greetings."
+      },
+      "status": "ADVISORY",
+      "reviewNote": "ADVISORY: do B while doing A omits explicit incidental/opportunity nuance for がてら, blurring comparison with long-term かたわら; add take the opportunity to."
+    },
+    {
+      "entityType": "RELATION",
+      "entityId": "cmsldfebf00ciy1vbanznwb6a",
+      "sourceHash": "f86533fb09eb2725d6cb3c08714d65c80cbc3b7fd0fee91d52f772300543c115",
+      "source": {
+        "title": "～をものともせず／～をよそに",
+        "notes": "～をものともせず：不顾困难采取行动，一般带有赞赏语气。\n～をよそに：无视他人的担心或反对，一般带有批评语气。"
+      },
+      "english": {
+        "title": "～をものともせず／～をよそに",
+        "notes": "～をものともせず: act without regard for difficulties, generally with a tone of praise.\n～をよそに: ignore others' worries or opposition, generally with a tone of criticism."
+      },
+      "status": "PASS",
+      "reviewNote": "Praise versus criticism distinction preserved for ものともせず / よそに."
+    },
+    {
+      "entityType": "RELATION",
+      "entityId": "cmsldfebj00cjy1vboijj4gv0",
+      "sourceHash": "43e0a1927e3ac8509fe777446bbca68ec622c7fda69882aadfd8850ab0d69aee",
+      "source": {
+        "title": "～に即して／～を踏まえて",
+        "notes": "～に即して：按照规则、事实或现实情况来处理。\n～を踏まえて：把已有的经验、结果或意见作为判断基础。"
+      },
+      "english": {
+        "title": "～に即して／～を踏まえて",
+        "notes": "～に即して: handle according to rules, facts, or the actual situation.\n～を踏まえて: use existing experience, results, or opinions as the basis for judgment."
+      },
+      "status": "PASS",
+      "reviewNote": "Acting in accordance with a standard versus evidence as a judgment basis preserved."
+    },
+    {
+      "entityType": "RELATION",
+      "entityId": "cmsldfebm00cky1vbg3sricui",
+      "sourceHash": "4d91a2c9bd916ab49e6054702a29c77ab6445bf38c0639465052716d423a9adf",
+      "source": {
+        "title": "三种「いかん」",
+        "notes": "～いかんで：结果取决于……\n～いかんでは：根据情况，可能会……\n～いかんにかかわらず：无论……如何，都……"
+      },
+      "english": {
+        "title": "Three kinds of 「いかん」",
+        "notes": "～いかんで: the result depends on...\n～いかんでは: depending on the situation, it may...\n～いかんにかかわらず: regardless of how..., ..."
+      },
+      "status": "PASS",
+      "reviewNote": "Depends on / may depending on / regardless of contrast preserved."
+    },
+    {
+      "entityType": "SCENARIO",
+      "entityId": "formal-address-objection",
+      "sourceHash": "12ca736509ec9ff7efff4aaa6e5e02d62c6ff7296b5ce1dc34048b4f714be3a0",
+      "source": {
+        "id": "formal-address-objection",
+        "domain": "FORMAL",
+        "objective": "ADDRESS_OBJECTION",
+        "register": "FORMAL_WRITTEN",
+        "promptZh": "用正式书面表达回应一种反对意见，承认其合理之处并提出你的判断。",
+        "levels": "{N1}",
+        "active": true,
+        "version": "scenario-v1"
+      },
+      "english": {
+        "domain": "FORMAL",
+        "objective": "ADDRESS_OBJECTION",
+        "register": "FORMAL_WRITTEN",
+        "prompt": "Respond to an objection in formal written expression, acknowledge its valid points, and state your judgment."
+      },
+      "status": "PASS",
+      "reviewNote": "Objective, polarity/qualification, interlocutor and requested register preserved; no instruction to answer in a non-Japanese language introduced."
+    },
+    {
+      "entityType": "SCENARIO",
+      "entityId": "grammar-context-v2:cmsldfdk3000fy1vblb0ngxyt:ESTIMATE_BUDGET_LIMIT",
+      "sourceHash": "21a7740a6eb2eb5515ab8d30d6b46ec4ed6b7afa9c7d6557b97b9deceb5d51e6",
+      "source": {
+        "id": "grammar-context-v2:cmsldfdk3000fy1vblb0ngxyt:ESTIMATE_BUDGET_LIMIT",
+        "domain": "WORK",
+        "objective": "ESTIMATE_BUDGET_LIMIT",
+        "register": "POLITE",
+        "promptZh": "朋友询问活动预算，请说明你最多能承担的大致金额。",
+        "levels": "{N1}",
+        "active": true,
+        "version": "scenario-v1"
+      },
+      "english": {
+        "domain": "WORK",
+        "objective": "ESTIMATE_BUDGET_LIMIT",
+        "register": "POLITE",
+        "prompt": "A friend asks about the event budget; explain roughly the maximum amount you can cover."
+      },
+      "status": "PASS",
+      "reviewNote": "Objective, polarity/qualification, interlocutor and requested register preserved; no instruction to answer in a non-Japanese language introduced."
+    },
+    {
+      "entityType": "SCENARIO",
+      "entityId": "grammar-context-v2:cmsldfdki000py1vbaar7esb7:COMPLAIN_REPEATED_FORGETTING",
+      "sourceHash": "d02b3ecce07aa6aef0feb69e017a23b6a969d61cb96d96492ef0dcbb44931b3c",
+      "source": {
+        "id": "grammar-context-v2:cmsldfdki000py1vbaar7esb7:COMPLAIN_REPEATED_FORGETTING",
+        "domain": "LIFE",
+        "objective": "COMPLAIN_REPEATED_FORGETTING",
+        "register": "CASUAL",
+        "promptZh": "告诉朋友你学习时刚记住内容就又忘记的烦恼，突出反复发生。",
+        "levels": "{N1}",
+        "active": true,
+        "version": "scenario-v1"
+      },
+      "english": {
+        "domain": "LIFE",
+        "objective": "COMPLAIN_REPEATED_FORGETTING",
+        "register": "CASUAL",
+        "prompt": "Tell a friend about the frustration of forgetting what you just memorized while studying, highlighting that it happens repeatedly."
+      },
+      "status": "PASS",
+      "reviewNote": "Objective, polarity/qualification, interlocutor and requested register preserved; no instruction to answer in a non-Japanese language introduced."
+    },
+    {
+      "entityType": "SCENARIO",
+      "entityId": "grammar-context-v2:cmsldfdld0015y1vbnb1cq3nr:DESCRIBE_PARTICIPATION_RANGE",
+      "sourceHash": "1ffc56f9a6818deb13a2595f00bbfd8c17c3c35d88b9556259ef43d9093219dd",
+      "source": {
+        "id": "grammar-context-v2:cmsldfdld0015y1vbnb1cq3nr:DESCRIBE_PARTICIPATION_RANGE",
+        "domain": "LIFE",
+        "objective": "DESCRIBE_PARTICIPATION_RANGE",
+        "register": "POLITE",
+        "promptZh": "介绍一项活动吸引了哪些不同年龄或背景的人参加，突出覆盖范围。",
+        "levels": "{N1}",
+        "active": true,
+        "version": "scenario-v1"
+      },
+      "english": {
+        "domain": "LIFE",
+        "objective": "DESCRIBE_PARTICIPATION_RANGE",
+        "register": "POLITE",
+        "prompt": "Introduce what kinds of people of different ages or backgrounds an event attracted, highlighting its reach."
+      },
+      "status": "PASS",
+      "reviewNote": "Objective, polarity/qualification, interlocutor and requested register preserved; no instruction to answer in a non-Japanese language introduced."
+    },
+    {
+      "entityType": "SCENARIO",
+      "entityId": "grammar-context-v2:cmsldfdm5001hy1vbxieb2kdr:COMPARE_OUTCOMES",
+      "sourceHash": "e1691bb9904e0eb1b898bb66389ddcf3c2d418a76e0c7e7cc3cc0fe9cdf44a50",
+      "source": {
+        "id": "grammar-context-v2:cmsldfdm5001hy1vbxieb2kdr:COMPARE_OUTCOMES",
+        "domain": "LIFE",
+        "objective": "COMPARE_OUTCOMES",
+        "register": "POLITE",
+        "promptZh": "对比两个项目的结果，突出其中的明显差异。",
+        "levels": "{N1}",
+        "active": true,
+        "version": "scenario-v1"
+      },
+      "english": {
+        "domain": "LIFE",
+        "objective": "COMPARE_OUTCOMES",
+        "register": "POLITE",
+        "prompt": "Compare the results of two projects and highlight the clear difference between them."
+      },
+      "status": "PASS",
+      "reviewNote": "Objective, polarity/qualification, interlocutor and requested register preserved; no instruction to answer in a non-Japanese language introduced."
+    },
+    {
+      "entityType": "SCENARIO",
+      "entityId": "grammar-context-v2:cmsldfdmx001ry1vbnk21wgnk:EXPLAIN_EVIDENCE_BASED_PLAN",
+      "sourceHash": "44d50410fd2480b71021bdd88a4e7223ede3a5f9cf0c8ca5c4ca4d17c619950b",
+      "source": {
+        "id": "grammar-context-v2:cmsldfdmx001ry1vbnk21wgnk:EXPLAIN_EVIDENCE_BASED_PLAN",
+        "domain": "WORK",
+        "objective": "EXPLAIN_EVIDENCE_BASED_PLAN",
+        "register": "FORMAL_WRITTEN",
+        "promptZh": "向同事说明如何依据调查结果或实际情况调整计划。",
+        "levels": "{N1}",
+        "active": true,
+        "version": "scenario-v1"
+      },
+      "english": {
+        "domain": "WORK",
+        "objective": "EXPLAIN_EVIDENCE_BASED_PLAN",
+        "register": "FORMAL_WRITTEN",
+        "prompt": "Explain to a colleague how to adjust a plan based on survey results or the actual situation."
+      },
+      "status": "PASS",
+      "reviewNote": "Objective, polarity/qualification, interlocutor and requested register preserved; no instruction to answer in a non-Japanese language introduced."
+    },
+    {
+      "entityType": "SCENARIO",
+      "entityId": "grammar-context-v2:cmsldfdns0023y1vb2tdc2mer:QUESTION_ADULT_BEHAVIOR",
+      "sourceHash": "d5b3d259d7c078154de805a4576992f1d6c252114ffd0d31fc67fe36afddab92",
+      "source": {
+        "id": "grammar-context-v2:cmsldfdns0023y1vb2tdc2mer:QUESTION_ADULT_BEHAVIOR",
+        "domain": "WORK",
+        "objective": "QUESTION_ADULT_BEHAVIOR",
+        "register": "POLITE",
+        "promptZh": "说明某种行为如果是孩子尚可理解，但成年人不应如此。",
+        "levels": "{N1}",
+        "active": true,
+        "version": "scenario-v1"
+      },
+      "english": {
+        "domain": "Work",
+        "objective": "Question adult behavior",
+        "register": "Polite",
+        "prompt": "Explain that a certain behavior might be understandable if it were a child, but an adult should not act that way."
+      },
+      "status": "PASS",
+      "reviewNote": "Objective, polarity/qualification, interlocutor and requested register preserved; no instruction to answer in a non-Japanese language introduced."
+    },
+    {
+      "entityType": "SCENARIO",
+      "entityId": "life-share-change",
+      "sourceHash": "6050237eb0888888add00d026a24887ad76775f7a45406fb1a85ac1d203952fa",
+      "source": {
+        "id": "life-share-change",
+        "domain": "LIFE",
+        "objective": "DESCRIBE_CHANGE",
+        "register": "CASUAL",
+        "promptZh": "向朋友描述最近生活中的一个变化及你的感受。",
+        "levels": "{N1,N2,N3,N4}",
+        "active": true,
+        "version": "scenario-v1"
+      },
+      "english": {
+        "domain": "LIFE",
+        "objective": "DESCRIBE_CHANGE",
+        "register": "CASUAL",
+        "prompt": "Describe a recent change in your life and how you feel about it to a friend."
+      },
+      "status": "PASS",
+      "reviewNote": "Objective, polarity/qualification, interlocutor and requested register preserved; no instruction to answer in a non-Japanese language introduced."
+    }
+  ]
+}
