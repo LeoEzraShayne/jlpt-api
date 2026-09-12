@@ -13,6 +13,7 @@ import {
 } from '../study-sessions/study-session-ledger';
 import { PrismaService } from '../database/prisma.service';
 import { publicAiReviewErrorMessage } from '../ai/public-error';
+import { TOTAL_REVIEW_ROUNDS } from '../ai/review-job-lease';
 import { recallPolicyForEvidence } from '../review/adaptive-review';
 import { CreateSentenceReviewDto } from './dto/create-review.dto';
 
@@ -151,7 +152,7 @@ export class SentenceReviewsService {
         code: 'REVIEW_NOT_FAILED',
         message: 'Only failed reviews can be retried',
       });
-    if (job.retryCount >= 4)
+    if (job.retryCount >= TOTAL_REVIEW_ROUNDS)
       throw new BadRequestException({
         code: 'RETRY_LIMIT_REACHED',
         message: 'Review retry limit reached',
@@ -160,6 +161,11 @@ export class SentenceReviewsService {
       await lockStudyUser(tx, userId);
       const fresh = await tx.aiReviewJob.findUniqueOrThrow({ where: { id } });
       if (fresh.status !== 'FAILED') billingError('REQUEST_IN_PROGRESS');
+      if (fresh.retryCount >= TOTAL_REVIEW_ROUNDS)
+        throw new BadRequestException({
+          code: 'RETRY_LIMIT_REACHED',
+          message: 'Review retry limit reached',
+        });
       const submission = await tx.taskSubmission.findFirst({
         where: { resultId: id, userId },
       });

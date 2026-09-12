@@ -28,7 +28,7 @@ function setup(
 ) {
   const job = {
     id: 'job1',
-    retryCount: 0,
+    retryCount: 1,
     attempt: {
       userId: 'u1',
       studySessionId: 's1',
@@ -51,7 +51,9 @@ function setup(
   const prisma = {
     $queryRaw: jest
       .fn()
-      .mockResolvedValue([{ id: 'job1', lockedAt: new Date() }]),
+      .mockResolvedValue([
+        { id: 'job1', lockedAt: new Date(), exhausted: false, round: 1 },
+      ]),
     $transaction: jest.fn(),
     aiReviewJob: {
       findUnique: jest.fn().mockResolvedValue(job),

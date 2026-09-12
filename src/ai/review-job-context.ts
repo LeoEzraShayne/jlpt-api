@@ -16,7 +16,10 @@ export const reviewJobInclude = {
 export type ReviewJob = Prisma.AiReviewJobGetPayload<{
   include: typeof reviewJobInclude;
 }>;
-export function jobInput(job: ReviewJob): ReviewProviderInput {
+export function jobInput(
+  job: ReviewJob,
+  admittedRound = job.retryCount,
+): ReviewProviderInput {
   return {
     explanationLocale:
       job.attempt.studySession.explanationLocale === 'en' ? 'en' : 'zh',
@@ -24,7 +27,7 @@ export function jobInput(job: ReviewJob): ReviewProviderInput {
       userId: job.attempt.userId,
       taskKind: 'GRAMMAR',
       taskKey: job.attempt.studySessionId,
-      attempt: job.retryCount * 2 + 1,
+      attempt: Math.max(0, admittedRound - 1) * 2 + 1,
     },
     grammarLevel: job.attempt.grammar.level,
     grammarTitle: job.attempt.grammar.title,

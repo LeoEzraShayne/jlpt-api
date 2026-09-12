@@ -1,4 +1,5 @@
 import { StripeWebhookService } from '../../src/billing/stripe-webhook.service';
+import type Stripe from 'stripe';
 import { randomUUID } from 'node:crypto';
 import { startHarness, type Harness } from './harness';
 import { QuotaService } from '../../src/billing/quota.service';
@@ -59,7 +60,7 @@ async function reserve(userId: string, id: string) {
     quota.authorizeTask(tx, userId, 'GRAMMAR', id),
   );
 }
-async function submit(userId: string, id: string, key = randomUUID()) {
+async function submit(userId: string, id: string, key: string = randomUUID()) {
   return h.prisma.$transaction((tx) =>
     quota.authorizeSubmission(tx, userId, 'GRAMMAR', id, key, key),
   );
@@ -368,8 +369,7 @@ test('concurrent out-of-order provider snapshots retry after revision change; pa
   });
   const gateway = {
     environment: 'test',
-    verify: (raw: Buffer) =>
-      JSON.parse(raw.toString()) as import('stripe').default.Event,
+    verify: (raw: Buffer) => JSON.parse(raw.toString()) as Stripe.Event,
     stripe: {
       paymentIntents: {
         retrieve: jest.fn(async () => {

@@ -10,6 +10,7 @@ import { readTrainingContext } from '../scenes/training-context';
 import { ProviderError } from './ai-provider';
 import { AiReviewService } from './ai-review.service';
 import { claimReview, leaseWhere, type ReviewLease } from './review-job-lease';
+import { failReview } from './review-job-failure';
 import { jobInput, reviewJobInclude } from './review-job-context';
 import { PROMPT_VERSION } from './prompt';
 import { AI_SCORE_POLICY_VERSION } from '../review/adaptive-review';
@@ -50,11 +51,17 @@ export class AiWorkerService {
     });
     if (!job) return;
     try {
+      if (lease.exhausted)
+        throw new ProviderError(
+          'AI automatic recovery budget exhausted',
+          'AI_RETRY_LIMIT_REACHED',
+          false,
+        );
       const trainingContext = readTrainingContext(
         job.attempt.studySession.trainingContext,
       );
       const reviewed = await this.reviews.review({
-        ...jobInput(job),
+        ...jobInput(job, lease.round),
         stage: 'CORE',
       });
       const result = reviewed.response.result;
@@ -148,53 +155,7 @@ export class AiWorkerService {
           ),
         );
     } catch (error) {
-      await this.fail(lease, job.retryCount, error);
+      await failReview(this.prisma, lease, lease.round, error, this.quota);
     }
-  }
-
-  private async fail(lease: ReviewLease, retryCount: number, error: unknown) {
-    const providerError =
-      error instanceof ProviderError
-        ? error
-        : new ProviderError(
-            'Unexpected AI worker error',
-            'AI_INTERNAL_ERROR',
-            true,
-          );
-    const retry = providerError.retryable && retryCount < 2;
-    const update = async (
-      tx: import('@prisma/client').Prisma.TransactionClient | PrismaService,
-    ) =>
-      tx.aiReviewJob.updateMany({
-        where: leaseWhere(lease),
-        data: {
-          status: retry ? AiJobStatus.QUEUED : AiJobStatus.FAILED,
-          retryCount: { increment: 1 },
-          errorCode: providerError.code,
-          errorMessage: providerError.message.slice(0, 500),
-          availableAt: retry
-            ? new Date(Date.now() + (retryCount + 1) * 30_000)
-            : new Date(),
-          lockedAt: null,
-        },
-      });
-    if (!this.quota) {
-      await update(this.prisma);
-      return;
-    }
-    await this.prisma.$transaction(async (tx) => {
-      const job = await tx.aiReviewJob.findUniqueOrThrow({
-        where: { id: lease.id },
-        include: { attempt: true },
-      });
-      await lockBillingUser(tx, job.attempt.userId);
-      const saved = await update(tx);
-      if (saved.count && !retry) {
-        const submission = await tx.taskSubmission.findFirst({
-          where: { resultId: lease.id, status: 'PENDING' },
-        });
-        if (submission) await this.quota!.failSubmission(tx, submission.id);
-      }
-    });
   }
 }

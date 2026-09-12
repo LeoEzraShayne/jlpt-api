@@ -93,7 +93,7 @@ describe('progressive review boundary', () => {
   it('times out while reading a response body, even after headers arrived', async () => {
     const original = global.fetch;
     jest.useFakeTimers();
-    global.fetch = jest.fn((_url, init) =>
+    global.fetch = jest.fn((_url: string | URL | Request, init?: RequestInit) =>
       Promise.resolve({
         ok: true,
         status: 200,
@@ -104,7 +104,7 @@ describe('progressive review boundary', () => {
             );
           }),
       }),
-    ) as typeof fetch;
+    ) as unknown as typeof fetch;
     try {
       const pending = expect(
         fetchWithTimeout('https://example.test', {}, 100),
