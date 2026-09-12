@@ -24,10 +24,11 @@ export class StripeWebhookService {
       environment: this.gateway.environment,
       eventId: event.id,
     };
-    const receipt = await this.prisma.billingEvent.upsert({
-      where: { provider_environment_eventId: key },
-      update: {},
-      create: {
+    // Empty-update Prisma upsert can fall back to read-then-insert. Concurrent
+    // first deliveries must instead deduplicate in PostgreSQL's INSERT itself.
+    await this.prisma.billingEvent.createMany({
+      skipDuplicates: true,
+      data: {
         ...key,
         eventType: event.type,
         providerCreatedAt: new Date(event.created * 1000),
@@ -35,6 +36,9 @@ export class StripeWebhookService {
           objectId: 'id' in event.data.object ? event.data.object.id : '',
         },
       },
+    });
+    const receipt = await this.prisma.billingEvent.findUniqueOrThrow({
+      where: { provider_environment_eventId: key },
     });
     if (receipt.status === 'PROCESSED') return { received: true };
     try {
