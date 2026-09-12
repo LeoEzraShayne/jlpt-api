@@ -128,6 +128,7 @@ export class BillingService {
             ...price,
             market: input.market,
             locale: input.locale,
+            paymentMethodPolicy: 'CARD_ONLY_V1',
             launchAt: catalog.launchAt,
             launchEndsAt: catalog.launchEndsAt,
             stripePriceId:
@@ -170,6 +171,11 @@ export class BillingService {
       const session = await stripe.checkout.sessions.create(
         {
           mode: 'payment',
+          // Legacy quotes omit this parameter exactly as their original request did.
+          ...((order.snapshot as { paymentMethodPolicy?: string })
+            .paymentMethodPolicy === 'CARD_ONLY_V1'
+            ? { payment_method_types: ['card' as const] }
+            : {}),
           client_reference_id: userId,
           metadata: {
             orderId: order.id,
