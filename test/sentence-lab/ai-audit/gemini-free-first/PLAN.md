@@ -1,0 +1,27 @@
+# F independent Gemini free-first acceptance
+
+Frozen before D's candidate implementation: 12 new operations, six per explanation locale, covering grammar connection error / natural control / no-obligation polarity, vocabulary synonym abstention / wrong-sense original evidence / concealed-target generation. The source manifest pins the fixtures. Do not edit fixtures after seeing responses. This batch is bounded quality evidence, not a universal accuracy certification.
+
+## Execution boundary
+
+Only the main agent executes the real provider run from the authorized server IP, using a fresh candidate checkout with generated Prisma client and migrations. F does not read credentials or use the authenticated console. `run.ts --run` reads explicitly supplied process variables only; it never loads `.env`. `acceptanceDatabase` creates and later drops only its own random `jlpt_f_acceptance_test_*` PostgreSQL database on localhost. Supply a localhost admin URL with create-database permission in `TEST_DATABASE_ADMIN_URL`; never supply the production learning database. All training fixtures are synthetic and only AIUsageRecord rows are written in that isolated database.
+
+The main agent privately injects GEMINI_API_KEY, DEEPSEEK_API_KEY and the approved candidate's GEMINI_MODEL, GEMINI_FREE_FIRST=true, DEEPSEEK_MODEL=deepseek-flash, DEEPSEEK_THINKING_EFFORT=low, DEEPSEEK_THINKING_SCOPE=grammar. Set F_CANDIDATE_COMMIT to the full implementation hash and F_OUTPUT_DIR to a new protected absolute directory. The runner refuses an existing output directory, records final text and numeric usage only, and omits thought content, credentials, request URLs and provider error bodies. Maximum 24 actual network calls, 12 Gemini calls and two calls per operation. It performs no worker retry loop.
+
+Candidate constructor wiring must be updated before running if the shared circuit requires explicit Prisma injection into AiReviewService. A run lacking that dependency is not valid route acceptance. Never simulate quota responses in this real-quality batch; separate deterministic transport tests cover quota/network behavior.
+
+## Independent decision criteria
+
+Inspect final outputs and every rejected raw candidate, linked to unique AIUsageRecord request IDs and attempt ordinals. Record provider-specific first-candidate quality separately from final mixed-route quality. A DeepSeek fallback success does not certify the corresponding Gemini output. If quota exhausts before a purpose/locale has genuine Gemini evidence, that part of Gemini quality remains unverified; do not label missing evidence a pass. Preserve all failed raw outputs and receipts. A sample cap or free quota must not be mistaken for a user learning cap.
+
+- Every grammar error is diagnosed against the original, including after repair; 書くやすい must be rejected and corrected to 書きやすい. Natural controls stay unchanged and correct. Lack of obligation must not turn into prohibition, inability or obligation.
+- Vocabulary synonym answers stay natural and do not manufacture target knowledge. The wrong-sense answer must not receive target/meaning success because the reference or corrected sentence contains the target. Reading evidence stays null. The water sentence should be corrected to drinking, preserving thirst and drinking in one go.
+- All Japanese sentences are natural; furigana exactly reproduce them with correct readings; translations and all learner-facing reasons use the selected language. Generated scenarios/hints conceal spelling/readings and request a Japanese answer; ordered chunks reconstruct the reference.
+- Every network request has one durable unique receipt including rejects, 429s and transport errors. Missing usage is explicitly unknown, not free. Account budgeting reprices all available tokens at the paid DeepSeek basis; do not subtract Gemini free allowance. Gemini thinking tokens need explicit output accounting and must not disappear or double-count.
+- Deterministic PostgreSQL tests separately verify shared circuit concurrency/cooldown, rate/day quota distinction, network fallback, total call bound, incomplete metering fail-closed, success-only task consumption, recovery, gift and unlimited membership. Mock transport tests are operational evidence only, never language-quality evidence.
+
+## Baseline launch gates
+
+At base `55365d5` all 49 existing independent real-Postgres tests passed with the previously captured public source snapshots. The initial no-snapshot invocation had six fixture-configuration failures; all six passed once explicit source paths were provided. Four added launch tests pass: no launch creates no gift/offer, future launch grants nothing early, eight simultaneous owner reads create one fixed 365-day gift, and later sales shutdown/config changes do not move that existing gift. No fake payment order or admin role is created.
+
+The current entitlement code makes an already-created gift immutable, but BillingConfig itself has no immutable-timestamp guard. Main must activate with a single guarded transaction that rejects conflicting non-null launchAt/enforcementAt values and preserves original times on repeat. The new negative test deliberately mutates config only inside a throwaway database; it is not authorization to reset production timestamps. No live checkout, live webhook completion, production launch or Gemini quality pass is claimed by these local results.

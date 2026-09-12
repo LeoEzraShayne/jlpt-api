@@ -1,0 +1,365 @@
+{
+  "version": "F-gemini-free-first-heldout-v1",
+  "rows": [
+    {
+      "caseId": "zh:connection-error",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "zh",
+        "grammarTitle": "～やすい",
+        "explanation": "做某事容易",
+        "connectionRule": "动词ます形去ます＋やすい",
+        "sentence": "このペンは軽くて、書くやすいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": false,
+        "isCorrect": false,
+        "scoreMin": 0,
+        "scoreMax": 59,
+        "unchangedOriginal": false,
+        "errorMustReferToOriginal": true,
+        "meaning": "This pen is light and easy to write with.",
+        "requiredCorrection": "このペンは軽くて、書きやすいです。",
+        "diagnosis": "Reject 書くやすい; the stem is 書き. Grade the original even after repair."
+      }
+    },
+    {
+      "caseId": "zh:natural-control",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "zh",
+        "grammarTitle": "～やすい",
+        "explanation": "做某事容易",
+        "connectionRule": "动词ます形去ます＋やすい",
+        "sentence": "このペンは軽くて、書きやすいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "meaning": "This pen is light and easy to write with.",
+        "requiredCorrection": "このペンは軽くて、書きやすいです。",
+        "diagnosis": "Reject 書くやすい; the stem is 書き. Grade the original even after repair."
+      }
+    },
+    {
+      "caseId": "zh:no-obligation",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "zh",
+        "grammarTitle": "～なくてもいい",
+        "explanation": "不做也可以，并非禁止做",
+        "connectionRule": "动词ない形去ない＋なくてもいい",
+        "sentence": "資料はメールで送ったので、印刷しなくてもいいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "meaning": "The documents were sent by email, so there is no need to print them. Must not imply prohibition, inability or obligation."
+      }
+    },
+    {
+      "caseId": "zh:natural-synonym",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "事先预订座位或服务",
+          "senseKey": "F-launch-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; advance booking of a seat or service"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语说明你提前订好了明天的餐厅。",
+          "meaningHintZh": "事先安排好座位或服务。",
+          "grammarId": null,
+          "referenceSentence": "明日のレストランを予約しました。",
+          "referenceFurigana": "明日[あした]のレストランを予約[よやく]しました。",
+          "referenceTranslationZh": "我预订了明天的餐厅。",
+          "chunks": [
+            "明日のレストランを",
+            "予約しました。"
+          ]
+        },
+        "sentence": "明日のレストランの席を取りました。"
+      },
+      "expected": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "meaning": "Preserve the natural reservation synonym without manufacturing target evidence."
+      }
+    },
+    {
+      "caseId": "zh:wrong-meaning",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "事先预订座位或服务",
+          "senseKey": "F-launch-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; advance booking of a seat or service"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "用日语说明你提前订好了明天的餐厅。",
+          "meaningHintZh": "事先安排好座位或服务。",
+          "grammarId": null,
+          "referenceSentence": "明日のレストランを予約しました。",
+          "referenceFurigana": "明日[あした]のレストランを予約[よやく]しました。",
+          "referenceTranslationZh": "我预订了明天的餐厅。",
+          "chunks": [
+            "明日のレストランを",
+            "予約しました。"
+          ]
+        },
+        "sentence": "のどが渇いたので、コップの水を一気に予約しました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "unchangedOriginal": false,
+        "meaning": "Reject booking as drinking the water in a glass in one go; correct to 飲みました while preserving thirst and original failed evidence."
+      }
+    },
+    {
+      "caseId": "zh:generate",
+      "kind": "generate",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "zh",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "事先预订座位或服务",
+          "senseKey": "F-launch-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; advance booking of a seat or service"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        }
+      },
+      "expected": {
+        "feedbackLocale": "zh",
+        "concealTargetAndReading": true,
+        "meaning": "Natural advance reservation scenario, target reference and matching reading/translation; ask for Japanese answer."
+      }
+    },
+    {
+      "caseId": "en:connection-error",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "en",
+        "grammarTitle": "～やすい",
+        "explanation": "做某事容易",
+        "connectionRule": "动词ます形去ます＋やすい",
+        "sentence": "このペンは軽くて、書くやすいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": false,
+        "isCorrect": false,
+        "scoreMin": 0,
+        "scoreMax": 59,
+        "unchangedOriginal": false,
+        "errorMustReferToOriginal": true,
+        "meaning": "This pen is light and easy to write with.",
+        "requiredCorrection": "このペンは軽くて、書きやすいです。",
+        "diagnosis": "Reject 書くやすい; the stem is 書き. Grade the original even after repair."
+      }
+    },
+    {
+      "caseId": "en:natural-control",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "en",
+        "grammarTitle": "～やすい",
+        "explanation": "做某事容易",
+        "connectionRule": "动词ます形去ます＋やすい",
+        "sentence": "このペンは軽くて、書きやすいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "meaning": "This pen is light and easy to write with.",
+        "requiredCorrection": "このペンは軽くて、書きやすいです。",
+        "diagnosis": "Reject 書くやすい; the stem is 書き. Grade the original even after repair."
+      }
+    },
+    {
+      "caseId": "en:no-obligation",
+      "kind": "grammar",
+      "input": {
+        "stage": "CORE",
+        "explanationLocale": "en",
+        "grammarTitle": "～なくてもいい",
+        "explanation": "不做也可以，并非禁止做",
+        "connectionRule": "动词ない形去ない＋なくてもいい",
+        "sentence": "資料はメールで送ったので、印刷しなくてもいいです。"
+      },
+      "expected": {
+        "usedTargetGrammar": true,
+        "targetGrammarCorrect": true,
+        "isCorrect": true,
+        "scoreMin": 90,
+        "scoreMax": 100,
+        "unchangedOriginal": true,
+        "errorMustReferToOriginal": false,
+        "meaning": "The documents were sent by email, so there is no need to print them. Must not imply prohibition, inability or obligation."
+      }
+    },
+    {
+      "caseId": "en:natural-synonym",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "事先预订座位或服务",
+          "senseKey": "F-launch-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; advance booking of a seat or service"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Explain in Japanese that you booked a restaurant for tomorrow.",
+          "meaningHintZh": "Arrange a seat or service in advance.",
+          "grammarId": null,
+          "referenceSentence": "明日のレストランを予約しました。",
+          "referenceFurigana": "明日[あした]のレストランを予約[よやく]しました。",
+          "referenceTranslationZh": "I booked a restaurant for tomorrow.",
+          "chunks": [
+            "明日のレストランを",
+            "予約しました。"
+          ]
+        },
+        "sentence": "明日のレストランの席を取りました。"
+      },
+      "expected": {
+        "usedTarget": false,
+        "targetCorrect": null,
+        "meaningCorrect": null,
+        "readingCorrect": null,
+        "unchangedOriginal": true,
+        "meaning": "Preserve the natural reservation synonym without manufacturing target evidence."
+      }
+    },
+    {
+      "caseId": "en:wrong-meaning",
+      "kind": "vocabulary",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "事先预订座位或服务",
+          "senseKey": "F-launch-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; advance booking of a seat or service"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        },
+        "challenge": {
+          "promptZh": "Explain in Japanese that you booked a restaurant for tomorrow.",
+          "meaningHintZh": "Arrange a seat or service in advance.",
+          "grammarId": null,
+          "referenceSentence": "明日のレストランを予約しました。",
+          "referenceFurigana": "明日[あした]のレストランを予約[よやく]しました。",
+          "referenceTranslationZh": "I booked a restaurant for tomorrow.",
+          "chunks": [
+            "明日のレストランを",
+            "予約しました。"
+          ]
+        },
+        "sentence": "のどが渇いたので、コップの水を一気に予約しました。"
+      },
+      "expected": {
+        "usedTarget": true,
+        "targetCorrect": false,
+        "meaningCorrect": false,
+        "readingCorrect": null,
+        "unchangedOriginal": false,
+        "meaning": "Reject booking as drinking the water in a glass in one go; correct to 飲みました while preserving thirst and original failed evidence."
+      }
+    },
+    {
+      "caseId": "en:generate",
+      "kind": "generate",
+      "input": {
+        "vocabulary": {
+          "explanationLocale": "en",
+          "word": "予約",
+          "reading": "よやく",
+          "chineseGloss": "事先预订座位或服务",
+          "senseKey": "F-launch-reservation",
+          "glosses": [
+            {
+              "language": "eng",
+              "text": "reservation; advance booking of a seat or service"
+            }
+          ],
+          "grammars": [],
+          "previousPrompts": []
+        }
+      },
+      "expected": {
+        "feedbackLocale": "en",
+        "concealTargetAndReading": true,
+        "meaning": "Natural advance reservation scenario, target reference and matching reading/translation; ask for Japanese answer."
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "fixtureSha256": "efac0faa37ac3309dc5fa0c1f5d169f49d0c38a784570f0140f4088bdc8872b9",
+  "operations": 12,
+  "maxNetworkRequests": 24,
+  "maxGeminiRequests": 12,
+  "status": "FROZEN_BEFORE_CANDIDATE_RUN"
+}
