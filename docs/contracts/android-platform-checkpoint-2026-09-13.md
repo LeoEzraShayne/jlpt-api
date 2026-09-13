@@ -384,3 +384,59 @@ observation window. They are not a claim of unrestricted provider-order
 visibility or proof that no future notification can arrive. The earlier
 unexplained test purchase remains recorded separately; slow/pending payment
 coverage is still incomplete.
+
+## Real slow-decline test and same-database repair
+
+The later slow-decline test started from two refunded orders/two revoked grants.
+Before checkout, the Pad's original native session had expired; the operator
+completed a new normal PKCE flow through the actual Web approval button. The
+backend verified the same synthetic user and source session. The new native
+session expires at the unchanged source limit **2026-09-13T06:19:19.569Z**.
+
+After selecting Google's explicitly labelled slow-declining, no-charge test
+card, main approved a single confirmation at **05:34:21.378Z**. Native entered
+waiting/free status; no separate Google pending screen was captured. During
+that stage the existing two refunded orders and two revoked grants were
+unchanged. Native does not submit a token to verification while Play still
+reports it as owned and pending, so this is not a claim that the backend read a
+pending productsv2 response. A subsequent real notification and fresh v2 query
+established CANCELLED for the same test day-pass token and synthetic owner.
+
+This exposed a real backend parser boundary. Google Orders returned HTTP 200
+with `state=CANCELED`, order/token identity, createTime, lineItems and
+orderHistory, but no total or lastEventTime; the v2 response had an order ID but
+no completion time. The old worker required successful-order financial fields
+before handling cancellation, causing retries and leaving native waiting.
+Commit `9553c3c` handles trusted PENDING/CANCELLED attempts before that financial
+lookup only when no successful local order or prior financial event exists.
+It still validates environment, actual product/option/quantity and owner, and
+uses a fenced transaction. CANCELLED also marks related billing events processed
+and never grants or consumes. Existing financial records still require Orders,
+including fallback to the stored verified order ID when v2 omits it; conflicting
+purchase states cannot downgrade an existing successful order. Tests cover
+Orders 404 and the observed missing-financial-field response, plus preservation
+of prior financial state. All 28 Google PostgreSQL acceptance tests, TypeScript
+and ESLint checks passed.
+
+The fix was loaded into the isolated API by an explicit controlled restart,
+retaining the same database, native sessions, purchase encryption key and expiry.
+The original test harness had not persisted its random Web SESSION_SECRET.
+With main's explicit approval, the test resume tool generated a mode-600 secret
+and rebuilt only the tokenHash of the two pre-existing synthetic AuthSessions
+from their original private cookies; IDs, users and expiry were unchanged, and
+no user, session or billing record was bootstrapped. Both existing cookies then
+returned HTTP 200 and the expected user through the external same-origin /me
+route. The pre-restart database was privately archived and inspected; the new
+entrypoint does not delete or migrate the database and does not extend expiry.
+The resume tool is test-only and is not a production deployment entrypoint.
+
+At **05:47:22.647Z**, the operator made one normal restore request for the same
+recorded token. By **05:47:51.326Z**, its queue was CANCELLED /
+NOT_APPLICABLE with no local order and no error, and its notification was
+PROCESSED. The existing two refunded orders and two revoked grants remained
+unchanged. The final fresh device screenshot at **05:50:56.478Z** showed
+CommerceActivity, the cancellation message, a free account, zero extra tasks,
+enabled restore/refresh buttons and no waiting text. No new checkout occurred.
+A private post-fix database archive and safe projections are retained. This
+completes the slow-decline/cancellation recovery check for this real test flow;
+it does not claim a successful delayed-approval purchase or a year-pass purchase.
