@@ -96,6 +96,26 @@ the self-owned unit. The harness cannot verify device registration itself.
 An empty config uses the shared Google demo ad unit for SDK display checks only;
 it cannot establish the callback configuration of an owned unit.
 
+For a test subscription receiving all app events, run
+`android-test-rtdn-relay.ts` with the same `--platform-config` and `--state-dir`
+arguments on port 4403. Route only `/api/v1/android/commerce/google/rtdn` from
+the test proxy to this relay; all other API traffic remains on 4401. The relay
+verifies Google OIDC plus the exact configured subscription and package before
+filtering legacy subscriptions/products. It fetches Google's v2 evidence for
+new one-time and voided hints; only real test context for the two JLPT products
+is forwarded unchanged to the real API. It never requires an owner or order to
+exist, so pending and unknown-owner test purchases retain the normal durable
+queue path. Provider lookup failures return 503 for Pub/Sub retry, never a
+successful filtered acknowledgement. Known live or irrelevant product events
+are acknowledged only on this separate test subscription without database writes.
+This adapter must never replace the production/legacy RTDN subscription.
+
+Relay PID and safe counters are in `rtdn-relay.json` and
+`rtdn-relay-stats.json`; SIGHUP reloads its platform config. Set a push acknowledgement
+deadline that accommodates cold Google identity and purchase queries. Stop the
+relay separately with SIGTERM when testing finishes; stopping it does not modify
+the API database.
+
 References: [Play license testing](https://developer.android.com/google/play/billing/test),
 [AdMob SSV](https://developers.google.com/admob/android/ssv),
 [AdMob callback testing](https://support.google.com/admob/answer/9603226?hl=en).
