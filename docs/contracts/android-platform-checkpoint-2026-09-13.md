@@ -15,7 +15,7 @@ In developer `8576711330364766433`, app `4972669113843626504` / `com.meritledger
 - `jlpt_day_pass`: USD 0.99 input to all-region automatic conversion.
 - `jlpt_year_pass`: USD 99 input to automatic conversion. Google rounded the US result to USD 99.99; this was manually corrected to USD 99.00 and the UI confirmed the change was saved. Japan's generated standard-year price was JPY 15,200.
 
-No product was activated. Existing lifetime products and subscriptions were untouched. A subsequent read-back confirmed the day pass remains draft, US USD 0.99 and Japan JPY 150.
+At the initial checkpoint no product was activated. After the user returned and reported saving the purchase option, a fresh Console read confirmed `jlpt_day_pass` / `buy` is now **active** (UI “有效”, with a deactivate button and saved confirmation), US USD 0.99 and Japan JPY 150. The year purchase option and `launch-64` offer still show **draft**. These later checks were read-only; existing lifetime products and subscriptions were untouched. Backend native commerce remains off, so active catalog configuration is not evidence of completed payment integration.
 
 The `launch-64` offer was subsequently **saved and verified as draft**. It uses an absolute USD 35 discount with Google regional conversion, producing US USD 64.00 and Japan JPY 9,824 (JPY 5,376 discount from JPY 15,200). A temporary USD 64 discount was corrected before saving; no incorrect offer was activated. The Console labels the bulk discount input “new price”, but the resulting grid confirms it is the discount amount.
 
