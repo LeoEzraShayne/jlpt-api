@@ -7,8 +7,14 @@ import { billingError } from '../billing/billing.policy';
 export function parseSsv(query: string) {
   if (query.length > 16000 || query.includes('#'))
     throw new Error('INVALID_SSV_QUERY');
-  const match = /^(.*)&signature=([A-Za-z0-9_=-]+)&key_id=(\d+)$/.exec(query);
+  const match = /^(.*)&signature=([^&]+)&key_id=([^&]+)$/.exec(query);
   if (!match) throw new Error('INVALID_SSV_QUERY');
+  // Tink percent-decodes the URI query before reading these suffix values too.
+  // Decode once only; the strict alphabet rejects remaining '%' and separators.
+  const signature = decodeURIComponent(match[2]);
+  const keyId = decodeURIComponent(match[3]);
+  if (!/^[A-Za-z0-9_-]+={0,2}$/.test(signature) || !/^\d+$/.test(keyId))
+    throw new Error('INVALID_SSV_QUERY');
   const fields: Record<string, string> = {};
   for (const part of match[1].split('&')) {
     const index = part.indexOf('=');
@@ -31,8 +37,8 @@ export function parseSsv(query: string) {
   return {
     fields,
     bytes: Buffer.from(decoded, 'utf8'),
-    signature: Buffer.from(match[2], 'base64url'),
-    keyId: match[3],
+    signature: Buffer.from(signature, 'base64url'),
+    keyId,
   };
 }
 @Injectable()
