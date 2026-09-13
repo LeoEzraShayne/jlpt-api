@@ -1,5 +1,7 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
+import type { Request } from 'express';
+import { AndroidCommerceController } from '../../src/android-commerce/android-commerce.controller';
 import { acceptanceDatabase, type AcceptanceDatabase } from './database';
 import type { PrismaService } from '../../src/database/prisma.service';
 import { EntitlementService } from '../../src/billing/entitlement.service';
@@ -198,6 +200,52 @@ test('pending and unknown owner stay durable without a grant; forged owner canno
     await h.prisma.entitlementGrant.count({ where: { userId: stranger.id } }),
   ).toBe(0);
 });
+test.each([false, true])(
+  'verify accepts pending tokens without granting or consuming, then reports cancellation (order present: %s)',
+  async (withOrder) => {
+    const f = await fixture();
+    f.purchase.purchaseStateContext.purchaseState = 'PENDING';
+    if (!withOrder) delete f.purchase.orderId;
+    f.order.state = 'PENDING';
+    const controller = new AndroidCommerceController(
+      h.prisma as PrismaService,
+      f.policy,
+      null as never,
+      f.service,
+      null as never,
+    );
+    jest
+      .spyOn(controller, 'entitlements')
+      .mockResolvedValue({ data: {} } as never);
+    const req = { currentUser: { id: f.user.id } } as Request;
+    const input = { productId: 'jlpt_year_pass', purchaseToken: f.token };
+    expect((await controller.verify(req, input)).data).toMatchObject({
+      status: 'PENDING',
+      orderId: null,
+      consumption: 'PENDING',
+    });
+    expect(f.consume).not.toHaveBeenCalled();
+    expect(
+      await h.prisma.paymentOrder.count({ where: { userId: f.user.id } }),
+    ).toBe(0);
+    expect(
+      await h.prisma.entitlementGrant.count({ where: { userId: f.user.id } }),
+    ).toBe(0);
+    f.purchase.purchaseStateContext.purchaseState = 'CANCELLED';
+    f.order.state = 'CANCELLED';
+    await expect(controller.verify(req, input)).rejects.toMatchObject({
+      response: { code: 'GOOGLE_PURCHASE_CANCELLED' },
+      status: 409,
+    });
+    expect(f.consume).not.toHaveBeenCalled();
+    expect(
+      await h.prisma.paymentOrder.count({ where: { userId: f.user.id } }),
+    ).toBe(0);
+    expect(
+      await h.prisma.entitlementGrant.count({ where: { userId: f.user.id } }),
+    ).toBe(0);
+  },
+);
 test('refund before owner persists a tombstone and later purchased snapshots never create a grant', async () => {
   const f = await fixture();
   delete f.purchase.obfuscatedExternalAccountId;
