@@ -73,6 +73,16 @@ ticket without restarting or issuing a reward. Only the unchanged real SSV
 handler can verify Google's signature and credit the test account. Tool
 verification is not proof that watching a test ad caused the callback.
 
+Actual Google Verify URL callbacks were observed using placeholder
+`ad_unit=1234567890`, even when verifying the new owned unit. The isolated
+tool-ticket issuer therefore sets only its newly issued ticket's `ssvAdUnitId`
+to that placeholder and labels the private artifact with `expectedToolAdUnit`.
+The first genuine callback against a normal owned-unit ticket was correctly
+rejected with no reward: signature, alias, item and time window matched, but
+the ad unit did not. Production verification and tickets for SDK impressions
+retain exact real-unit matching. A successful tool callback cannot establish
+that the real owned unit supplies its correct numeric ad unit.
+
 Only after the Android test-device setup is independently confirmed may the
 owner choose `admobSsvVerifierOnly:false` and `admobTestDeviceConfirmed:true` for
 the self-owned unit. The harness cannot verify device registration itself.

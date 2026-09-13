@@ -242,12 +242,18 @@ async function main() {
         issuing = true;
         try {
           const ticket = await issuer.create(rewardLogin.user.id, randomUUID());
+          // Observed Verify URL placeholder; this isolated ticket is not an SDK impression.
+          await prisma.rewardTicket.update({
+            where: { id: ticket.ticketId },
+            data: { ssvAdUnitId: '1234567890' },
+          });
           await writeFile(
             join(stateDir, 'ssv-ticket.json'),
             JSON.stringify({
               ...ticket,
               purpose:
                 'Google AdMob Verify URL tool only; no viewed-ad evidence',
+              expectedToolAdUnit: '1234567890',
               callbackUrl: `${publicApi.origin}/api/v1/android/commerce/admob/ssv`,
             }),
             { mode: 0o600 },
