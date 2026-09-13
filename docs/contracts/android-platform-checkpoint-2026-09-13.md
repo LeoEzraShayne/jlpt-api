@@ -193,3 +193,40 @@ one REFUNDED Google purchase and one REVOKED grant; restore did not issue a new
 grant or start another purchase. This closes the real day-pass refund/recovery
 check. The year-pass purchase and an owned-unit viewed-ad SSV remain separate
 checks, and the production native flags remain disabled.
+
+## 2026-09-13 owned-unit emulator test ad and real SSV
+
+An Android 36 Google Play emulator independently reported the Google Mobile Ads
+SDK's automatic `isTestDevice(context)=true`, with an empty explicit test-device
+list and before any ad request. Main then authorized changing only the isolated
+platform configuration to confirmed test device mode and disabling the Verify
+URL tool-only mode. SIGHUP applied this to the existing API, database and
+sessions; no production flag changed. The Pad build kept ads disabled.
+
+The emulator generated a real native PKCE binding. Using the separate synthetic
+reward account's existing valid Web cookie, the test operator approved that
+exact request through the normal authenticated API, then delivered the returned
+one-time HTTPS callback through the registered App Link. Native exchange
+consumed the binding and matched the independent nonmember reward account.
+There was no native token injection or synthetic replacement of the exchange.
+
+The native reward flow created an ordinary ticket for owned unit
+`ca-app-pub-6296584170791776/7191979288`. The emulator displayed Google's **Test
+Ad** label, completed the ad sequence and displayed **Reward granted**; the
+operator closed the ad without clicking its advertising content. Native then
+reported one extra task. Independent backend verification of the actual captured
+callback confirmed Google's ECDSA signature and the exact ticket, opaque alias,
+unit `7191979288`, reward item `jlpt_task`, amount `1`, test environment and
+reward timestamp window. The ordinary ticket became REDEEMED, exactly one
+RewardEvent existed, and the synthetic reward balance changed from zero to one.
+The older Verify URL placeholder ticket remained ISSUED, making the two evidence
+paths distinguishable.
+
+At **2026-09-13T04:50:32.699Z**, three concurrent replays of that actual signed
+owned-unit callback each returned HTTP 200. The database still contained one
+redeemed ordinary ticket, one reward event, balance one and reserved balance
+zero. The actual callback is retained in a private mode-600 evidence file; only
+safe projections are recorded here. This establishes the owned-unit SDK test-ad
+view → real Google SSV → idempotent backend reward path in the isolated harness.
+It does not establish production ad readiness or authorize enabling native
+production flags.
