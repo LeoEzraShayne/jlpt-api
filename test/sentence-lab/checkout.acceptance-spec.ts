@@ -123,10 +123,10 @@ test('checkout snapshots server price, fixed return URLs and one-time mode; para
   ).rejects.toMatchObject({ response: { code: 'IDEMPOTENCY_CONFLICT' } });
 });
 
-test('quote made before 90-day cutoff keeps USD64 for 60 minutes while new quotes cost USD99', async () => {
+test('quote made before six-calendar-month cutoff keeps USD64 for 60 minutes while new quotes cost USD99', async () => {
   const f = await fixture();
   const launchAt = new Date('2026-06-01T00:00:00Z');
-  const cutoff = new Date(launchAt.getTime() + 90 * day);
+  const cutoff = new Date('2026-12-01T00:00:00Z');
   await h.prisma.billingConfig.upsert({
     where: { id: 'default' },
     create: { id: 'default', launchAt, salesEnabled: true },
@@ -174,6 +174,104 @@ test('quote made before 90-day cutoff keeps USD64 for 60 minutes while new quote
     response: { code: 'CHECKOUT_EXPIRED' },
   });
 });
+
+test.each([6400, 9900])(
+  'a historical 90-day quote keeps its USD%s price, expiry and snapshot under the six-month policy',
+  async (amount) => {
+    const f = await fixture();
+    const launchAt = new Date('2026-09-12T23:58:15.676Z');
+    freezeDate(new Date('2026-12-12T00:00:00Z'));
+    await h.prisma.billingConfig.upsert({
+      where: { id: 'default' },
+      create: { launchAt, salesEnabled: true },
+      update: { launchAt, salesEnabled: true },
+    });
+    const input = {
+      productCode: 'YEAR_PASS' as const,
+      market: 'GLOBAL' as const,
+      requestKey: randomUUID(),
+      locale: 'en' as const,
+    };
+    const quotedAt = new Date(
+      amount === 6400 ? '2026-12-11T23:55:00Z' : '2026-12-11T23:59:00Z',
+    );
+    const snapshot = {
+      ...input,
+      amount,
+      currency: 'USD',
+      durationSeconds: 365 * 86400,
+      launchPrice: amount === 6400,
+      launchAt: launchAt.toISOString(),
+      launchEndsAt: '2026-12-11T23:58:15.676Z',
+      checkoutExpiryPolicy: 'CHECKOUT_60M_V1',
+      checkoutCreationEndsAt: new Date(
+        quotedAt.getTime() + 25 * 60000,
+      ).toISOString(),
+      stripePriceId: null,
+    };
+    const order = await h.prisma.paymentOrder.create({
+      data: {
+        userId: f.user.id,
+        provider: 'STRIPE',
+        environment: 'test',
+        productCode: input.productCode,
+        market: input.market,
+        requestKey: input.requestKey,
+        amount,
+        currency: 'USD',
+        durationSeconds: snapshot.durationSeconds,
+        launchPrice: snapshot.launchPrice,
+        createdAt: quotedAt,
+        expiresAt: new Date(quotedAt.getTime() + 60 * 60000),
+        snapshot,
+      },
+    });
+    await f.service.checkout(f.user.id, input);
+    const stored = await h.prisma.paymentOrder.findUniqueOrThrow({
+      where: { id: order.id },
+    });
+    expect(stored).toMatchObject({
+      amount,
+      snapshot,
+      expiresAt: order.expiresAt,
+      durationSeconds: 365 * 86400,
+    });
+    expect(
+      f.create.mock.calls[0][0].line_items?.[0].price_data?.unit_amount,
+    ).toBe(amount);
+    const fresh = await f.service.checkout(f.user.id, {
+      ...input,
+      requestKey: randomUUID(),
+    });
+    expect(
+      await h.prisma.paymentOrder.findUniqueOrThrow({
+        where: { id: fresh.orderId },
+      }),
+    ).toMatchObject({
+      amount: 6400,
+      snapshot: { launchEndsAt: '2027-03-12T23:58:15.676Z' },
+    });
+    await h.prisma.paymentOrder.update({
+      where: { id: order.id },
+      data: { status: 'PAID' },
+    });
+    expect(await f.service.order(f.user.id, order.id)).toMatchObject({
+      amount,
+      status: 'PAID',
+      durationSeconds: 365 * 86400,
+    });
+    await expect(f.service.checkout(f.user.id, input)).rejects.toMatchObject({
+      response: { code: 'CHECKOUT_EXPIRED' },
+    });
+    expect(
+      (
+        await h.prisma.paymentOrder.findUniqueOrThrow({
+          where: { id: order.id },
+        })
+      ).snapshot,
+    ).toEqual(snapshot);
+  },
+);
 
 test.each([undefined, 'CARD_ONLY_V1'])(
   'retry after a lost local response preserves the quoted payment-method parameters: %s',

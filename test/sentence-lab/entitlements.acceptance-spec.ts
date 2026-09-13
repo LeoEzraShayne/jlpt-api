@@ -132,13 +132,13 @@ test('dispute suspension preserves remaining source time; won event restores onc
   ).toBe(1);
 });
 
-test('launch catalog 90-day cutoff is exclusive; legacy JP requests use global USD prices', async () => {
+test('launch catalog six-calendar-month cutoff is exclusive; legacy JP requests use global USD prices', async () => {
   const config = await h.prisma.billingConfig.upsert({
     where: { id: 'default' },
     create: { id: 'default', launchAt: now, salesEnabled: true },
     update: { launchAt: now, salesEnabled: true },
   });
-  const cutoff = new Date(now.getTime() + 90 * day);
+  const cutoff = new Date('2027-03-13T12:00:00Z');
   expect(
     catalogFor(config, 'GLOBAL', new Date(cutoff.getTime() - 1)).products.map(
       (p) => p.amount,

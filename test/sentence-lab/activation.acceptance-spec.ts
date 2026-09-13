@@ -3,6 +3,7 @@ import { acceptanceDatabase, type AcceptanceDatabase } from './database';
 import { EntitlementService } from '../../src/billing/entitlement.service';
 import { activateWebBilling } from '../../scripts/billing/activation';
 import type { PrismaService } from '../../src/database/prisma.service';
+import { catalogFor } from '../../src/billing/billing.policy';
 
 let h: AcceptanceDatabase;
 const now = new Date('2026-09-15T01:02:03.456Z');
@@ -31,7 +32,7 @@ const owner = () =>
     },
   });
 
-test('eight first activations serialize one start, one 365-day gift, and a shared 90-day offer', async () => {
+test('eight first activations serialize one start, one 365-day gift, and a shared six-calendar-month offer', async () => {
   const u = await owner();
   const settled = await Promise.allSettled(
     Array.from({ length: 8 }, () => activate()),
@@ -47,7 +48,7 @@ test('eight first activations serialize one start, one 365-day gift, and a share
     expect(result).toMatchObject({
       launchAt: now,
       enforcementAt: now,
-      launchEndsAt: new Date(now.getTime() + 90 * day),
+      launchEndsAt: new Date('2027-03-15T01:02:03.456Z'),
       giftStartsAt: now,
       giftEndsAt: new Date(now.getTime() + 365 * day),
       salesEnabled: true,
@@ -76,6 +77,38 @@ test('later repeat retains original timestamps and gift even after sales were cl
     enforcementAt: now,
     salesEnabled: true,
   });
+  expect(await h.prisma.entitlementGrant.findFirstOrThrow()).toEqual(original);
+});
+
+test('existing launch uses the revised deadline without rewriting its gift or timestamps', async () => {
+  const u = await owner();
+  const launchAt = new Date('2026-09-12T23:58:15.676Z');
+  await h.prisma.billingConfig.create({
+    data: { launchAt, enforcementAt: launchAt, salesEnabled: true },
+  });
+  const original = await h.prisma.entitlementGrant.create({
+    data: {
+      userId: u.id,
+      source: 'LAUNCH_GIFT',
+      sourceKey: 'launch-vip:leo.ezra.shayne@gmail.com',
+      startsAt: launchAt,
+      endsAt: new Date(launchAt.getTime() + 365 * day),
+      durationSeconds: 365 * 86400,
+    },
+  });
+  const result = await activate();
+  const config = await h.prisma.billingConfig.findUniqueOrThrow({
+    where: { id: 'default' },
+  });
+  expect(result).toMatchObject({
+    alreadyActivated: true,
+    launchAt,
+    enforcementAt: launchAt,
+    launchEndsAt: new Date('2027-03-12T23:58:15.676Z'),
+  });
+  expect(catalogFor(config, 'GLOBAL').launchEndsAt).toBe(
+    result.launchEndsAt.toISOString(),
+  );
   expect(await h.prisma.entitlementGrant.findFirstOrThrow()).toEqual(original);
 });
 

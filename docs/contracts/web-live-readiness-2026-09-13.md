@@ -10,7 +10,7 @@ performs account, secret, production and activation operations.
 - New quotes use USD 99 / 6400 / 9900 cents, one-time payment, card-only and
   Adaptive Pricing disabled. JP legacy inputs also quote USD; earlier order
   snapshots preserve their original currency and request parameters.
-- The shared 90-day period starts at the one immutable `BillingConfig.launchAt`.
+- The shared six-calendar-month period (UTC, month-end clamped) starts at the one immutable `BillingConfig.launchAt`.
   Before that timestamp or while sales are disabled, new quotes fail closed.
 - Signed raw-body webhooks re-read Stripe's current payment, charge and dispute
   state, validate application/user/order/currency/amount/environment, then write
@@ -105,7 +105,7 @@ uncreated quote at or beyond its 25-minute creation deadline returns
 `CHECKOUT_EXPIRED` and needs a new request key. Historical quotes without this
 policy keep their original request parameters and expiry; no order migration
 occurs. A pre-cutoff launch-price quote retains USD64 through its own fixed
-payment deadline; new quotes at or after the shared 90-day cutoff use USD99.
+payment deadline; new quotes at or after the shared six-calendar-month cutoff use USD99.
 The public contract's old blanket 30-minute statement must be updated to
 describe this versioned behavior. Product durations and pricing are unchanged.
 

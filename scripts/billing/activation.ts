@@ -3,7 +3,10 @@ import {
   EntitlementService,
   lockBillingUser,
 } from '../../src/billing/entitlement.service';
-import { GIFT_EMAIL } from '../../src/billing/billing.policy';
+import {
+  GIFT_EMAIL,
+  launchOfferEndsAt,
+} from '../../src/billing/billing.policy';
 
 /** Main-agent operation: singleton lock serializes first activation and retries. */
 export async function activateWebBilling(
@@ -60,7 +63,7 @@ export async function activateWebBilling(
     return {
       launchAt: config.launchAt,
       enforcementAt: config.enforcementAt,
-      launchEndsAt: new Date(launchAt.getTime() + 90 * 86400_000),
+      launchEndsAt: launchOfferEndsAt(launchAt),
       salesEnabled: config.salesEnabled,
       enforcementEnabled: config.enforcementEnabled,
       rewardsEnabled: config.rewardsEnabled,

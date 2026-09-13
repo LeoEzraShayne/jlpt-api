@@ -4,6 +4,15 @@ import type { BillingMarket, Catalog } from '../contracts/sentence-lab';
 
 export const DAY_SECONDS = 86_400;
 export const GIFT_EMAIL = 'leo.ezra.shayne@gmail.com';
+/** Six UTC calendar months; clamp missing month-end days, preserving time. */
+export function launchOfferEndsAt(launchAt: Date): Date {
+  const endsAt = new Date(launchAt);
+  endsAt.setUTCMonth(endsAt.getUTCMonth() + 6, 1);
+  const monthEnd = new Date(endsAt);
+  monthEnd.setUTCMonth(monthEnd.getUTCMonth() + 1, 0);
+  endsAt.setUTCDate(Math.min(launchAt.getUTCDate(), monthEnd.getUTCDate()));
+  return endsAt;
+}
 export function billingError(code: string, status = 409): never {
   throw new HttpException({ code, message: code }, status);
 }
@@ -13,7 +22,7 @@ export function catalogFor(
   now = new Date(),
 ): Catalog {
   const launchEndsAt = config?.launchAt
-    ? new Date(config.launchAt.getTime() + 90 * DAY_SECONDS * 1000)
+    ? launchOfferEndsAt(config.launchAt)
     : null;
   const launch =
     !!config?.launchAt && now >= config.launchAt && now < launchEndsAt!;

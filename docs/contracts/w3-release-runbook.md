@@ -37,7 +37,7 @@ Switch the API release symlink and reload the existing PM2 process with the matc
 
 ## Activate once and verify
 
-Only after quality acceptance, the resolved pricing decision, live configuration and paired-service checks: write one immutable UTC `launchAt` and `enforcementAt`, enable the approved sales/allowance behavior, and leave Web rewards disabled. A repeated activation must preserve the original timestamps and the shared 90-day offer deadline.
+Only after quality acceptance, the resolved pricing decision, live configuration and paired-service checks: write one immutable UTC `launchAt` and `enforcementAt`, enable the approved sales/allowance behavior, and leave Web rewards disabled. A repeated activation must preserve the original timestamps and the shared six-calendar-month offer deadline (UTC, month-end clamped).
 
 Create/verify the designated user's idempotent `LAUNCH_GIFT` through `EntitlementService.ensureGift` while holding that user's billing lock. It starts at `launchAt`, ends exactly 365 days later and has source key `launch-vip:leo.ezra.shayne@gmail.com`; no administrator role or fake order is involved. Existing renewal and historical grant records must remain intact.
 

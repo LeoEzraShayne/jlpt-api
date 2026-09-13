@@ -10,7 +10,7 @@ import type { GooglePurchaseService } from '../../src/android-commerce/google-pu
 import type { AdmobRewardService } from '../../src/android-commerce/admob-reward.service';
 
 const launchAt = new Date('2026-09-12T23:58:15.676Z');
-const launchEndsAt = '2026-12-11T23:58:15.676Z';
+const launchEndsAt = '2027-03-12T23:58:15.676Z';
 let h: AcceptanceDatabase;
 let controller: AndroidCommerceController;
 beforeAll(async () => {
@@ -31,10 +31,10 @@ afterEach(() => jest.useRealTimers());
 afterAll(async () => h?.stop());
 
 test.each([
-  ['2026-12-11T23:57:59.999Z', 'launch-64', 6400],
-  ['2026-12-11T23:58:00.000Z', 'paused', 6400],
-  ['2026-12-11T23:58:15.675Z', 'paused', 6400],
-  ['2026-12-11T23:58:15.676Z', null, 9900],
+  ['2027-03-12T23:57:59.999Z', 'launch-64', 6400],
+  ['2027-03-12T23:58:00.000Z', 'paused', 6400],
+  ['2027-03-12T23:58:15.675Z', 'paused', 6400],
+  ['2027-03-12T23:58:15.676Z', null, 9900],
 ])(
   'native year availability at %s preserves the Web clock',
   async (iso, offer, amount) => {
@@ -76,8 +76,8 @@ test('minute-aligned shared deadline has no artificial pause', async () => {
     data: { launchAt: new Date('2026-09-12T23:58:00Z') },
   });
   for (const [iso, offer] of [
-    ['2026-12-11T23:57:59.999Z', 'launch-64'],
-    ['2026-12-11T23:58:00.000Z', null],
+    ['2027-03-12T23:57:59.999Z', 'launch-64'],
+    ['2027-03-12T23:58:00.000Z', null],
   ]) {
     freezeDate(new Date(iso!));
     expect(
