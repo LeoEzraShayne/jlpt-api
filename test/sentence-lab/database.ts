@@ -7,7 +7,9 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 /** Never reads .env, never reuses a learning DB, and only drops its own random DB. */
-export async function acceptanceDatabase() {
+export async function acceptanceDatabase(
+  options: { stopBeforeMigration?: string } = {},
+) {
   const adminUrl = new URL(
     process.env.TEST_DATABASE_ADMIN_URL ??
       `postgres://${encodeURIComponent(userInfo().username)}@localhost:5432/postgres`,
@@ -32,9 +34,16 @@ export async function acceptanceDatabase() {
   };
   try {
     await sql.connect();
-    for (const migration of (await readdir('prisma/migrations'))
+    const migrations = (await readdir('prisma/migrations'))
       .filter((n) => /^\d/.test(n))
-      .sort()) {
+      .sort();
+    if (
+      options.stopBeforeMigration &&
+      !migrations.includes(options.stopBeforeMigration)
+    )
+      throw new Error('UNKNOWN_MIGRATION_BOUNDARY');
+    for (const migration of migrations) {
+      if (migration === options.stopBeforeMigration) break;
       await sql.query(
         await readFile(`prisma/migrations/${migration}/migration.sql`, 'utf8'),
       );
