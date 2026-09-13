@@ -4,9 +4,12 @@ This is a local test entrypoint, never a production deployment. It extends the
 disposable AppModule device harness with real Google provider requests. It binds
 only `127.0.0.1`, creates a random local PostgreSQL database, applies repository
 migrations, and uses two synthetic `example.test` users. No production data or
-repository `.env` is read. Termination drops this database and removes temporary
-session/ticket files. Restarting creates new users and invalidates all test
-bindings; do not restart in the middle of a Play purchase.
+repository `.env` is read. Normal termination now retains the test database,
+private session/ticket artifacts and its mode-0600 test encryption key for
+reconciliation and evidence; `--discard-on-exit` explicitly opts into cleanup.
+Startup requires an empty state directory and cannot overwrite retained state.
+A new process with a new state directory creates new users and bindings; do not
+restart in the middle of a Play purchase.
 
 Run from this worktree with its own dependencies:
 
@@ -40,8 +43,12 @@ mode 0600 (no symlink). The owner injects only these supported configuration key
 Optional RTDN fields: `rtdnAudience`, `rtdnSubscription`,
 `rtdnServiceAccountEmail`. These do not create a Pub/Sub subscription or change
 its routing. Never replace the legacy app's notification route for this test.
-The test token encryption key is random and process-local; no production key is
-needed. Configuration changes require a restart before beginning purchases.
+The test token encryption key is random and stored only in the protected state
+directory; no production key is needed. Once running, SIGHUP reloads the private
+platform config and updates RTDN values, ad unit/item and the explicit ad testing
+mode without changing database, users, sessions or token encryption key. Changing
+service-account identity/path through this reload is rejected. The safe flags
+and reload timestamp appear in state.json; configuration values are not logged.
 
 Google uses package `com.meritledger.app`, client `android-test`, callback
 `/android/callback/test`, and ledger environment `test`. A real license tester

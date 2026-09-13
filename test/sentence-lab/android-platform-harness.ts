@@ -1,7 +1,15 @@
 /** Test-only process. Run with ts-node (decorator metadata), never deploy this entrypoint. */
 import 'reflect-metadata';
 import { randomBytes, randomUUID } from 'node:crypto';
-import { chmod, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import {
+  chmod,
+  mkdir,
+  mkdtemp,
+  rm,
+  writeFile,
+  readFile,
+  readdir,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -35,11 +43,13 @@ async function main() {
       'api-public-url': { type: 'string' },
       'state-dir': { type: 'string' },
       'platform-config': { type: 'string' },
+      'discard-on-exit': { type: 'boolean', default: false },
       'max-minutes': { type: 'string', default: '60' },
     },
   });
   if (!values['platform-config']) throw new Error('PLATFORM_CONFIG_REQUIRED');
-  const platform = await platformConfig(resolve(values['platform-config']));
+  const configPath = resolve(values['platform-config']);
+  let platform = await platformConfig(configPath);
   const originalFetch = globalThis.fetch;
   const frontend = new URL(values['frontend-url'] ?? 'http://localhost:3059');
   const publicApi = new URL(values['api-public-url'] ?? frontend.origin);
@@ -75,6 +85,8 @@ async function main() {
     : await mkdtemp(join(tmpdir(), 'jlpt-platform-state-'));
   await mkdir(stateDir, { recursive: true, mode: 0o700 });
   await chmod(stateDir, 0o700);
+  if ((await readdir(stateDir)).length)
+    throw new Error('EMPTY_STATE_DIRECTORY_REQUIRED_PRESERVE_EXISTING_STATE');
   const leaseFile = join(stateDir, 'harness.lock');
   await writeFile(leaseFile, String(process.pid), { mode: 0o600, flag: 'wx' });
   const emptyCwd = await mkdtemp(join(tmpdir(), 'jlpt-f-empty-cwd-'));
@@ -82,25 +94,36 @@ async function main() {
   let db: AcceptanceDatabase | undefined;
   let app: NestExpressApplication | undefined;
   let stopping = false;
+  let ready = false;
   let expiryTimer: NodeJS.Timeout | undefined;
   const stop = async () => {
     if (stopping) return;
     stopping = true;
     if (expiryTimer) clearTimeout(expiryTimer);
     await app?.close();
-    await db?.stop();
-    await Promise.all(
-      [
-        'state.json',
-        'cookie.txt',
-        'reward-cookie.txt',
-        'ssv-ticket.json',
-        'harness.lock',
-      ].map((name) => rm(join(stateDir, name), { force: true })),
-    );
+    const discard = !ready || values['discard-on-exit'];
+    if (discard) await db?.stop();
+    else {
+      await db?.prisma.$disconnect();
+      await db?.sql.end();
+    }
+    if (discard)
+      await Promise.all(
+        [
+          'state.json',
+          'cookie.txt',
+          'reward-cookie.txt',
+          'ssv-ticket.json',
+          'harness.lock',
+          'token-encryption-key.txt',
+        ].map((name) => rm(join(stateDir, name), { force: true })),
+      );
+    await rm(leaseFile, { force: true });
     await rm(emptyCwd, { recursive: true, force: true });
     console.log(
-      'ANDROID_PLATFORM_HARNESS_STOPPED database dropped; secret files removed',
+      discard
+        ? 'ANDROID_PLATFORM_HARNESS_STOPPED database dropped; secret files removed'
+        : 'ANDROID_PLATFORM_HARNESS_STOPPED private test database and state retained',
     );
   };
   try {
@@ -143,6 +166,11 @@ async function main() {
       AI_WORKER_ENABLED: 'false',
       GEMINI_FREE_FIRST: 'false',
     });
+    await writeFile(
+      join(stateDir, 'token-encryption-key.txt'),
+      process.env.GOOGLE_PLAY_TOKEN_ENCRYPTION_KEY!,
+      { mode: 0o600, flag: 'wx' },
+    );
     for (const [key, value] of Object.entries({
       GOOGLE_PLAY_CREDENTIALS_FILE: platform.googleCredentialsFile,
       GOOGLE_RTDN_AUDIENCE: platform.rtdnAudience,
@@ -238,9 +266,14 @@ async function main() {
       );
       let issuing = false;
       const mint = async () => {
-        if (issuing || stopping) return;
+        if (issuing || stopping || !platform.admobSsvVerifierOnly) return;
         issuing = true;
         try {
+          ticketPolicy.config.set('ADMOB_REWARDED_AD_UNIT_ID', platform.adUnit);
+          ticketPolicy.config.set(
+            'ADMOB_REWARD_ITEM',
+            platform.admobRewardItem,
+          );
           const ticket = await issuer.create(rewardLogin.user.id, randomUUID());
           // Observed Verify URL placeholder; this isolated ticket is not an SDK impression.
           await prisma.rewardTicket.update({
@@ -367,6 +400,64 @@ async function main() {
       ),
       { mode: 0o600, flag: 'wx' },
     );
+    let reloading = false;
+    process.on('SIGHUP', () => {
+      if (reloading || stopping) return;
+      reloading = true;
+      void (async () => {
+        const next = await platformConfig(configPath);
+        if (next.googleCredentialsFile !== platform.googleCredentialsFile)
+          throw new Error('PLATFORM_CREDENTIAL_IDENTITY_CHANGE_FORBIDDEN');
+        const config = app!.get(ConfigService);
+        await prisma.billingConfig.update({
+          where: { id: 'default' },
+          data: {
+            androidSalesEnabled: !!next.googleCredentialsFile,
+            androidRewardsEnabled: true,
+          },
+        });
+        for (const [key, value] of Object.entries({
+          GOOGLE_RTDN_AUDIENCE: next.rtdnAudience,
+          GOOGLE_RTDN_SUBSCRIPTION: next.rtdnSubscription,
+          GOOGLE_RTDN_SERVICE_ACCOUNT_EMAIL: next.rtdnServiceAccountEmail,
+          ADMOB_REWARDED_AD_UNIT_ID: next.adUnit,
+          ADMOB_REWARD_ITEM: next.admobRewardItem,
+          ANDROID_ADMOB_ENABLED: !next.admobSsvVerifierOnly,
+        }))
+          config.set(key, value);
+        platform = next;
+        const path = join(stateDir, 'state.json');
+        const state = JSON.parse(await readFile(path, 'utf8')) as Record<
+          string,
+          unknown
+        >;
+        state.flags = {
+          commerce: true,
+          google: !!next.googleCredentialsFile,
+          admob: !next.admobSsvVerifierOnly,
+        };
+        state.admobMode = next.admobSsvVerifierOnly
+          ? 'ssv-verifier-only-native-ads-disabled'
+          : next.admobTestDeviceConfirmed
+            ? 'owned-unit-test-device'
+            : 'demo-unit-sdk-only';
+        state.platformReloadedAt = new Date().toISOString();
+        state.rtdnConfigured = !!(
+          next.rtdnAudience &&
+          next.rtdnSubscription &&
+          next.rtdnServiceAccountEmail
+        );
+        await writeFile(path, JSON.stringify(state), { mode: 0o600 });
+        console.log(
+          'ANDROID_PLATFORM_CONFIG_RELOADED database and sessions retained',
+        );
+      })()
+        .catch(() => console.error('ANDROID_PLATFORM_CONFIG_RELOAD_FAILED'))
+        .finally(() => {
+          reloading = false;
+        });
+    });
+    ready = true;
     console.log(
       `ANDROID_PLATFORM_HARNESS_READY port=${port} state=${join(stateDir, 'state.json')}`,
     );
