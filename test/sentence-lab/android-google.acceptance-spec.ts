@@ -210,6 +210,7 @@ test.each([
   async (withOrder, shape) => {
     const f = await fixture();
     f.purchase.purchaseStateContext.purchaseState = 'PENDING';
+    delete f.purchase.purchaseCompletionTime;
     if (!withOrder) delete f.purchase.orderId;
     f.order.state = 'PENDING';
     if (shape === '404')

@@ -316,3 +316,40 @@ test('an already linked live order is never terminally ignored on contradictory 
     errorCode: 'GOOGLE_RECONCILIATION_FAILED',
   });
 });
+test('a first-seen completed-then-cancelled purchase still reads Orders and records the refund tombstone', async () => {
+  const f = fixture('test');
+  const user = await h.prisma.user.create({
+    data: {
+      email: `${randomUUID()}@example.test`,
+      displayName: 'Refund fixture',
+      googlePlayAccountId: randomUUID(),
+    },
+  });
+  f.purchase.obfuscatedExternalAccountId = user.googlePlayAccountId!;
+  f.purchase.purchaseStateContext.purchaseState = 'CANCELLED';
+  f.purchase.orderId = `GPA.${randomUUID()}`;
+  f.purchase.purchaseCompletionTime = new Date().toISOString();
+  f.order.mockResolvedValue({
+    orderId: f.purchase.orderId,
+    purchaseToken: f.token,
+    state: 'REFUNDED',
+    lastEventTime: new Date().toISOString(),
+    createTime: new Date().toISOString(),
+    total: { currencyCode: 'JPY', units: '150', nanos: 0 },
+    lineItems: [{ productId: 'jlpt_day_pass' }],
+  });
+  const row = await f.purchases.enqueue(f.token);
+  await f.purchases.reconcile(row.id);
+  expect(f.order).toHaveBeenCalledTimes(1);
+  expect(await f.queued()).toMatchObject({
+    state: 'REFUNDED',
+    consumeState: 'NOT_APPLICABLE',
+  });
+  expect(
+    await h.prisma.paymentOrder.findFirst({ where: { userId: user.id } }),
+  ).toMatchObject({ status: 'REFUNDED', refundedAmount: 150 });
+  expect(
+    await h.prisma.entitlementGrant.count({ where: { userId: user.id } }),
+  ).toBe(0);
+  expect(f.consume).not.toHaveBeenCalled();
+});

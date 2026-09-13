@@ -173,6 +173,7 @@ export class GooglePurchaseService {
       if (
         !row.orderId &&
         !row.googleLastEventTime &&
+        !purchase.purchaseCompletionTime &&
         !['VERIFIED', 'REFUNDED'].includes(row.state) &&
         ['PENDING', 'CANCELLED'].includes(purchaseState)
       ) {
