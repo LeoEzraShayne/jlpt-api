@@ -280,3 +280,53 @@ were each REFUNDED for JPY 150, both grants were REVOKED, and two purchase hints
 and two voided hints were PROCESSED. The first refund remained unchanged.
 Cancellation and slow/pending-payment UI coverage remain incomplete at this
 checkpoint; this additional test order is not evidence that either case passed.
+
+## Permanent callback readiness and official app-ads.txt follow-up
+
+Main reports the separate `meritledger-official` website repository deployed
+commit `6b10981`: the official domain's root `/app-ads.txt` returns HTTP 200 and
+matches the expected public Google seller line exactly. AdMob is now associated
+with the existing same-package Play application. Its subsequent recheck has
+**not passed** and displayed no useful detail; neither app-ads verification nor
+production ad readiness is claimed. No production configuration or permissions
+were modified as part of this read-only backend review.
+
+The minimum remaining permanent callback configuration is:
+
+| Item | Required value or action |
+| --- | --- |
+| Runtime isolation | Keep ANDROID_COMMERCE_ENVIRONMENT and BILLING_ENVIRONMENT both `live`; retain the current production database and stable live token-encryption key. |
+| Play verification | Retain GOOGLE_PLAY_PACKAGE_NAME=`com.meritledger.app`, the already configured protected GOOGLE_PLAY_CREDENTIALS_FILE and GOOGLE_PLAY_TOKEN_ENCRYPTION_KEY. No new backend service-account key is needed for Pub/Sub push. |
+| Permanent RTDN route | Public HTTPS POST `/api/v1/android/commerce/google/rtdn` on the chosen permanent API origin; preserve the Authorization header and wrapped Pub/Sub JSON. Configure GOOGLE_RTDN_AUDIENCE to exactly match the configured push token audience, preferably that complete endpoint URL. |
+| Permanent subscription | A distinct permanent subscription ID, never the temporary `jlpt-play-rtdn-test`; set GOOGLE_RTDN_SUBSCRIPTION to its full projects/.../subscriptions/... name. A suggested name is `jlpt-play-rtdn-live`, not an assertion that it exists. |
+| Push identity | Set GOOGLE_RTDN_SERVICE_ACCOUNT_EMAIL to the selected dedicated keyless push service account. Scope Pub/Sub service-agent token creation permission to that identity; no Play financial/order permission is needed on the push identity. |
+| Topic and delivery | Preserve the topic's Google Play publisher permission and the old products' service lifecycle. Use authenticated push, wrapped messages, acknowledgement deadline 30 seconds, retry backoff 10–600 seconds and no idle expiration for the permanent subscription. Monitor oldest unacked message age and rejected requests. |
+| Permanent SSV route | Public HTTPS GET `/api/v1/android/commerce/admob/ssv`; preserve the original raw query encoding and exclude full signed URLs from access logs. Configure the owned ad unit's SSV callback to this permanent origin only when the test route is no longer needed for that unit. |
+| AdMob runtime | ADMOB_REWARDED_AD_UNIT_ID must be the exact owned SDK unit ID; ADMOB_REWARD_ITEM=`jlpt_task`, with platform reward amount `1`. The server derives the numeric SSV ad_unit from the SDK unit and verifies Google's signature plus the issued ticket. No SSV shared secret is required. |
+| Release gates | Keep ANDROID_COMMERCE_ENABLED, ANDROID_GOOGLE_ENABLED, ANDROID_ADMOB_ENABLED and database androidSalesEnabled/androidRewardsEnabled off until the unresolved checks are complete and main approves enablement. Web reward flags remain independent. |
+
+Google documents the [Play topic publisher and RTDN setup](https://developer.android.com/google/play/billing/getting-ready)
+and [authenticated Pub/Sub push identity/audience requirements](https://docs.cloud.google.com/pubsub/docs/authenticate-push-subscriptions).
+The permanent subscription should join the selected app topic without replacing
+or consuming another service's subscription. Topic delivery does not distinguish
+license-test purchases from live ones using the present message envelope; a
+Pub/Sub attribute filter cannot be assumed to provide that distinction.
+
+One release blocker needs an explicit implementation decision before connecting
+a mixed test/live stream permanently: the current production receiver durably
+queues same-package tokens before fetching Google evidence. A token Google
+identifies as test is correctly refused by a live worker, but its generic
+reconciliation failure remains retryable. Choose and test either an authenticated
+ingress classifier with durable/retry-safe Google validation, or a distinct
+terminal ignored-test state after trusted v2 evidence. A test token must never
+grant a live entitlement. Do not deploy the temporary test relay as a production
+workaround, and do not infer safety from sales flags being false: RTDN/SSV receipt
+and outstanding purchase/voided reconciliation intentionally continue with new
+sales disabled, so existing purchasers retain lifecycle processing.
+
+After permanent configuration, use an actual Play Console TestNotification to
+prove authenticated route/audience/subscription handling, then inspect the
+resulting processed event and real voided watermark health. A TestNotification
+alone still does not prove a live purchase, refund or ad view. The hourly voided
+sweep and 15-second durable-queue drain must remain operational with sales off;
+alarm on growing retries, GOOGLE_VOIDED_HISTORY_GAP or stale watermarks.
