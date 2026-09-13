@@ -132,3 +132,64 @@ Remaining evidence: actual license-tester purchase UI, productsv2 and Orders
 responses, consume, purchase/voided notifications and refund reconciliation,
 plus a real owned-unit test-device ad view producing SSV. A successful
 TestNotification alone establishes none of those purchase or refund outcomes.
+
+## 2026-09-13 actual license-test day pass and refund follow-up
+
+This section updates the remaining-evidence list above. The existing production
+API native flags remained off. Main reported that the year product's `buy`
+purchase option and `launch-64` offer were activated in Play Console; this is
+configuration evidence, not a completed year-pass purchase. The following
+actual order used the isolated database, an independent synthetic JLPT account
+without a launch gift, and the owner's separately configured Play license-test
+account. No production users were copied into the test database.
+
+The device displayed Google's test-card approval flow and its explicit no-charge
+notice, then reported payment success. Fresh productsv2 and Orders reads verified
+`testPurchaseContext.fopType=TEST`, the bound opaque account ID, the day-pass
+product, matching order/token evidence, and the actual JPY 150 total. The backend
+recorded exactly one PAID order and one ACTIVE `GOOGLE_TEST` entitlement. Both
+the durable queue and fresh Google evidence confirmed consumption. The grant
+runs from **2026-09-13T04:31:25.710Z** to
+**2026-09-14T04:31:25.710Z**, exactly 86,400 seconds. Device restore, process death
+during restore, restart and another completed restore retained the same expiry;
+the subsequent database check still found one order and one grant.
+
+The first purchase RTDN retries exposed a test-relay initialization defect:
+its standalone ConfigService omitted DATABASE_URL and BILLING_ENVIRONMENT.
+GoogleGateway's real AndroidPolicy.assertIsolation therefore failed before the
+Google purchase lookup. TestNotification had passed because its path did not
+perform that lookup. Commit `73c2e96` supplies the validated private harness
+state's loopback test database identity and explicit test billing environment,
+and checks the real isolation policy at startup. Nine focused tests passed,
+including rejection of production/non-test database names; TypeScript and
+ESLint checks passed. Production gateway/policy logic was unchanged. Only the
+relay restarted; API, sessions, purchase data and encryption key were retained.
+Main changed Pub/Sub retry policy from immediate retries to exponential backoff
+of 10–600 seconds, retaining the 30-second acknowledgement deadline.
+
+The real queued purchase notification then reached the API at
+**04:40:16.893Z**, returned HTTP 200, and became `PURCHASE_HINT / PROCESSED` at
+**04:40:20.423Z**. The relay recorded no failures after the fix. Its pre-fix
+safe error counters were retained separately rather than attributed to the new
+process.
+
+Main reviewed and executed a private refund driver limited to this pinned,
+unrefunded test day-pass order. Before the refund request it re-read Google v2
+and Orders evidence, checking test context, account/product/token/order linkage,
+consumption, exact amount and the matching isolated database target. Google
+accepted the full refund with revoke=true. The driver did not mutate the local
+ledger or invoke reconciliation. The real `VOIDED_HINT` arrived at
+**04:43:42.885Z** and became `PROCESSED` at **04:43:51.289Z** through normal
+reconciliation. The unique queue became REFUNDED / NOT_APPLICABLE, the unique
+order became REFUNDED with refundedAmount=150 JPY, and the unique grant became
+REVOKED. No second grant was issued. Safe evidence is retained privately along
+with the running isolated database; raw tokens, order identifiers, cookies and
+signed callback URLs are excluded from this checkpoint.
+
+After refund, the device completed two more `Check existing purchases` actions.
+It displayed a free account after the first and remained free after the second.
+A subsequent independent database read still found exactly one REFUNDED order,
+one REFUNDED Google purchase and one REVOKED grant; restore did not issue a new
+grant or start another purchase. This closes the real day-pass refund/recovery
+check. The year-pass purchase and an owned-unit viewed-ad SSV remain separate
+checks, and the production native flags remain disabled.
