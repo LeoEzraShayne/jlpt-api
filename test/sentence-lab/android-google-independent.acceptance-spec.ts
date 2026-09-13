@@ -324,3 +324,79 @@ test('a stale voided scan cannot overwrite a replacement lease watermark', async
     await h.prisma.androidCommerceSyncState.findUnique({ where: { id } }),
   ).toMatchObject({ leaseToken: token, watermarkAt: replacement });
 });
+
+test('eight distinct notifications share one unowned durable queue and later resolve to exactly one real owner', async () => {
+  const f = await fixture();
+  const lateAccount = randomBytes(32).toString('base64url');
+  f.purchase.obfuscatedExternalAccountId = lateAccount;
+  const eventIds = Array.from({ length: 8 }, () => `f-unowned:${randomUUID()}`);
+  await Promise.all(
+    eventIds.map((id) => f.notifications.record(id, 'PURCHASE_HINT', f.token)),
+  );
+  const events = await h.prisma.billingEvent.findMany({
+    where: { eventId: { in: eventIds } },
+  });
+  expect(events).toHaveLength(8);
+  expect(new Set(events.map((event) => event.googlePurchaseId)).size).toBe(1);
+  const id = events[0].googlePurchaseId!;
+  expect(
+    await h.prisma.googlePlayPurchase.findUnique({ where: { id } }),
+  ).toMatchObject({ userId: null, revision: 8 });
+  await f.service.reconcile(id);
+  expect(
+    await h.prisma.googlePlayPurchase.findUnique({ where: { id } }),
+  ).toMatchObject({ userId: null, orderId: null, state: 'AWAITING_OWNER' });
+  expect(f.consume).not.toHaveBeenCalled();
+  const lateUser = await h.prisma.user.create({
+    data: {
+      email: `${randomUUID()}@example.test`,
+      displayName: 'F late real owner',
+      googlePlayAccountId: lateAccount,
+    },
+  });
+  // Disabling new commerce must not abandon a previously paid queue.
+  f.config.set('ANDROID_COMMERCE_ENABLED', false);
+  f.config.set('ANDROID_GOOGLE_ENABLED', false);
+  await f.service.enqueue(f.token);
+  await f.service.reconcile(id);
+  expect(
+    await h.prisma.googlePlayPurchase.findUnique({ where: { id } }),
+  ).toMatchObject({
+    userId: lateUser.id,
+    state: 'VERIFIED',
+    consumeState: 'CONSUMED',
+  });
+  expect(
+    await h.prisma.paymentOrder.count({ where: { userId: lateUser.id } }),
+  ).toBe(1);
+  expect(
+    await h.prisma.entitlementGrant.count({ where: { userId: lateUser.id } }),
+  ).toBe(1);
+  expect(
+    await h.prisma.billingEvent.count({
+      where: { eventId: { in: eventIds }, status: 'PROCESSED' },
+    }),
+  ).toBe(8);
+});
+
+test('voided history beyond thirty days records a gap instead of silently advancing the watermark', async () => {
+  const f = await fixture();
+  f.config.set('GOOGLE_PLAY_CREDENTIALS_FILE', 'synthetic-never-read');
+  const id = `google-voided:${f.policy.packageName}:test`;
+  const old = new Date(Date.now() - 31 * 86400000);
+  await h.prisma.androidCommerceSyncState.upsert({
+    where: { id },
+    create: { id, watermarkAt: old },
+    update: { watermarkAt: old, leaseToken: null, leaseUntil: null },
+  });
+  const api = jest.spyOn(f.gateway, 'voided');
+  await f.notifications.syncVoided();
+  expect(api).not.toHaveBeenCalled();
+  expect(
+    await h.prisma.androidCommerceSyncState.findUnique({ where: { id } }),
+  ).toMatchObject({
+    watermarkAt: old,
+    errorCode: 'GOOGLE_VOIDED_HISTORY_GAP',
+    leaseToken: null,
+  });
+});
