@@ -41,3 +41,7 @@ Two one-time products `jlpt_day_pass` and `jlpt_year_pass`, purchase option `buy
 AdMob account is approved; the existing Android app `ca-app-pub-6296584170791776~5699026455` currently has no store link and requires app review. Existing rewarded unit `ca-app-pub-6296584170791776/2866308545` is preserved; main will decide reuse versus a separate JLPT unit after inspecting legacy SSV settings. Do not alter the old unit blindly. Preserve old Play subscriptions/lifetime products and records.
 
 Pad `iPlay80miniPro`, API 36, is connected by wireless ADB. E alone controls the device, installs only the debug package, records/restores wake settings, and does not add a personal Google account. Actual Google login is not yet available on this device; mock/unsigned/debug checks cannot replace real Play identity, account binding, purchase and SSV acceptance. No release packaging is allowed while these gates are incomplete.
+
+## User-requested full-screen verification exception
+
+On 2026-09-13 the user explicitly requested removing the browser toolbar. In addition to the debug-only test lane above, a dedicated APK-only `twaPreview` lane may be installed locally using the existing verified production upload certificate after confirming the Pad has no production-package installation to overwrite. Its native API is empty. This is not permission to open release/AAB/store/commerce gates. See [deployment and signing evidence](android-twa-verification-2026-09-13.md).
