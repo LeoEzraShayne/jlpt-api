@@ -1,4 +1,5 @@
 import { BillingModule } from './billing/billing.module';
+import { AndroidCommerceModule } from './android-commerce/android-commerce.module';
 import { VocabularyLearningModule } from './vocabulary-learning/vocabulary-learning.module';
 import { ContentModule } from './content/content.module';
 import { Module } from '@nestjs/common';
@@ -29,6 +30,7 @@ import { HistoryModule } from './history/history.module';
     ScheduleModule.forRoot(),
     DatabaseModule,
     BillingModule,
+    AndroidCommerceModule,
     HealthModule,
     AuthModule,
     AdminModule,

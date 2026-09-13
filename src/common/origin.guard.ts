@@ -17,7 +17,15 @@ export class OriginGuard implements CanActivate {
     if (this.config.get('NODE_ENV') !== 'production') return true;
     if (
       request.method === 'POST' &&
-      request.path === '/api/v1/billing/webhooks/stripe'
+      [
+        '/api/v1/billing/webhooks/stripe',
+        '/api/v1/android/auth/bindings',
+        '/api/v1/android/auth/exchange',
+        '/api/v1/android/auth/logout',
+        '/api/v1/android/commerce/google/purchases/verify',
+        '/api/v1/android/commerce/google/rtdn',
+        '/api/v1/android/commerce/reward-tickets',
+      ].includes(request.path)
     )
       return true;
     const origin = request.header('origin');

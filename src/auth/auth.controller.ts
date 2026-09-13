@@ -25,7 +25,10 @@ export class AuthController {
     @Req() request: Request & { user: GoogleProfile },
     @Res() response: Response,
   ) {
-    const session = await this.auth.loginWithGoogle(request.user);
+    const session = await this.auth.loginWithGoogle(
+      request.user,
+      request.cookies?.jlpt_session as string | undefined,
+    );
     response.cookie('jlpt_session', session.rawToken, {
       httpOnly: true,
       secure: this.config.get('NODE_ENV') === 'production',

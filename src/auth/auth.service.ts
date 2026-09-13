@@ -13,7 +13,7 @@ export class AuthService {
     private readonly config: ConfigService,
   ) {}
 
-  async loginWithGoogle(profile: GoogleProfile) {
+  async loginWithGoogle(profile: GoogleProfile, previousToken?: string) {
     const adminEmail = this.config.get<string>('ADMIN_EMAIL')?.toLowerCase();
     const user = await this.prisma.$transaction(async (tx) => {
       const account = await tx.authAccount.findUnique({
@@ -65,8 +65,18 @@ export class AuthService {
     });
     const rawToken = randomBytes(32).toString('base64url');
     const expiresAt = new Date(Date.now() + SESSION_DAYS * 86_400_000);
-    await this.prisma.authSession.create({
-      data: { userId: user.id, tokenHash: this.hashToken(rawToken), expiresAt },
+    await this.prisma.$transaction(async (tx) => {
+      if (previousToken)
+        await tx.authSession.deleteMany({
+          where: { tokenHash: this.hashToken(previousToken) },
+        });
+      await tx.authSession.create({
+        data: {
+          userId: user.id,
+          tokenHash: this.hashToken(rawToken),
+          expiresAt,
+        },
+      });
     });
     return { rawToken, expiresAt, user };
   }
