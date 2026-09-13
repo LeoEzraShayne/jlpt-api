@@ -160,6 +160,8 @@ export class AndroidCommerceController {
       billingError('GOOGLE_PRODUCT_MISMATCH', 409);
     if (result.state === 'CANCELLED')
       billingError('GOOGLE_PURCHASE_CANCELLED', 409);
+    if (result.state === 'IGNORED_TEST')
+      billingError('GOOGLE_TEST_PURCHASE_NOT_SUPPORTED', 409);
     return {
       data: {
         status: result.orderId

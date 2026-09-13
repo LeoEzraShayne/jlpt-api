@@ -55,7 +55,12 @@ export class GoogleNotificationsService {
         const queue = await this.purchases.enqueue(token, tx);
         await tx.billingEvent.update({
           where: { provider_environment_eventId: key },
-          data: { googlePurchaseId: queue.id },
+          data: {
+            googlePurchaseId: queue.id,
+            ...(queue.state === 'IGNORED_TEST'
+              ? { status: 'PROCESSED', processedAt: new Date() }
+              : {}),
+          },
         });
       }
     });
@@ -117,6 +122,7 @@ export class GoogleNotificationsService {
         where: {
           environment: this.policy.environment,
           packageName: this.policy.packageName,
+          state: { not: 'IGNORED_TEST' },
           nextAttemptAt: { lte: new Date() },
           OR: [{ leaseUntil: null }, { leaseUntil: { lte: new Date() } }],
         },

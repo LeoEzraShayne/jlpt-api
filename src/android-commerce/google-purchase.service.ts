@@ -45,6 +45,7 @@ export class GooglePurchaseService {
     });
     if (row.environment !== this.policy.environment)
       throw new Error('GOOGLE_ENVIRONMENT_MISMATCH');
+    if (row.state === 'IGNORED_TEST') return row;
     return tx.googlePlayPurchase.update({
       where: { id: row.id },
       data: { revision: { increment: 1 }, nextAttemptAt: new Date() },
@@ -55,13 +56,15 @@ export class GooglePurchaseService {
     if (
       !row ||
       row.environment !== this.policy.environment ||
-      row.packageName !== this.policy.packageName
+      row.packageName !== this.policy.packageName ||
+      row.state === 'IGNORED_TEST'
     )
       return null;
     const leaseToken = randomUUID();
     const changed = await this.db.googlePlayPurchase.updateMany({
       where: {
         id,
+        state: { not: 'IGNORED_TEST' },
         revision: row.revision,
         OR: [{ leaseUntil: null }, { leaseUntil: { lte: new Date() } }],
       },
@@ -99,11 +102,43 @@ export class GooglePurchaseService {
     try {
       const token = this.gateway.decrypt(row.tokenCiphertext);
       const purchase = await this.gateway.purchase(token);
-      if (!!purchase.testPurchaseContext !== (row.environment === 'test'))
-        throw new Error('GOOGLE_ENVIRONMENT_MISMATCH');
       const item = purchase.productLineItem[0];
       if (purchase.productLineItem.length !== 1 || !item)
         throw new Error('GOOGLE_ITEMS_INVALID');
+      if (
+        row.environment === 'live' &&
+        purchase.testPurchaseContext &&
+        ['jlpt_day_pass', 'jlpt_year_pass'].includes(item.productId) &&
+        !row.orderId
+      ) {
+        await this.db.$transaction(async (tx) => {
+          const ignored = await tx.googlePlayPurchase.updateMany({
+            where: { ...this.fence(row), orderId: null },
+            data: {
+              state: 'IGNORED_TEST',
+              productId: item.productId,
+              consumeState: 'NOT_APPLICABLE',
+              evidence: json({ testPurchase: true, productId: item.productId }),
+              errorCode: null,
+              verifiedAt: new Date(),
+              leaseToken: null,
+              leaseUntil: null,
+            },
+          });
+          if (ignored.count !== 1) throw new Error('GOOGLE_LEASE_LOST');
+          await tx.billingEvent.updateMany({
+            where: { googlePurchaseId: row.id, status: { not: 'PROCESSED' } },
+            data: {
+              status: 'PROCESSED',
+              processedAt: new Date(),
+              errorCode: null,
+            },
+          });
+        });
+        return;
+      }
+      if (!!purchase.testPurchaseContext !== (row.environment === 'test'))
+        throw new Error('GOOGLE_ENVIRONMENT_MISMATCH');
       if (!['jlpt_day_pass', 'jlpt_year_pass'].includes(item.productId)) {
         await this.release(row, {
           state: 'IGNORED',
