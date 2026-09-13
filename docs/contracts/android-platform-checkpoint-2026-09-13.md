@@ -440,3 +440,11 @@ enabled restore/refresh buttons and no waiting text. No new checkout occurred.
 A private post-fix database archive and safe projections are retained. This
 completes the slow-decline/cancellation recovery check for this real test flow;
 it does not claim a successful delayed-approval purchase or a year-pass purchase.
+
+A follow-up guard in `0842334` also requires absent v2 purchaseCompletionTime for
+the early unsettled path. Google's [productsv2 field reference](https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.productsv2)
+defines that field as the time a purchase successfully completed. A first-seen
+CANCELLED snapshot that retains completion evidence therefore still reads Orders
+and records a refund tombstone when appropriate. The added PostgreSQL regression
+proves that such a refund creates no grant and is not misclassified as an unpaid
+cancellation. The Google acceptance total is now 29 passing tests.
