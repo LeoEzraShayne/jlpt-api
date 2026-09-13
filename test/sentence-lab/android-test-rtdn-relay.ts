@@ -5,11 +5,11 @@ import { writeFile, lstat } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { HttpException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { AndroidPolicy } from '../../src/android-commerce/android.policy';
 import { GoogleGateway } from '../../src/android-commerce/google.gateway';
 import { platformConfig } from './android-platform-config';
 import { AndroidTestRtdnFilter } from './android-test-rtdn-filter';
+import { readRelayIsolationConfig } from './android-test-relay-config';
 
 async function main() {
   const { values } = parseArgs({
@@ -34,10 +34,7 @@ async function main() {
   if (!Number.isInteger(port) || port < 1024 || port > 65535 || port === 4401)
     throw new Error('INVALID_RELAY_PORT');
   let settings = await platformConfig(configPath);
-  const config = new ConfigService({
-    ANDROID_COMMERCE_ENVIRONMENT: 'test',
-    GOOGLE_PLAY_PACKAGE_NAME: 'com.meritledger.app',
-  });
+  const config = await readRelayIsolationConfig(join(stateDir, 'state.json'));
   const apply = (next: typeof settings) => {
     if (
       !next.googleCredentialsFile ||
@@ -68,6 +65,9 @@ async function main() {
     failed: 0,
     lastStatus: 0,
     lastAt: '',
+    lastErrorCode: null as string | null,
+    lastErrorFrames: [] as string[],
+    lastErrorClass: null as string | null,
   };
   const save = async () => {
     await writeFile(
@@ -131,6 +131,30 @@ async function main() {
         }
       } catch (error) {
         stats.failed++;
+        stats.lastErrorCode =
+          error instanceof Error && /^[A-Z0-9_]+$/.test(error.message)
+            ? error.message
+            : error instanceof Error
+              ? error.name
+              : 'UNKNOWN';
+        if (error instanceof Error) {
+          stats.lastErrorFrames = (
+            error.stack?.split('\n').slice(1, 6) ?? []
+          ).map(
+            (frame) =>
+              frame.match(
+                /(?:[A-Za-z0-9_-]+\.[jt]s|node:[a-zA-Z0-9_/-]+):\d+:\d+/,
+              )?.[0] ?? 'internal',
+          );
+          stats.lastErrorClass =
+            error.message === 'fetch failed'
+              ? 'FETCH_FAILED'
+              : error.message.startsWith('Cannot read properties of undefined')
+                ? 'UNDEFINED_PROPERTY'
+                : error.message.startsWith('Failed to parse URL')
+                  ? 'INVALID_URL'
+                  : 'OTHER';
+        }
         stats.lastStatus =
           error instanceof HttpException
             ? error.getStatus()
