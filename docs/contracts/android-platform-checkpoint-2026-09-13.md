@@ -15,9 +15,15 @@ In developer `8576711330364766433`, app `4972669113843626504` / `com.meritledger
 - `jlpt_day_pass`: USD 0.99 input to all-region automatic conversion.
 - `jlpt_year_pass`: USD 99 input to automatic conversion. Google rounded the US result to USD 99.99; this was manually corrected to USD 99.00 and the UI confirmed the change was saved. Japan's generated standard-year price was JPY 15,200.
 
-No product was activated. Existing lifetime products and subscriptions were untouched. The day pass's precise Japan price still needs a read-back.
+No product was activated. Existing lifetime products and subscriptions were untouched. A subsequent read-back confirmed the day pass remains draft, US USD 0.99 and Japan JPY 150.
 
-The `launch-64` offer is only an **unsaved browser form**, not a created offer. Its type is absolute discount. Start date was selected as September 13, but the UI time defaults to 17:00 UTC and must be corrected before saving. Discount values and end date are not configured. US discount must produce exactly USD 64.00 from USD 99.00; regional prices need review after conversion. The shared launch deadline remains `2026-12-11T23:58:15.676Z`; do not reset the launch clock or silently extend it. This form is retained for continuation.
+The `launch-64` offer was subsequently **saved and verified as draft**. It uses an absolute USD 35 discount with Google regional conversion, producing US USD 64.00 and Japan JPY 9,824 (JPY 5,376 discount from JPY 15,200). A temporary USD 64 discount was corrected before saving; no incorrect offer was activated. The Console labels the bulk discount input “new price”, but the resulting grid confirms it is the discount amount.
+
+Draft offer starts `2026-09-13T01:15:00Z`, ends `2026-12-11T23:58:00Z`. Console rejects seconds and requires HH:mm UTC. The authoritative shared launch deadline remains `2026-12-11T23:58:15.676Z`. Resolve the 15.676-second discrepancy through the supported API before activation, or explicitly implement a matching purchase-availability boundary without changing the shared launch clock. The parent purchase option and offer remain disabled/draft.
+
+## Direct publication authorization
+
+The user subsequently explicitly instructed: “做好以后直接发布到谷歌市场”. Final Play submission and release are authorized after implementation and actual release checks succeed; do not request redundant final publication permission. This instruction does not claim the remaining platform checks are complete or answer the separately pending long-lived security-access confirmation. Record actual status separately as uploaded, in review, approved, and publicly available.
 
 ## Pending access and platform validation
 
