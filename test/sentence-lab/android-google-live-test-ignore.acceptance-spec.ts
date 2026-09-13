@@ -305,4 +305,14 @@ test('an already linked live order is never terminally ignored on contradictory 
       where: { userId: user.id, status: 'ACTIVE' },
     }),
   ).toBe(1);
+  delete f.purchase.testPurchaseContext;
+  delete f.purchase.orderId;
+  f.purchase.purchaseStateContext.purchaseState = 'CANCELLED';
+  await f.purchases.enqueue(f.token);
+  await f.purchases.reconcile(row.id);
+  expect(f.order).toHaveBeenCalledTimes(2);
+  expect(await f.queued()).toMatchObject({
+    state: 'VERIFIED',
+    errorCode: 'GOOGLE_RECONCILIATION_FAILED',
+  });
 });

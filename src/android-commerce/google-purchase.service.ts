@@ -157,13 +157,75 @@ export class GooglePurchaseService {
           ))
       )
         throw new Error('GOOGLE_PRODUCT_INVALID');
-      const order = purchase.orderId
-        ? await this.gateway.order(purchase.orderId)
+      const owner = purchase.obfuscatedExternalAccountId
+        ? await this.db.user.findUnique({
+            where: {
+              googlePlayAccountId: purchase.obfuscatedExternalAccountId,
+            },
+            select: { id: true },
+          })
+        : null;
+      if (row.userId && owner?.id !== row.userId)
+        throw new Error('GOOGLE_OWNER_MISMATCH');
+      const purchaseState = purchase.purchaseStateContext.purchaseState;
+      // Rejected/pending attempts may have an order ID but no financial fields.
+      // Existing financial evidence must still go through Orders reconciliation.
+      if (
+        !row.orderId &&
+        !row.googleLastEventTime &&
+        !['VERIFIED', 'REFUNDED'].includes(row.state) &&
+        ['PENDING', 'CANCELLED'].includes(purchaseState)
+      ) {
+        await this.db.$transaction(async (tx) => {
+          const changed = await tx.googlePlayPurchase.updateMany({
+            where: {
+              ...this.fence(row),
+              orderId: null,
+              googleLastEventTime: null,
+            },
+            data: {
+              userId: owner?.id,
+              productId: item.productId,
+              googleOrderId: purchase.orderId,
+              state: owner ? purchaseState : 'AWAITING_OWNER',
+              consumeState:
+                owner && purchaseState === 'CANCELLED'
+                  ? 'NOT_APPLICABLE'
+                  : 'NOT_READY',
+              errorCode: owner ? null : 'GOOGLE_OWNER_UNRESOLVED',
+              evidence: json({ purchaseState }),
+              nextAttemptAt: new Date(Date.now() + 300_000),
+              leaseToken: null,
+              leaseUntil: null,
+            },
+          });
+          if (changed.count !== 1) throw new Error('GOOGLE_LEASE_LOST');
+          if (owner && purchaseState === 'CANCELLED')
+            await tx.billingEvent.updateMany({
+              where: { googlePurchaseId: row.id, status: { not: 'PROCESSED' } },
+              data: {
+                status: 'PROCESSED',
+                processedAt: new Date(),
+                errorCode: null,
+              },
+            });
+        });
+        return;
+      }
+      const providerOrderId =
+        purchase.orderId ??
+        (row.orderId || row.googleLastEventTime || row.state === 'REFUNDED'
+          ? row.googleOrderId
+          : null);
+      if (!providerOrderId && (row.orderId || row.googleLastEventTime))
+        throw new Error('GOOGLE_ORDER_EVIDENCE_REQUIRED');
+      const order = providerOrderId
+        ? await this.gateway.order(providerOrderId)
         : null;
       if (
         order &&
         (order.purchaseToken !== token ||
-          order.orderId !== purchase.orderId ||
+          order.orderId !== providerOrderId ||
           order.lineItems.length !== 1 ||
           order.lineItems[0].productId !== item.productId)
       )
@@ -180,17 +242,9 @@ export class GooglePurchaseService {
         });
         return;
       }
-      const owner = purchase.obfuscatedExternalAccountId
-        ? await this.db.user.findUnique({
-            where: {
-              googlePlayAccountId: purchase.obfuscatedExternalAccountId,
-            },
-            select: { id: true },
-          })
-        : null;
-      if (row.userId && owner?.id !== row.userId)
-        throw new Error('GOOGLE_OWNER_MISMATCH');
       const refunded = row.state === 'REFUNDED' || order?.state === 'REFUNDED';
+      if (row.orderId && !refunded && purchaseState !== 'PURCHASED')
+        throw new Error('GOOGLE_PURCHASE_STATE_CONFLICT');
       if (!owner) {
         await this.release(row, {
           state: refunded ? 'REFUNDED' : 'AWAITING_OWNER',

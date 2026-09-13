@@ -8,6 +8,7 @@ import { EntitlementService } from '../../src/billing/entitlement.service';
 import { AndroidPolicy } from '../../src/android-commerce/android.policy';
 import {
   GoogleGateway,
+  playOrder,
   type PlayOrder,
   type PlayPurchase,
 } from '../../src/android-commerce/google.gateway';
@@ -200,13 +201,32 @@ test('pending and unknown owner stay durable without a grant; forged owner canno
     await h.prisma.entitlementGrant.count({ where: { userId: stranger.id } }),
   ).toBe(0);
 });
-test.each([false, true])(
-  'verify accepts pending tokens without granting or consuming, then reports cancellation (order present: %s)',
-  async (withOrder) => {
+test.each([
+  [false, '404'],
+  [true, '404'],
+  [true, 'incomplete'],
+] as const)(
+  'verify accepts pending tokens without granting or consuming, then reports cancellation (order present: %s, shape: %s)',
+  async (withOrder, shape) => {
     const f = await fixture();
     f.purchase.purchaseStateContext.purchaseState = 'PENDING';
     if (!withOrder) delete f.purchase.orderId;
     f.order.state = 'PENDING';
+    if (shape === '404')
+      f.getOrder.mockRejectedValue(new Error('GOOGLE_API_404'));
+    else
+      f.getOrder.mockImplementation(() =>
+        Promise.resolve().then(() =>
+          playOrder.parse({
+            orderId: f.order.orderId,
+            purchaseToken: f.token,
+            state: 'CANCELED',
+            createTime: f.order.createTime,
+            lineItems: f.order.lineItems,
+            orderHistory: {},
+          }),
+        ),
+      );
     const controller = new AndroidCommerceController(
       h.prisma as PrismaService,
       f.policy,
@@ -219,12 +239,18 @@ test.each([false, true])(
       .mockResolvedValue({ data: {} } as never);
     const req = { currentUser: { id: f.user.id } } as Request;
     const input = { productId: 'jlpt_year_pass', purchaseToken: f.token };
+    const eventId = randomUUID();
+    await f.notifications.record(eventId, 'PURCHASE_HINT', f.token);
     expect((await controller.verify(req, input)).data).toMatchObject({
       status: 'PENDING',
       orderId: null,
       consumption: 'PENDING',
     });
     expect(f.consume).not.toHaveBeenCalled();
+    expect(f.getOrder).not.toHaveBeenCalled();
+    expect(
+      await h.prisma.billingEvent.findFirst({ where: { eventId } }),
+    ).toMatchObject({ status: 'RECEIVED' });
     expect(
       await h.prisma.paymentOrder.count({ where: { userId: f.user.id } }),
     ).toBe(0);
@@ -238,6 +264,10 @@ test.each([false, true])(
       status: 409,
     });
     expect(f.consume).not.toHaveBeenCalled();
+    expect(f.getOrder).not.toHaveBeenCalled();
+    expect(
+      await h.prisma.billingEvent.findFirst({ where: { eventId } }),
+    ).toMatchObject({ status: 'PROCESSED', errorCode: null });
     expect(
       await h.prisma.paymentOrder.count({ where: { userId: f.user.id } }),
     ).toBe(0);
