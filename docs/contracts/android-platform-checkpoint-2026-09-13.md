@@ -46,3 +46,85 @@ API migration `202609130003_android_commerce` and the Android commerce code were
 Read-only checks found the old Merit Ledger API health and Web entry reachable. Logged-in old member functionality was not verified. Preserve the old Web/API/data, old app version, four old SKUs, and existing subscription notification route. New JLPT verification does not restore those old products. Do not publish a same-package replacement before validating an accessible path to the old paid service and resolving any old-to-new benefit policy. No old lifetime purchase has been converted to unlimited JLPT AI.
 
 Android commit `1b7d55b` subsequently added a native legacy-service/recovery entry. It reads only the three known `merit_ledger_prefs` draft keys and supported files under the old app-specific `recordings` directory, with local display/playback and user-selected document export. Raw JSON, unknown fields and original files are preserved; no deletion, automatic upload, old-token access or guessed draft/audio association was introduced. The legacy website opens at its fixed origin without passing draft/account data. E reports 21 passing unit tests (9 new synthetic recovery tests), debug build and strict lint, with Chinese/English/Japanese strings. Main read the recovery/activity implementation. No personal-device or real same-package upgrade test was performed in this step; those acceptance requirements remain open. Android repository has no remote and this commit is local only.
+
+## 2026-09-13: isolated real platform callback acceptance
+
+The following supersedes the earlier pending-callback status only for the stated
+test scope. Production native commerce and advertising flags remain closed.
+
+Main confirmed the owner's separate single-account license-testing list is saved;
+the old 46-person closed-testing list was not selected. E confirmed the device's
+Play account and installed an APK-only `playTest` variant using the existing app
+package `com.meritledger.app`, test client `android-test`, and test callback path.
+This does not authorize treating a normal payment instrument as a test card.
+The JLPT backend uses synthetic non-gift accounts; the real Play account is
+independent of those application accounts.
+
+The isolated API runs on loopback 4401 with a fresh local PostgreSQL database.
+Main's test proxy uses 4402, Web uses 3059, and authenticated RTDN test filtering
+uses 4403. Public test origin is
+`https://experiencing-reid-signs-postage.trycloudflare.com`. The protected platform
+configuration references the existing service-account file; no credential
+contents or copied production users were used as fixtures. SIGHUP configuration
+reload was exercised with the same database, user and source-session identifiers
+before and after. Runtime state, encryption key and test evidence are retained
+privately on normal exit. See the [test process guide](../../test/sentence-lab/android-platform-harness.md).
+
+### Real AdMob Verify URL callback
+
+Main created the separate owned rewarded test unit
+`ca-app-pub-6296584170791776/7191979288` under existing app
+`ca-app-pub-6296584170791776~5699026455`, with reward amount 1 and item
+`jlpt_task`. Native ad display stayed disabled; device-test confirmation was not
+fabricated to enable it.
+
+The first real Google verification-tool callback had a valid Google ECDSA
+signature, matching ticket secret, user alias, reward item, amount and earning
+window, but used Google's tool placeholder `ad_unit=1234567890`. The production
+handler correctly rejected it against the real-unit ticket with HTTP 400 and
+zero RewardEvents. With main's approval, only a newly issued isolated
+Verify-URL-only ticket was explicitly bound to that observed placeholder. The
+production verifier and ordinary real-unit ticket binding were unchanged.
+
+The next real Google tool callback succeeded: one ticket became REDEEMED,
+exactly one RewardEvent was created, and the synthetic reward balance changed
+from 0 to 1. Three concurrent replays of that same signed callback each returned
+HTTP 200, with one event and balance 1 retained. Safe evidence and an inspected
+private PostgreSQL dump were saved before a controlled pre-purchase restart;
+GooglePlayPurchase count was verified as zero before that restart. This proves
+the real tool-to-backend signature, ticket and idempotent reward path. It does
+not prove that watching an ad from the owned unit produces a valid callback.
+
+### Real Play TestNotification through authenticated Pub/Sub
+
+Main configured and activated test subscription
+`projects/diceroller-b89331d1/subscriptions/jlpt-play-rtdn-test` with keyless push
+identity `jlpt-play-rtdn-push@diceroller-b89331d1.iam.gserviceaccount.com`.
+Its configured push audience is the public test origin followed by
+`/api/v1/android/commerce/google/rtdn`. Main saved the Play notification topic,
+selected one-time-product notifications, sent Play Console's actual test
+notification, and then increased the subscription acknowledgement deadline from
+10 to 30 seconds.
+
+At **2026-09-13T04:28:40.634Z**, the test relay forwarded the real notification
+and received HTTP 200 from the API. Both relay and API performed real Google
+OIDC validation with the configured audience, verified push email, subscription
+and package checks. The isolated database contained exactly one Google
+BillingEvent with `eventType=TEST`, `status=PROCESSED`; GooglePlayPurchase remained
+empty. One earlier relay failure counter was the deliberate unauthenticated
+HTTP 401 smoke check, not a failure of the real notification.
+
+Only RTDN traffic is routed through the test relay. After authentication it
+filters old subscriptions/products and purchases Google identifies as live
+before they can enter the test database. Real test-context purchases for the
+two JLPT products are forwarded even when pending or without a known owner;
+lookup failures return 503 for Pub/Sub retry instead of acknowledging an
+unverified event. The original API still durably records and reconciles the
+accepted purchase hints. Global voided-history scanning is disabled only in this
+isolated process to avoid importing unrelated live orders. The relay has three
+passing focused tests plus TypeScript/ESLint validation.
+
+Remaining evidence: actual license-tester purchase UI, productsv2 and Orders
+responses, consume, purchase/voided notifications and refund reconciliation,
+plus a real owned-unit test-device ad view producing SSV. A successful
+TestNotification alone establishes none of those purchase or refund outcomes.
