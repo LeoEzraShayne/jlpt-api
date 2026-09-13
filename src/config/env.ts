@@ -16,6 +16,27 @@ const envSchema = z.object({
   STRIPE_PRICE_YEAR_USD_STANDARD: z.string().optional(),
   STRIPE_PRICE_YEAR_JPY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  ANDROID_COMMERCE_ENABLED: z
+    .string()
+    .default('false')
+    .transform((v) => v === 'true'),
+  ANDROID_COMMERCE_ENVIRONMENT: z.enum(['test', 'live']).default('test'),
+  ANDROID_GOOGLE_ENABLED: z
+    .string()
+    .default('false')
+    .transform((v) => v === 'true'),
+  ANDROID_ADMOB_ENABLED: z
+    .string()
+    .default('false')
+    .transform((v) => v === 'true'),
+  GOOGLE_PLAY_PACKAGE_NAME: z.string().default('com.meritledger.app'),
+  GOOGLE_PLAY_CREDENTIALS_FILE: z.string().optional(),
+  GOOGLE_PLAY_TOKEN_ENCRYPTION_KEY: z.string().optional(),
+  GOOGLE_RTDN_AUDIENCE: z.string().url().optional(),
+  GOOGLE_RTDN_SUBSCRIPTION: z.string().optional(),
+  GOOGLE_RTDN_SERVICE_ACCOUNT_EMAIL: z.string().email().optional(),
+  ADMOB_REWARDED_AD_UNIT_ID: z.string().optional(),
+  ADMOB_REWARD_ITEM: z.string().default('jlpt_task'),
   ADMIN_EMAIL: z.string().email().optional(),
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: z.string().min(1),

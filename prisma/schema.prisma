@@ -144,6 +144,7 @@ enum TaskSkipReason {
 }
 
 model User {
+  googlePlayAccountId String?               @unique
   id                  String                @id @default(cuid())
   email               String                @unique
   displayName         String
@@ -784,13 +785,15 @@ model AiProviderCircuit {
 }
 
 model BillingConfig {
-  enforcementAt      DateTime?
-  id                 String    @id @default("default")
-  launchAt           DateTime?
-  salesEnabled       Boolean   @default(false)
-  enforcementEnabled Boolean   @default(false)
-  rewardsEnabled     Boolean   @default(false)
-  updatedAt          DateTime  @updatedAt
+  androidSalesEnabled   Boolean   @default(false)
+  androidRewardsEnabled Boolean   @default(false)
+  enforcementAt         DateTime?
+  id                    String    @id @default("default")
+  launchAt              DateTime?
+  salesEnabled          Boolean   @default(false)
+  enforcementEnabled    Boolean   @default(false)
+  rewardsEnabled        Boolean   @default(false)
+  updatedAt             DateTime  @updatedAt
 }
 
 model PaymentOrder {
@@ -841,6 +844,7 @@ model EntitlementGrant {
 }
 
 model BillingEvent {
+  googlePurchaseId  String?
   id                String    @id @default(cuid())
   provider          String
   environment       String
@@ -856,6 +860,7 @@ model BillingEvent {
   updatedAt         DateTime  @updatedAt
 
   @@unique([provider, environment, eventId])
+  @@index([googlePurchaseId, status])
 }
 
 model QuotaAccount {
@@ -995,4 +1000,101 @@ model AiUsageRecord {
   @@index([userId, createdAt])
   @@index([taskKind, taskKey])
   @@index([purpose, model, createdAt])
+}
+
+// Browser-approved PKCE binding. Codes and native tokens are stored only as hashes.
+model AndroidBindingRequest {
+  id              String    @id @default(uuid())
+  codeHash        String?   @unique
+  codeChallenge   String
+  state           String
+  clientId        String
+  userId          String?
+  sourceSessionId String?
+  expiresAt       DateTime
+  codeExpiresAt   DateTime?
+  approvedAt      DateTime?
+  consumedAt      DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([expiresAt])
+}
+
+model AndroidSession {
+  id              String    @id @default(uuid())
+  userId          String
+  sourceSessionId String
+  tokenHash       String    @unique
+  scopes          String[]  @default([])
+  clientId        String
+  expiresAt       DateTime
+  revokedAt       DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@index([userId, expiresAt])
+  @@index([sourceSessionId])
+}
+
+// Durable, fenced verification/consumption queue; RTDN can precede account resolution.
+model GooglePlayPurchase {
+  id                  String    @id @default(uuid())
+  packageName         String
+  environment         String
+  tokenHash           String
+  tokenCiphertext     String
+  userId              String?
+  productId           String?
+  purchaseOptionId    String?
+  offerId             String?
+  orderId             String?   @unique
+  googleOrderId       String?
+  googleLastEventTime String?
+  state               String    @default("RECEIVED")
+  consumeState        String    @default("NOT_READY")
+  verifiedAt          DateTime?
+  nextAttemptAt       DateTime  @default(now())
+  attempts            Int       @default(0)
+  revision            Int       @default(0)
+  leaseToken          String?
+  leaseUntil          DateTime?
+  errorCode           String?
+  evidence            Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([packageName, tokenHash])
+  @@index([state, nextAttemptAt])
+  @@index([userId, createdAt])
+  @@index([googleOrderId])
+}
+
+model AndroidCommerceSyncState {
+  id            String    @id
+  watermarkAt   DateTime?
+  lastSuccessAt DateTime?
+  leaseToken    String?
+  leaseUntil    DateTime?
+  errorCode     String?
+  updatedAt     DateTime  @updatedAt
+}
+
+model RewardTicket {
+  id            String    @id @default(uuid())
+  userId        String
+  environment   String
+  requestKey    String
+  secretHash    String    @unique
+  ssvUserId     String
+  adUnitId      String
+  ssvAdUnitId   String
+  rewardItem    String
+  issuedAt      DateTime  @default(now())
+  expiresAt     DateTime
+  status        String    @default("ISSUED")
+  redeemedAt    DateTime?
+  transactionId String?   @unique
+
+  @@unique([userId, environment, requestKey])
+  @@index([userId, status])
+  @@index([expiresAt])
 }
