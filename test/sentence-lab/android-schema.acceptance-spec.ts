@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { acceptanceDatabase, type AcceptanceDatabase } from './database';
@@ -145,6 +145,13 @@ test('Android migration preserves all previous tables and live Web billing data;
 });
 
 test('repeating real Web activation after migration preserves native shutdown and launch gift', async () => {
+  // Historical A1 DDL is validated above; current services require all later DDL.
+  for (const name of (await readdir('prisma/migrations'))
+    .filter((name) => /^\d/.test(name) && name > migration)
+    .sort())
+    await h.sql.query(
+      await readFile(`prisma/migrations/${name}/migration.sql`, 'utf8'),
+    );
   const before = await h.prisma.entitlementGrant.findMany();
   const result = await activateWebBilling(
     h.prisma as PrismaService,

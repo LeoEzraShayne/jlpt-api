@@ -91,7 +91,7 @@ export class AuthService {
       where: { tokenHash: this.hashToken(rawToken) },
       include: { user: true },
     });
-    if (!session || session.expiresAt <= new Date())
+    if (!session || session.expiresAt <= new Date() || session.user.deletedAt)
       throw new UnauthorizedException({
         code: 'SESSION_EXPIRED',
         message: 'Session expired',

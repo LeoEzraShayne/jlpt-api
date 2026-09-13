@@ -4,8 +4,8 @@ import type { Client } from 'pg';
 
 // Frozen review inventory: schema additions fail closed until classified.
 export const schemaHash =
-  '3f309b793cce94a3a7c64766d051f69127637833d17516b52a67980fbbd5eb14';
-type Action = 'DELETE' | 'RETAIN_SCRUB' | 'REVIEW' | 'SHARED';
+  'd1915d01fbfb520f3f7fc807b7362da6ba7e7d65d976ac8d5cf850b469a95e50';
+type Action = 'DELETE' | 'TOMBSTONE' | 'RETAIN_SCRUB' | 'REVIEW' | 'SHARED';
 type Rule = { action: Action; where: string; reason: string };
 const owned = '"userId" = $1';
 const rules: Record<string, Rule> = {};
@@ -14,9 +14,9 @@ function add(names: string, action: Action, where: string, reason: string) {
 }
 add(
   'User',
-  'DELETE',
+  'TOMBSTONE',
   '"id" = $1',
-  'Account profile; FK descendants explicitly inventoried',
+  'Non-authenticating random profile; learning/auth rows explicitly deleted',
 );
 add(
   'AuthAccount AuthSession StudyPlan StudyTask UserGrammarProgress StudySession SentenceAttempt ReviewEvent DailyStudyStat StudyActivityDay VocabularyBookmark PersonalExpression ContentImport ContentCandidate ContentExposure VocabularyLearning VocabularyPractice',
@@ -40,7 +40,7 @@ add(
   'AiReviewJob',
   'DELETE',
   '"attemptId" IN (SELECT id FROM "SentenceAttempt" WHERE "userId" = $1)',
-  'Queued/finished AI job; active leases block rehearsal',
+  'Queued/finished AI job; removal fences result writes; admitted network may finish detached costs',
 );
 add(
   'AiReviewResult',
@@ -64,7 +64,7 @@ add(
   'GooglePlayPurchase',
   'RETAIN_SCRUB',
   owned,
-  'Encrypted token and ledger link needed for refund reconciliation; owner-deleted handling is blocked',
+  'Encrypted token and anonymous subject/ledger link retained for refund reconciliation only',
 );
 add(
   'EntitlementGrant',

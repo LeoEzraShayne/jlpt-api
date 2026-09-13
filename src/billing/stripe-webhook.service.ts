@@ -52,7 +52,12 @@ export class StripeWebhookService {
           return { received: true };
         }
         const committed = await this.prisma.$transaction(async (tx) => {
-          await lockBillingUser(tx, state.order.userId);
+          await lockBillingUser(tx, state.order.userId, true);
+          const owner = await tx.user.findUnique({
+            where: { id: state.order.userId },
+            select: { deletedAt: true },
+          });
+          const deletedOwner = !owner || !!owner.deletedAt;
           const duplicate = await tx.billingEvent.findUniqueOrThrow({
             where: { id: receipt.id },
           });
@@ -115,7 +120,12 @@ export class StripeWebhookService {
               status: 'PROCESSED',
               orderId: order.id,
               processedAt: new Date(),
-              errorCode: null,
+              errorCode:
+                deletedOwner &&
+                state.paid &&
+                state.refundedAmount < order.amount
+                  ? 'DELETED_ACCOUNT_MANUAL_REVIEW'
+                  : null,
             },
           });
           return true;

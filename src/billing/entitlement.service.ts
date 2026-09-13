@@ -6,8 +6,9 @@ import { DAY_SECONDS, GIFT_EMAIL } from './billing.policy';
 export async function lockBillingUser(
   tx: Prisma.TransactionClient,
   userId: string,
+  allowDeleted = false,
 ) {
-  await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+  await tx.$queryRaw`SELECT lock_account_subject(${userId}, ${allowDeleted}) AS active`;
 }
 
 /** Remaining time is frozen on suspension and debited only while the grant is active. */
@@ -46,9 +47,9 @@ export class EntitlementService {
     if (!config?.launchAt || config.launchAt > now) return;
     const user = await tx.user.findUnique({
       where: { id: userId },
-      select: { email: true },
+      select: { email: true, deletedAt: true },
     });
-    if (user?.email.toLowerCase() !== GIFT_EMAIL) return;
+    if (user?.deletedAt || user?.email.toLowerCase() !== GIFT_EMAIL) return;
     await tx.entitlementGrant.upsert({
       where: { sourceKey: `launch-vip:${GIFT_EMAIL}` },
       update: {},
@@ -96,6 +97,17 @@ export class EntitlementService {
     const order = await tx.paymentOrder.findUniqueOrThrow({
       where: { id: orderId },
     });
+    const owner = await tx.user.findUnique({
+      where: { id: order.userId },
+      select: { deletedAt: true },
+    });
+    if (!owner || owner.deletedAt) {
+      await tx.entitlementGrant.updateMany({
+        where: { orderId },
+        data: { status: 'REVOKED', revokedAt: new Date(), metadata: {} },
+      });
+      return null;
+    }
     const existing = await tx.entitlementGrant.findUnique({
       where: { orderId },
     });

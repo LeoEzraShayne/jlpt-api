@@ -236,6 +236,14 @@ export class GooglePurchaseService {
       );
       if (!committed) return;
       const finalRefunded = committed === 'REFUNDED';
+      if (committed === 'DELETED_ACCOUNT') {
+        await this.release(row, {
+          consumeState: 'MANUAL_REVIEW',
+          errorCode: 'GOOGLE_DELETED_ACCOUNT_MANUAL_REVIEW',
+          nextAttemptAt: new Date(Date.now() + 24 * 60 * 60_000),
+        });
+        return;
+      }
       if (
         !finalRefunded &&
         item.productOfferDetails.consumptionState !==
@@ -277,7 +285,12 @@ export class GooglePurchaseService {
     if (!Number.isFinite(paidAt.getTime()))
       throw new Error('GOOGLE_TIME_INVALID');
     return this.db.$transaction(async (tx) => {
-      await lockBillingUser(tx, userId);
+      await lockBillingUser(tx, userId, true);
+      const owner = await tx.user.findUnique({
+        where: { id: userId },
+        select: { deletedAt: true },
+      });
+      if (!owner) throw new Error('GOOGLE_OWNER_MISSING');
       const fenced = await tx.googlePlayPurchase.updateMany({
         where: this.fence(row),
         data: { verifiedAt: new Date() },
@@ -348,7 +361,9 @@ export class GooglePurchaseService {
           where: { id: local.id },
           data: { status, refundedAmount: refund },
         });
-      if (status !== 'REFUNDED')
+      if (owner.deletedAt)
+        await this.grants.changeOrderGrant(tx, local.id, 'REVOKED');
+      else if (status !== 'REFUNDED')
         await this.grants.grantOrder(tx, local.id, local.paidAt!);
       else await this.grants.changeOrderGrant(tx, local.id, 'REVOKED');
       const committed = await tx.googlePlayPurchase.updateMany({
@@ -384,7 +399,11 @@ export class GooglePurchaseService {
           errorCode: null,
         },
       });
-      return status === 'REFUNDED' ? 'REFUNDED' : 'VERIFIED';
+      return status === 'REFUNDED'
+        ? 'REFUNDED'
+        : owner.deletedAt
+          ? 'DELETED_ACCOUNT'
+          : 'VERIFIED';
     });
   }
 }

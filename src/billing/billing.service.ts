@@ -246,7 +246,7 @@ export class BillingService {
       );
       if (!session.url || session.livemode !== (order.environment === 'live'))
         billingError('PAYMENT_UNAVAILABLE', 503);
-      await this.prisma.paymentOrder.update({
+      const saved = await this.prisma.paymentOrder.update({
         where: { id: order.id },
         data: {
           providerOrderId: session.id,
@@ -254,6 +254,7 @@ export class BillingService {
           expiresAt: new Date(session.expires_at * 1000),
         },
       });
+      if (!saved.checkoutUrl) billingError('PAYMENT_UNAVAILABLE', 503);
       return { orderId: order.id, checkoutUrl: session.url };
     } catch (error) {
       if (

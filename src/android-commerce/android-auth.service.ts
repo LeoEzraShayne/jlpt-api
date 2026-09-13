@@ -9,6 +9,7 @@ import {
   type AndroidBindingInput,
 } from '../contracts/android-commerce';
 import { androidHash, AndroidPolicy } from './android.policy';
+import { lockBillingUser } from '../billing/entitlement.service';
 
 @Injectable()
 export class AndroidAuthService {
@@ -54,6 +55,7 @@ export class AndroidAuthService {
     id: string,
     userId: string,
   ) {
+    await lockBillingUser(tx, userId);
     await tx.$queryRaw`SELECT id FROM "AuthSession" WHERE id = ${id} FOR UPDATE`;
     const session = await tx.authSession.findUnique({ where: { id } });
     if (
@@ -192,6 +194,7 @@ export class AndroidAuthService {
     const user = await this.db.user.findUniqueOrThrow({
       where: { id: session.userId },
     });
+    if (user.deletedAt) billingError('SESSION_EXPIRED', 401);
     return { session, user };
   }
   async logout(id: string) {

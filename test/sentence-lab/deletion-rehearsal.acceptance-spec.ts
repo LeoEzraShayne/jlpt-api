@@ -66,7 +66,6 @@ test('synthetic apply clears FK and scalar learning/session data, preserves shar
   const f = await fixture();
   await rehearseDeletion(h, { applySynthetic: true });
   for (const table of [
-    'User',
     'AuthAccount',
     'AuthSession',
     'AndroidSession',
@@ -121,18 +120,13 @@ test('synthetic apply clears FK and scalar learning/session data, preserves shar
   });
 });
 
-test('in-flight AI or admin import blockers abort before writes and non-minted handles are rejected', async () => {
+test('in-flight AI is reported, admin scope blocks writes, and non-minted handles are rejected', async () => {
   const f = await fixture();
   await expect(
     rehearseDeletion({ ...h }, { applySynthetic: true }),
   ).rejects.toThrow('FRESH_SYNTHETIC_DATABASE_REQUIRED');
   await h.prisma.aiReviewJob.updateMany({ data: { status: 'PROCESSING' } });
-  expect((await rehearseDeletion(h)).blockers).toContain(
-    'IN_FLIGHT_WORK_REQUIRES_DRAIN',
-  );
-  await expect(rehearseDeletion(h, { applySynthetic: true })).rejects.toThrow(
-    'DELETION_BLOCKED',
-  );
+  expect((await rehearseDeletion(h)).admittedWorkCount).toBeGreaterThan(0);
   expect(await h.prisma.androidSession.count()).toBe(1);
   expect(
     (await h.prisma.paymentOrder.findFirstOrThrow()).checkoutUrl,
@@ -181,7 +175,7 @@ test('transaction failure rolls back scrubbing and all deletions', async () => {
   await fixture();
   await h.sql
     .query(`CREATE FUNCTION synthetic_stop_delete() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'synthetic rollback'; END $$;
-    CREATE TRIGGER synthetic_stop BEFORE DELETE ON "User" FOR EACH ROW EXECUTE FUNCTION synthetic_stop_delete();`);
+    CREATE TRIGGER synthetic_stop BEFORE DELETE ON "AuthAccount" FOR EACH ROW EXECUTE FUNCTION synthetic_stop_delete();`);
   await expect(rehearseDeletion(h, { applySynthetic: true })).rejects.toThrow(
     'synthetic rollback',
   );
@@ -194,7 +188,7 @@ test('transaction failure rolls back scrubbing and all deletions', async () => {
   ).not.toBeNull();
 });
 
-test('KNOWN BLOCKER: actual Stripe reconciliation can create an orphan grant after deleting an account', async () => {
+test('late Stripe success reconciles money without recreating a grant for a deleted account', async () => {
   const f = await fixture();
   // A pending order had no existing grant when the deletion happened.
   await h.prisma.entitlementGrant.deleteMany();
@@ -243,89 +237,113 @@ test('KNOWN BLOCKER: actual Stripe reconciliation can create an orphan grant aft
       secret: 'whsec_synthetic',
     }),
   );
-  expect(await h.prisma.user.count()).toBe(0);
+  expect(
+    await h.prisma.user.count({ where: { deletedAt: { not: null } } }),
+  ).toBe(1);
   expect(
     await h.prisma.entitlementGrant.count({
       where: { userId: f.user.id, status: 'ACTIVE' },
     }),
-  ).toBe(1);
+  ).toBe(0);
   expect(global.fetch).not.toHaveBeenCalled();
 });
 
-test('KNOWN BLOCKER: Google late refund cannot reconcile a retained purchase after its owner is deleted', async () => {
-  const f = await fixture();
-  const config = new ConfigService({
-    ANDROID_COMMERCE_ENVIRONMENT: 'test',
-    BILLING_ENVIRONMENT: 'test',
-    DATABASE_URL: h.connectionString,
-    GOOGLE_PLAY_TOKEN_ENCRYPTION_KEY: randomBytes(32).toString('hex'),
-  });
-  const policy = new AndroidPolicy(config),
-    gateway = new GoogleGateway(policy);
-  const service = new GooglePurchaseService(
-    h.prisma as PrismaService,
-    policy,
-    gateway,
-    new EntitlementService(config),
-  );
-  const token = randomUUID();
-  const purchase: PlayPurchase = {
-    testPurchaseContext: { fopType: 'TEST' },
-    orderId: 'GPA.synthetic',
-    obfuscatedExternalAccountId: f.user.googlePlayAccountId!,
-    productLineItem: [
-      {
-        productId: 'jlpt_day_pass',
-        productOfferDetails: {
-          quantity: 1,
-          purchaseOptionId: 'buy',
-          consumptionState: 'CONSUMPTION_STATE_CONSUMED',
+test.each([false, true])(
+  'Google late accounting works when deletion preceded the first token delivery: %s',
+  async (deletedBeforeDelivery) => {
+    const f = await fixture();
+    const config = new ConfigService({
+      ANDROID_COMMERCE_ENVIRONMENT: 'test',
+      BILLING_ENVIRONMENT: 'test',
+      DATABASE_URL: h.connectionString,
+      GOOGLE_PLAY_TOKEN_ENCRYPTION_KEY: randomBytes(32).toString('hex'),
+    });
+    const policy = new AndroidPolicy(config),
+      gateway = new GoogleGateway(policy);
+    const service = new GooglePurchaseService(
+      h.prisma as PrismaService,
+      policy,
+      gateway,
+      new EntitlementService(config),
+    );
+    const token = randomUUID();
+    const purchase: PlayPurchase = {
+      testPurchaseContext: { fopType: 'TEST' },
+      orderId: 'GPA.synthetic',
+      obfuscatedExternalAccountId: f.user.googlePlayAccountId!,
+      productLineItem: [
+        {
+          productId: 'jlpt_day_pass',
+          productOfferDetails: {
+            quantity: 1,
+            purchaseOptionId: 'buy',
+            consumptionState: 'CONSUMPTION_STATE_CONSUMED',
+          },
         },
-      },
-    ],
-    purchaseStateContext: { purchaseState: 'PURCHASED' },
-  };
-  const order: PlayOrder = {
-    orderId: 'GPA.synthetic',
-    purchaseToken: token,
-    state: 'PROCESSED',
-    createTime: new Date().toISOString(),
-    lastEventTime: new Date().toISOString(),
-    total: { currencyCode: 'USD', units: '0', nanos: 990000000 },
-    lineItems: [{ productId: 'jlpt_day_pass' }],
-  };
-  jest
-    .spyOn(gateway, 'purchase')
-    .mockImplementation(() => Promise.resolve(structuredClone(purchase)));
-  jest
-    .spyOn(gateway, 'order')
-    .mockImplementation(() => Promise.resolve(structuredClone(order)));
-  jest.spyOn(gateway, 'consume').mockResolvedValue();
-  const row = await service.enqueue(token);
-  await service.reconcile(row.id);
-  expect(
-    await h.prisma.googlePlayPurchase.findUniqueOrThrow({
+      ],
+      purchaseStateContext: { purchaseState: 'PURCHASED' },
+    };
+    const order: PlayOrder = {
+      orderId: 'GPA.synthetic',
+      purchaseToken: token,
+      state: 'PROCESSED',
+      createTime: new Date().toISOString(),
+      lastEventTime: new Date().toISOString(),
+      total: { currencyCode: 'USD', units: '0', nanos: 990000000 },
+      lineItems: [{ productId: 'jlpt_day_pass' }],
+    };
+    jest
+      .spyOn(gateway, 'purchase')
+      .mockImplementation(() => Promise.resolve(structuredClone(purchase)));
+    jest
+      .spyOn(gateway, 'order')
+      .mockImplementation(() => Promise.resolve(structuredClone(order)));
+    const consume = jest.spyOn(gateway, 'consume').mockResolvedValue();
+    if (deletedBeforeDelivery)
+      await rehearseDeletion(h, { applySynthetic: true });
+    const row = await service.enqueue(token);
+    await service.reconcile(row.id);
+    expect(
+      await h.prisma.googlePlayPurchase.findUniqueOrThrow({
+        where: { id: row.id },
+      }),
+    ).toMatchObject({ userId: f.user.id, state: 'VERIFIED' });
+    if (deletedBeforeDelivery) {
+      expect(
+        await h.prisma.googlePlayPurchase.findUniqueOrThrow({
+          where: { id: row.id },
+        }),
+      ).toMatchObject({
+        consumeState: 'MANUAL_REVIEW',
+        errorCode: 'GOOGLE_DELETED_ACCOUNT_MANUAL_REVIEW',
+      });
+      expect(consume).not.toHaveBeenCalled();
+      expect(
+        await h.prisma.entitlementGrant.count({
+          where: { userId: f.user.id, status: 'ACTIVE' },
+        }),
+      ).toBe(0);
+    } else await rehearseDeletion(h, { applySynthetic: true });
+    order.state = 'REFUNDED';
+    await service.enqueue(token);
+    await service.reconcile(row.id);
+    const after = await h.prisma.googlePlayPurchase.findUniqueOrThrow({
       where: { id: row.id },
-    }),
-  ).toMatchObject({ userId: f.user.id, state: 'VERIFIED' });
-  await rehearseDeletion(h, { applySynthetic: true });
-  order.state = 'REFUNDED';
-  await service.enqueue(token);
-  await service.reconcile(row.id);
-  const after = await h.prisma.googlePlayPurchase.findUniqueOrThrow({
-    where: { id: row.id },
-  });
-  expect(after.errorCode).toBe('GOOGLE_RECONCILIATION_FAILED');
-  expect(
-    await h.prisma.paymentOrder.findUniqueOrThrow({
-      where: { id: after.orderId! },
-    }),
-  ).toMatchObject({ status: 'PAID', refundedAmount: 0 });
-  expect(await h.prisma.user.count()).toBe(0);
-  expect(global.fetch).not.toHaveBeenCalled();
-});
+    });
+    expect(after.errorCode).toBeNull();
+    expect(
+      await h.prisma.paymentOrder.findUniqueOrThrow({
+        where: { id: after.orderId! },
+      }),
+    ).toMatchObject({ status: 'REFUNDED', refundedAmount: 99 });
+    expect(
+      await h.prisma.user.count({ where: { deletedAt: { not: null } } }),
+    ).toBe(1);
+    expect(global.fetch).not.toHaveBeenCalled();
+  },
+);
 
-test('KNOWN BLOCKER: a late metered AI attempt persists the old scalar userId after deletion', async () => {
+test('late metered AI attempt is rejected before network admission after deletion', async () => {
   const f = await fixture();
   await rehearseDeletion(h, { applySynthetic: true });
   jest.mocked(global.fetch).mockResolvedValue(
@@ -342,15 +360,23 @@ test('KNOWN BLOCKER: a late metered AI attempt persists the old scalar userId af
     new ConfigService({ DEEPSEEK_API_KEY: 'synthetic_not_a_key' }),
     h.prisma as PrismaService,
   );
-  await client.request(
-    'DEEPSEEK',
-    'synthetic',
-    'GRAMMAR_REVIEW',
-    { userId: f.user.id, taskKey: f.study.id },
-    (text) => JSON.parse(text) as unknown,
-  );
+  await expect(
+    client.request(
+      'DEEPSEEK',
+      'synthetic',
+      'GRAMMAR_REVIEW',
+      { userId: f.user.id, taskKey: f.study.id },
+      (text) => JSON.parse(text) as unknown,
+    ),
+  ).rejects.toMatchObject({
+    code: 'AI_METERING_UNAVAILABLE',
+    retryable: false,
+  });
+  expect(global.fetch).not.toHaveBeenCalled();
   expect(
     await h.prisma.aiUsageRecord.count({ where: { userId: f.user.id } }),
+  ).toBe(0);
+  expect(
+    await h.prisma.user.count({ where: { deletedAt: { not: null } } }),
   ).toBe(1);
-  expect(await h.prisma.user.count()).toBe(0);
 });

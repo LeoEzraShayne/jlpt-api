@@ -64,6 +64,7 @@ test.each([1, 365])(
     const u = await user();
     const o = await order(u.id, days);
     const g = await grant(u.id, o.id);
+    if (!g) throw new Error('ACTIVE_USER_GRANT_REQUIRED');
     expect(g.startsAt).toEqual(now);
     expect(g.endsAt.getTime() - g.startsAt.getTime()).toBe(days * day);
     expect(

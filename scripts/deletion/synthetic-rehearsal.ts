@@ -3,7 +3,7 @@ import {
   acceptanceDatabase,
   type AcceptanceDatabase,
 } from '../../test/sentence-lab/database';
-import { tablePlan } from './table-plan';
+import { deleteAccount } from './operator';
 
 // No DATABASE_URL, dotenv, existing DB selector, email selector or production apply.
 // Only handles minted here for a freshly created DB can reach the mutating path.
@@ -242,106 +242,30 @@ export async function rehearseDeletion(
     current.rows[0].name !== url.pathname.slice(1)
   )
     throw new Error('FRESH_SYNTHETIC_DATABASE_REQUIRED');
-  await h.sql.query('BEGIN ISOLATION LEVEL REPEATABLE READ');
-  try {
-    await h.sql.query("SET LOCAL lock_timeout='2s'");
-    await h.sql.query("SET LOCAL statement_timeout='10s'");
-    const account = await h.sql.query<{ email: string }>(
-      'SELECT email FROM "User" WHERE id=$1 FOR UPDATE',
-      [fixture.userId],
-    );
-    if (account.rows.length !== 1 || account.rows[0].email !== fixture.email)
-      throw new Error('SYNTHETIC_ACCOUNT_REQUIRED');
-    const plan = await tablePlan(h.sql, fixture.userId);
-    const busy = await h.sql.query<{ count: number }>(
-      `SELECT (
-      (SELECT count(*) FROM "AiReviewJob" j JOIN "SentenceAttempt" a ON a.id=j."attemptId" WHERE a."userId"=$1 AND j.status='PROCESSING') +
-      (SELECT count(*) FROM "VocabularyPractice" WHERE "userId"=$1 AND "lockedAt" IS NOT NULL) +
-      (SELECT count(*) FROM "AiUsageRecord" WHERE "userId"=$1 AND "errorCode"='AI_IN_FLIGHT') +
-      (SELECT count(*) FROM "GooglePlayPurchase" WHERE "userId"=$1 AND "leaseUntil">CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
-    )::int AS count`,
-      [fixture.userId],
-    );
-    const blockers = [
-      ...plan
-        .filter((p) => p.action === 'REVIEW' && p.count)
-        .map((p) => `MANUAL_REVIEW:${p.table}`),
-      ...(busy.rows[0].count ? ['IN_FLIGHT_WORK_REQUIRES_DRAIN'] : []),
-    ];
-    const exceptional = await h.sql.query<{ count: number }>(
-      `SELECT (
-      (SELECT count(*) FROM "EntitlementGrant" WHERE "userId"=$1 AND source='LAUNCH_GIFT') +
-      (SELECT count(*) FROM "VocabularyLearning" WHERE "userId"<>$1 AND "vocabularyId" IN (SELECT id FROM "VocabularyEntry" WHERE "ownerId"=$1)) +
-      (SELECT count(*) FROM "VocabularyPractice" WHERE "userId"<>$1 AND "vocabularyId" IN (SELECT id FROM "VocabularyEntry" WHERE "ownerId"=$1)) +
-      (SELECT count(*) FROM "VocabularyBookmark" WHERE "userId"<>$1 AND "vocabularyId" IN (SELECT id FROM "VocabularyEntry" WHERE "ownerId"=$1))
-    )::int AS count`,
-      [fixture.userId],
-    );
-    if (exceptional.rows[0].count)
-      blockers.push('GIFT_OR_CROSS_ACCOUNT_SCOPE_REQUIRES_REVIEW');
-    const report = {
-      mode: options.applySynthetic ? 'SYNTHETIC_APPLY' : 'DRY_RUN',
-      productionReady: false,
-      productionBlockers: [
-        'STRIPE_ORPHAN_GRANT',
-        'GOOGLE_DELETED_OWNER_REFUND',
-        'AI_LATE_USER_RELINK',
-        'RETENTION_AND_OPERATOR_APPROVAL_REQUIRED',
-      ],
-      blockers,
-      plan: plan.map(({ table, action, reason, count }) => ({
-        table,
-        action,
-        reason,
-        count,
-      })),
-    };
-    if (!options.applySynthetic) {
-      await h.sql.query('ROLLBACK');
-      return report;
-    }
-    if (blockers.length)
-      throw new Error(`DELETION_BLOCKED:${blockers.join(',')}`);
-    // Simulation only. Financial identifiers intentionally remain, NOT anonymized.
-    await h.sql.query(
-      'UPDATE "PaymentOrder" SET "checkoutUrl"=NULL, snapshot=\'{}\'::jsonb, "requestKey"=\'deleted:\'||id WHERE "userId"=$1',
-      [fixture.userId],
-    );
-    await h.sql.query(
-      'UPDATE "BillingEvent" SET payload=\'{}\'::jsonb WHERE "orderId" IN (SELECT id FROM "PaymentOrder" WHERE "userId"=$1) OR "googlePurchaseId" IN (SELECT id FROM "GooglePlayPurchase" WHERE "userId"=$1)',
-      [fixture.userId],
-    );
-    await h.sql.query(
-      'UPDATE "EntitlementGrant" SET status=\'REVOKED\', "revokedAt"=CURRENT_TIMESTAMP AT TIME ZONE \'UTC\', metadata=NULL WHERE "userId"=$1',
-      [fixture.userId],
-    );
-    await h.sql.query(
-      'UPDATE "GooglePlayPurchase" SET evidence=NULL, revision=revision+1, "leaseToken"=NULL, "leaseUntil"=NULL WHERE "userId"=$1',
-      [fixture.userId],
-    );
-    await h.sql.query(
-      'UPDATE "AiUsageRecord" SET "userId"=NULL, "taskKey"=NULL, "taskKind"=NULL, "rawUsage"=NULL WHERE "userId"=$1',
-      [fixture.userId],
-    );
-    for (const table of [
-      'AndroidSession',
-      'AndroidBindingRequest',
-      'RewardTicket',
-      'RewardEvent',
-      'TaskSubmission',
-      'TaskAuthorization',
-      'QuotaPeriod',
-      'QuotaAccount',
-      'VocabularyPracticeAttempt',
-    ])
-      await h.sql.query(`DELETE FROM "${table}" WHERE "userId"=$1`, [
-        fixture.userId,
-      ]);
-    await h.sql.query('DELETE FROM "User" WHERE id=$1', [fixture.userId]);
-    await h.sql.query('COMMIT');
-    return report;
-  } catch (error) {
-    await h.sql.query('ROLLBACK');
-    throw error;
-  }
+  const account = await h.prisma.user.findUniqueOrThrow({
+    where: { id: fixture.userId },
+  });
+  if (!account.deletedAt && account.email !== fixture.email)
+    throw new Error('SYNTHETIC_ACCOUNT_REQUIRED');
+  const preview = await deleteAccount(h.sql, fixture.userId);
+  if (!options.applySynthetic) return preview;
+  return deleteAccount(h.sql, fixture.userId, {
+    apply: true,
+    review: {
+      ...syntheticReview(fixture.userId),
+      planDigest: preview.planDigest,
+    },
+  });
+}
+export function syntheticReview(userId: string) {
+  return {
+    userId,
+    requestRef: 'synthetic-only-request',
+    ownershipVerified: true,
+    scope: 'JLPT',
+    retentionBasis: 'Synthetic fixture only; no real retention decision',
+    nextRetentionReview: '2026-09-14',
+    rightsEndAcknowledged: true,
+    pendingPaymentHandling: 'MANUAL_REVIEW_NO_AUTO_REFUND',
+  };
 }
