@@ -316,7 +316,7 @@ export class GooglePurchaseService {
       if (status !== 'REFUNDED')
         await this.grants.grantOrder(tx, local.id, local.paidAt!);
       else await this.grants.changeOrderGrant(tx, local.id, 'REVOKED');
-      await tx.googlePlayPurchase.updateMany({
+      const committed = await tx.googlePlayPurchase.updateMany({
         where: this.fence(row),
         data: {
           userId,
@@ -337,6 +337,9 @@ export class GooglePurchaseService {
           }),
         },
       });
+      // The lease can expire while the ledger transaction is running. Never
+      // commit an entitlement without its durable queue link and final fence.
+      if (committed.count !== 1) throw new Error('GOOGLE_LEASE_LOST');
       await tx.billingEvent.updateMany({
         where: { googlePurchaseId: row.id, status: { not: 'PROCESSED' } },
         data: {
