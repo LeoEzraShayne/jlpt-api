@@ -330,3 +330,34 @@ resulting processed event and real voided watermark health. A TestNotification
 alone still does not prove a live purchase, refund or ad view. The hourly voided
 sweep and 15-second durable-queue drain must remain operational with sales off;
 alarm on growing retries, GOOGLE_VOIDED_HISTORY_GAP or stale watermarks.
+
+### Later AdMob verification result and mixed-stream code follow-up
+
+Main's second AdMob recheck succeeded: the UI explicitly confirmed verification
+of the existing Android application. App-ads verification is now **VERIFIED**,
+updating the earlier failed-recheck observation. AdMob then entered application
+review; its UI stated review typically takes 2–3 days and ad serving remains
+limited until review completes. This is **application review pending**, not
+unrestricted production advertising readiness.
+
+The mixed-stream code fix now introduces a terminal `IGNORED_TEST` queue state
+only after the normal authenticated/package-checked ingress and trusted Google
+v2 evidence identify a test purchase for a known JLPT SKU in the live environment.
+It applies only before a local order exists. The fenced database transaction
+records that evidence and marks associated events processed, creates no order or
+entitlement, and never consumes the test purchase. Subsequent delivery replays
+remain linked and processed without reopening the queue; the drain excludes
+only this terminal state. Normal live/unknown-owner/provider-error processing
+and the legacy-product boundary remain unchanged. Contradictory test evidence
+for an already linked live order stays retryable instead of suppressing its
+lifecycle. Native verify returns a specific HTTP 409
+`GOOGLE_TEST_PURCHASE_NOT_SUPPORTED`; its successful response DTO is unchanged.
+
+Eight independent PostgreSQL tests cover real RSA OIDC verification, bad
+identity/package rejection, untrusted payload claims, trusted test finalization,
+repeat delivery/drain behavior, stale fences, provider failure, old-product
+boundaries and preservation of an existing live order. Together with existing
+Google acceptance coverage, 27 tests passed; TypeScript and ESLint passed.
+These are isolated automated tests, not production deployment evidence. Main
+must review and deploy the code before treating this particular permanent
+subscription blocker as closed; no production configuration was changed here.
