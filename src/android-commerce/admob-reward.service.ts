@@ -95,6 +95,11 @@ export class AdmobRewardService {
   async receive(query: string) {
     this.policy.assertIsolation();
     const fields = await this.verifier.verify(query);
+    // Google also signs callbacks without app custom data (including URL checks).
+    // Acknowledge transport only: no ticket means no attributable reward or DB work.
+    // Present-but-empty/invalid/unknown tickets must still fail the normal checks.
+    if (!Object.hasOwn(fields, 'custom_data'))
+      return { received: true, ignored: 'NO_REWARD_TICKET' };
     if (
       !/^[A-Za-z0-9_-]{43}$/.test(fields.custom_data ?? '') ||
       !/^\d+$/.test(fields.timestamp ?? '') ||
