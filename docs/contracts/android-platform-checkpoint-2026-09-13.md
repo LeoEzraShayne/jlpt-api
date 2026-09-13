@@ -361,3 +361,26 @@ Google acceptance coverage, 27 tests passed; TypeScript and ESLint passed.
 These are isolated automated tests, not production deployment evidence. Main
 must review and deploy the code before treating this particular permanent
 subscription blocker as closed; no production configuration was changed here.
+
+### Explicit cancellation retest passed within its observed window
+
+The later, separately controlled cancellation test had a fixed baseline at
+**05:24:52.225Z**: two REFUNDED day-pass orders/queues, two REVOKED grants, and
+processed notification counts TEST=1, PURCHASE_HINT=2, VOIDED_HINT=2. The device
+opened checkout at **05:26:21.840Z**. Fresh screenshots and foreground checks at
+05:26:26 and 05:27:06 showed Google's test-card/no-charge sheet. The operator
+performed one Back action at **05:27:06.344Z**, without confirming purchase.
+Native then displayed its USER_CANCELED message and a free account with no
+reward balance. A fresh read-only restore completed at **05:29:14Z**, with its
+button enabled and no waiting/new verification state.
+
+At **05:29:33.497Z**, the independent database and RTDN counts still exactly
+matched the baseline. Fresh Google v2/Orders reads of the two already-known
+tokens continued to show CANCELLED/REFUNDED. These token lookups do not enumerate
+all provider orders, and the native UI did not expose a raw owned-token count.
+The combined explicit cancellation result, successful fresh restore and
+unchanged backend evidence establish this cancellation path during the stated
+observation window. They are not a claim of unrestricted provider-order
+visibility or proof that no future notification can arrive. The earlier
+unexplained test purchase remains recorded separately; slow/pending payment
+coverage is still incomplete.
