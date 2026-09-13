@@ -59,3 +59,25 @@ test('versioned authenticated encryption rejects tampering and cross-environment
   f.config.set('ANDROID_COMMERCE_ENVIRONMENT', 'live');
   expect(() => f.gateway.decrypt(envelope)).toThrow();
 });
+
+test('voided bootstrap omits startTime while incremental scans preserve bounds and pagination', async () => {
+  const { gateway } = fixture();
+  const request = jest
+    .spyOn(
+      gateway as unknown as { request(path: string): Promise<unknown> },
+      'request',
+    )
+    .mockResolvedValue({});
+  await gateway.voided(undefined, 1234);
+  const bootstrap = new URL(request.mock.calls[0][0], 'https://example.test');
+  expect(bootstrap.searchParams.has('startTime')).toBe(false);
+  expect(bootstrap.searchParams.get('endTime')).toBe('1234');
+  expect(bootstrap.searchParams.get('includeQuantityBasedPartialRefund')).toBe(
+    'true',
+  );
+  await gateway.voided(1000, 1234, 'page+/=');
+  const incremental = new URL(request.mock.calls[1][0], 'https://example.test');
+  expect(incremental.searchParams.get('startTime')).toBe('1000');
+  expect(incremental.searchParams.get('endTime')).toBe('1234');
+  expect(incremental.searchParams.get('token')).toBe('page+/=');
+});

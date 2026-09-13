@@ -163,10 +163,16 @@ export class GoogleNotificationsService {
       const earliest = end - 30 * 86400_000;
       if (state.watermarkAt && state.watermarkAt.getTime() < earliest)
         throw new Error('GOOGLE_VOIDED_HISTORY_GAP');
-      const start = Math.max(
-        earliest,
-        (state.watermarkAt?.getTime() ?? earliest) - 86400_000,
-      );
+      const overlapStart = state.watermarkAt
+        ? state.watermarkAt.getTime() - 86400_000
+        : undefined;
+      // A local now-minus-30-days is already too old when Google receives it.
+      // Omit the boundary so Google uses its own full retention window; never
+      // shorten bootstrap history by adding an arbitrary safety margin.
+      const start =
+        overlapStart !== undefined && overlapStart > earliest
+          ? overlapStart
+          : undefined;
       let pageToken: string | undefined;
       const seen = new Set<string>();
       do {

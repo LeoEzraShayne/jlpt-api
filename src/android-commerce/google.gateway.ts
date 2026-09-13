@@ -176,13 +176,13 @@ export class GoogleGateway {
       'POST',
     );
   }
-  async voided(start: number, end: number, pageToken?: string) {
+  async voided(start: number | undefined, end: number, pageToken?: string) {
     const query = new URLSearchParams({
-      startTime: String(start),
       endTime: String(end),
       includeQuantityBasedPartialRefund: 'true',
       type: '0',
     });
+    if (start !== undefined) query.set('startTime', String(start));
     if (pageToken) query.set('token', pageToken);
     return z
       .object({

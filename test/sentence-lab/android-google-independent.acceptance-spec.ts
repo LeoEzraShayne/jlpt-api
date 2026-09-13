@@ -379,6 +379,39 @@ test('eight distinct notifications share one unowned durable queue and later res
   ).toBe(8);
 });
 
+test.each([null, 29.5, 2])(
+  'voided scan uses provider retention for %s day old watermarks and preserves normal overlap',
+  async (ageDays) => {
+    const f = await fixture();
+    f.config.set('GOOGLE_PLAY_CREDENTIALS_FILE', 'synthetic-never-read');
+    const id = `google-voided:${f.policy.packageName}:test`;
+    const watermarkAt =
+      ageDays === null ? null : new Date(Date.now() - ageDays * 86400000);
+    await h.prisma.androidCommerceSyncState.upsert({
+      where: { id },
+      create: { id, watermarkAt },
+      update: { watermarkAt, leaseToken: null, leaseUntil: null },
+    });
+    const api = jest
+      .spyOn(f.gateway, 'voided')
+      .mockResolvedValue({ voidedPurchases: [] });
+    const before = Date.now();
+    await f.notifications.syncVoided();
+    expect(api).toHaveBeenCalledTimes(1);
+    const [start, end] = api.mock.calls[0];
+    expect(start).toBe(
+      ageDays === 2 ? watermarkAt!.getTime() - 86400000 : undefined,
+    );
+    expect(end).toBeGreaterThanOrEqual(before);
+    const row = await h.prisma.androidCommerceSyncState.findUniqueOrThrow({
+      where: { id },
+    });
+    expect(row.watermarkAt).toEqual(new Date(end));
+    expect(row.lastSuccessAt).not.toBeNull();
+    expect(row.errorCode).toBeNull();
+  },
+);
+
 test('voided history beyond thirty days records a gap instead of silently advancing the watermark', async () => {
   const f = await fixture();
   f.config.set('GOOGLE_PLAY_CREDENTIALS_FILE', 'synthetic-never-read');
