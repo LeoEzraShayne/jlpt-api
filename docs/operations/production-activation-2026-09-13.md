@@ -50,6 +50,8 @@ AdMob CMP 草稿已加入正式 `/privacy` 地址，但草稿未发布。`app-ad
 - 根代理通过 AdMob 正式网址验证工具得到“成功！该回调网址已通过验证”，随后保存并重新展开核实网址为 `https://api.jlpt.meritledger.org/api/v1/android/commerce/admob/ssv`。仅设置专用广告位 `7191979288`，没有应用到其他广告联盟。
 - `JLPT Android — European consent` 已在 AdMob 显示“已发布”，仅关联 Android `com.meritledger.app`。默认英语、另加中文和日语；EEA/英国/瑞士显示；同意、不同意、管理选项均启用。平台提示最多一小时分发。实际 SDK 同意/拒绝/撤回验收继续进行，正式广告开关仍关闭。
 - 用户重新连接真机并授权调试后，E 的独立 instrumentation 只读查询返回：日卡 `buy/null` JPY 150；年卡 `buy/null` JPY 15200 与 `buy/launch-64` JPY 9824。SDK 连接、功能和 BillingConfig 响应成功，JP 匹配，无 unfetched 项。这证明当前优惠可见，不证明原 `status 4` 的根因，也不等同于完成年卡结账。
+- Web `04aac198bcc5e60bbb547161f705843124fdccc3`（产品源码与构建点 `891f32e` 相同，后两次提交仅测试/报告）已发布为 Worker `676d1d0a-ae5a-46ec-97f5-264873fee4a7`。根代理在线查看 `/login`：18+ 复选框默认未选、继续按钮禁用；点击隐私链接可直接访问公开说明，返回仍未确认；浏览器无相关错误。候选 94 项单测、4 项桌面/320px 浏览器检查及构建通过。该确认仅为当前标签页自我声明，不是年龄证明或后端身份授权。
+- Play 数据安全的删除申请网址已改为 `https://jlpt.meritledger.org/delete-account`，界面显示“已保存您所做的更改”；这是草稿，尚未提交新版声明。
 
 ## 仍待完成，未放行 Android 发布
 
