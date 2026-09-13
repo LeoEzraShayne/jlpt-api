@@ -254,3 +254,29 @@ price. These checks did not find a Japan configuration or active-time mismatch.
 They do not prove the specific device/account is already eligible. Propagation
 or account-specific availability remains an inference to test; no product state
 was changed during this diagnosis, and no year-pass test order was placed.
+
+### Attempted cancellation did not produce a passing cancellation test
+
+A later device checkout exercise was intended to open the test-card sheet and
+cancel with Back without purchasing. It must **not** be recorded as a passing
+cancellation test: Google subsequently reported a distinct new day-pass test
+purchase with completion time **2026-09-13T05:02:24.319Z**, matching the same
+synthetic purchase account. Its token differed from the already refunded first
+purchase. The operator reported no purchase-button action, but that report does
+not override the provider's PURCHASED evidence; the exact UI trigger remains
+unresolved. The device's subsequent already-owned message therefore was not
+assumed to be a replay of the first refunded token.
+
+The real purchase notification entered the durable queue, initially without an
+owner, and normal reconciliation subsequently verified ownership, granted once
+and consumed the test purchase. Main reviewed a separate private refund driver
+pinned to this second completion time and its exact order/token fingerprints.
+Fresh checks required test context, the synthetic owner, day-pass duration,
+JPY 150 price, PAID/CONSUMED state and matching Google order evidence. Main
+executed that test-only refund successfully; the script did not modify the
+local ledger. By **2026-09-13T05:07:48.635Z**, the real voided notification had
+automatically revoked the second grant. The two independent day-pass orders
+were each REFUNDED for JPY 150, both grants were REVOKED, and two purchase hints
+and two voided hints were PROCESSED. The first refund remained unchanged.
+Cancellation and slow/pending-payment UI coverage remain incomplete at this
+checkpoint; this additional test order is not evidence that either case passed.
