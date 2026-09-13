@@ -64,7 +64,17 @@ export class AndroidCommerceController {
     const config = await this.db.billingConfig.findUnique({
       where: { id: 'default' },
     });
-    const catalog = catalogFor(config, 'GLOBAL');
+    const now = new Date();
+    const catalog = catalogFor(config, 'GLOBAL', now);
+    const launchEnd = catalog.launchEndsAt
+      ? Date.parse(catalog.launchEndsAt)
+      : null;
+    // Play requires whole-minute offer expiry. Pause annual sales in the
+    // remaining fraction of the shared launch window instead of charging $99 early.
+    const yearPaused =
+      launchEnd !== null &&
+      now.getTime() >= Math.floor(launchEnd / 60_000) * 60_000 &&
+      now.getTime() < launchEnd;
     return {
       data: {
         packageName: this.policy.packageName,
@@ -72,17 +82,21 @@ export class AndroidCommerceController {
         salesEnabled:
           !!config?.androidSalesEnabled &&
           !!config.launchAt &&
-          config.launchAt <= new Date() &&
+          config.launchAt <= now &&
           this.policy.enabled('ANDROID_GOOGLE_ENABLED'),
         launchAt: catalog.launchAt,
         launchEndsAt: catalog.launchEndsAt,
-        products: catalog.products.map((product) => ({
-          productCode: product.productCode,
-          ...GOOGLE_PRODUCTS[product.productCode],
-          offerId: product.launchPrice ? 'launch-64' : null,
-          durationSeconds: product.durationSeconds,
-          launchPrice: product.launchPrice,
-        })),
+        products: catalog.products
+          .filter(
+            (product) => !(yearPaused && product.productCode === 'YEAR_PASS'),
+          )
+          .map((product) => ({
+            productCode: product.productCode,
+            ...GOOGLE_PRODUCTS[product.productCode],
+            offerId: product.launchPrice ? 'launch-64' : null,
+            durationSeconds: product.durationSeconds,
+            launchPrice: product.launchPrice,
+          })),
       },
     };
   }
