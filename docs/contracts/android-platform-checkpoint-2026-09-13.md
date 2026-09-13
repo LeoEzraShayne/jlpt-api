@@ -230,3 +230,27 @@ safe projections are recorded here. This establishes the owned-unit SDK test-ad
 view → real Google SSV → idempotent backend reward path in the isolated harness.
 It does not establish production ad readiness or authorize enabling native
 production flags.
+
+### Year-pass availability diagnostic: still requires a successful device query
+
+The device's Billing Library 9.1 query returned a successful overall result but
+listed the year product under `UnfetchedProduct` with status **4**. Google's
+[UnfetchedProduct.StatusCode reference](https://developer.android.com/reference/com/android/billingclient/api/UnfetchedProduct.StatusCode)
+defines this as `NO_ELIGIBLE_OFFER`: the product was found but no eligible offer
+was returned, including the case where no one-time purchase option is available.
+It is a separate status namespace from BillingResult response codes.
+
+At **2026-09-13T04:57:13.545Z**, authenticated read-only Developer API requests
+showed `jlpt_year_pass / buy` ACTIVE with legacy compatibility, Japan AVAILABLE
+at JPY 15,200, and the US AVAILABLE at USD 99. New-regions configuration was
+AVAILABLE. Its `launch-64` offer was ACTIVE and within its configured
+2026-09-13T01:15:00Z–2026-12-11T23:58:00Z time window; Japan was AVAILABLE with a
+JPY 5,376 absolute discount (result JPY 9,824), and the US with a USD 35 discount
+(result USD 64). No redemption limit or restricted-payment-country field was
+returned. Both purchase option and offer contained 173 regional entries.
+Google's [offer resource documentation](https://developers.google.com/android-publisher/api-ref/rest/v3/monetization.onetimeproducts.purchaseOptions.offers)
+defines absoluteDiscount as the amount subtracted from the purchase option
+price. These checks did not find a Japan configuration or active-time mismatch.
+They do not prove the specific device/account is already eligible. Propagation
+or account-specific availability remains an inference to test; no product state
+was changed during this diagnosis, and no year-pass test order was placed.
