@@ -1,6 +1,6 @@
 # Web live release prepared — 2026-09-13 JST
 
-The candidate is prepared on the production server; **it has not replaced the running API and sales are not active**. The signing-secret handoff is pending. This record is not a payment-success or launch-activation receipt.
+This is the historical preparation checkpoint. The subsequent deployment and activation are now complete; see [actual live results](production-web-live-2026-09-13.md). The state below records what was true before the signing-secret handoff.
 
 ## Verified candidate
 
